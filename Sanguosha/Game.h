@@ -10,6 +10,12 @@
 #include <sstream>
 using namespace std;
 using namespace sf;
+typedef enum skill_number {
+	kill,             // kill
+	jink,             // escape
+	analeptic,        // wine
+	peach             // peach
+};
 
 LPCWSTR string_To_LPCWSTR(string _string) {
 	size_t origsize = _string.length() + 1;
@@ -143,8 +149,6 @@ public:
 	bool Detete_Card_Selected() {
 		LinkList T = Pile_Card_Total;
 		while (T->next) {
-			//cout << T->next->card_name << endl;
-			//cout << name << endl;
 			if (T->next->mouse_select_card == true) {
 				LinkList p = T->next;
 				T->next = p->next;
@@ -215,7 +219,6 @@ public:
 			return true;
 		}
 		else {
-			//cout << "target search false! no such one!>>>>>>> " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
 			return false;
 		}
 	}
@@ -274,6 +277,7 @@ public:
 		}
 	}
 	void Shuffle_Card() {
+		srand(time(NULL));
 		for (int i = 0; i < 200; i++)
 		{
 			Insert_Card((rand() % 4), (rand() % 4));
@@ -292,6 +296,15 @@ public:
 	}
 };
 
+class Skill
+{
+public:
+	bool need_jink;            // set a state when someone play kill or other skill that need jink , target need play jink
+	bool need_kill;            // also
+	// define skill 
+
+	Skill() {}
+};
 
 class Player
 {
@@ -318,25 +331,13 @@ public:
 	int button_assure;          // there exist four stage : unable;normal;hover;click
 	int button_cancel;          // there exist four stage : unable;normal;hover;click
 	int button_over;            // there exist four stage : unable;normal;hover;click
-
+	bool animator_kill, animator_jink, animator_peach, animator_analeptic, animator_damage;                   // bool to constrain animator of kill
+	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
+	Skill skill;
 	//定义游玩者
 	Player() { HP = 4; }
 };
 
-class Skill
-{
-public:
-	// define skill 
-	void kill(Player player, Player target) {
-		//cout << "what fuck!" << endl;
-		//if (enemy.play_card(enemy.play_card())) {
-			// 			return;
-		//}
-		cout << "666" << endl;
-		//}
-	}
-	Skill() {}
-};
 
 class Game
 {
@@ -412,7 +413,6 @@ public:
 			}
 			if (Human.round_play_phase){
 				if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
-					cout << "进来了，啊？" << endl;
 					mouse_count_clock_two = Mouse::getPosition(window);
 					if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
 						cout << "Mouse::Left double click" << endl;
@@ -503,7 +503,6 @@ public:
 				}
 			}
 		}
-		
 	}
 
 	int Previous_Draw_Phase() {
@@ -557,21 +556,27 @@ public:
 		}
 		if (Human.round_play_phase) {
 			// button stage initialize
-			if ((Human.select_card == false)&&!(button_discard.is_hover)){ // there exist tow kind of situation -- original initialize and no hover
+			if ((Human.select_card == false)&&!(button_discard.is_hover||button_discard.is_down)){ // there exist tow kind of situation -- original initialize and no hover & no down
 				button_ok.enable_diabled_button();
 				button_cancel.enable_diabled_button();
 				button_discard.enable_normal_button();
 			}
-			//cout << mouse_select_vector.x << " || " << mouse_select_vector.y << endl;
-			if (Human.cards.Search_Card_Position(mouse_select_vector)){     //play choose cards ,only once each time
+			if (Human.cards.Search_Card_Position(mouse_select_vector)){        //play choose cards ,only once each time   also  it can change button state according to card attribute
 				Single_Card* ptr = nullptr;
 					ptr= Human.cards.Search_Card_Position_locate(mouse_select_vector);
 				if (ptr->mouse_select_card==false&&Human.select_card==false) {
 					ptr->mouse_select_card = true;
 					Human.select_card = true;
-					button_ok.enable_diabled_button();
-					button_cancel.enable_normal_button();
-					button_discard.enable_diabled_button();
+					if (ptr->card_info.can_attck){
+						button_ok.enable_diabled_button();
+						button_cancel.enable_normal_button();
+						button_discard.enable_diabled_button();
+					}
+					else {
+						button_ok.enable_normal_button();
+						button_cancel.enable_normal_button();
+						button_discard.enable_diabled_button();
+					}
 				}
 				else if(ptr->mouse_select_card == true && Human.select_card == true){
 					ptr->mouse_select_card = false;
@@ -601,24 +606,76 @@ public:
 						button_cancel.enable_normal_button();
 						button_discard.enable_diabled_button();
 					}
-					else if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75) && Machine.being_choose == true) {     // when it choose enemy & tends to click assure button to fight   the assure button area is 
+					else if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75) && Machine.being_choose == true) {  // when it choose enemy & tends to click assure button to fight   the assure button area is 
 						Machine.being_choose = false;
+						if (ptr->card_info.single_card_number==kill)
+						{
+							animator_kill = true;
+							animator_kill_counter = 0;
+							Machine.skill.need_jink = true;
+						}
 						Human.cards.Detete_Card_Selected();
 						Human.select_card = false;
+						// then change button state
 						button_ok.enable_diabled_button();
 						button_cancel.enable_diabled_button();
 						button_discard.enable_normal_button();
+						/////----> skill go
+						//skill.kill(Human, Machine);
 					}
-					//else if(mouse_select_vector.x>)
 				}
-
+				else {
+					if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75)) {  // when it play card & the card is non_choosen   the assure button area is 
+						if (ptr->card_info.single_card_number == jink) {
+							animator_jink = true;
+							animator_jink_counter = 0;
+						}
+						else if (ptr->card_info.single_card_number == peach) {
+							animator_peach = true;
+							animator_peach_counter = 0;
+						}
+						else if (ptr->card_info.single_card_number == analeptic) {
+							animator_analeptic = true;
+							animator_analeptic_counter = 0;
+						}
+						Machine.being_choose = false;
+						Human.cards.Detete_Card_Selected();
+						Human.select_card = false;
+						// then change button state
+						button_ok.enable_diabled_button();
+						button_cancel.enable_diabled_button();
+						button_discard.enable_normal_button();
+						
+					}
+				}
+				if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 694 && mouse_select_vector.y < (694 + 73)) {  // when it go to cancel ,change all anyway
+					Machine.being_choose = false;
+					Human.select_card = false;
+					ptr->mouse_select_card = false;
+					// then change button state
+					button_ok.enable_diabled_button();
+					button_cancel.enable_diabled_button();
+					button_discard.enable_normal_button();
+				}
 				return;
 			}
-
-
+		}
+    }
+	void Machine_Round() {
+		if (Machine.skill.need_jink) {
+			if (Machine.cards.Search_Card(jink)) {
+				animator_jink = true;
+				animator_jink_counter = 0;
+				Machine.cards.Delete_Card(jink);
+			}
+			else {
+				Machine.HP--;
+				animator_damage = true;
+				animator_damage_counter = 0;
+			}
+			Machine.skill.need_jink = false;
 		}
 	}
-	void Machine_Round() {}
 
 	void Draw() {
 
@@ -697,6 +754,81 @@ public:
 			window.draw(button_ok.sprite_normal);
 		}
 
+		if (animator_kill) {
+			window.setFramerateLimit(6);
+			Texture texture_temp_kill;
+			Sprite sprite_temp_kill;
+			stringstream ss;
+			ss << "image/animator/killer/" << animator_kill_counter << ".png";
+			Load_Image(texture_temp_kill, sprite_temp_kill, ss.str(), 0, 0, 1, 1);
+			sprite_temp_kill.setPosition(500, 470);
+			animator_kill_counter++;
+			window.draw(sprite_temp_kill);
+			if (animator_kill_counter==13){
+				animator_kill = false;
+				window.setFramerateLimit(30);
+			}
+		}
+		else if (animator_jink) {
+			window.setFramerateLimit(6);
+			Texture texture_temp_kill;
+			Sprite sprite_temp_kill;
+			stringstream ss;
+			ss << "image/animator/jink/" << animator_jink_counter << ".png";
+			Load_Image(texture_temp_kill, sprite_temp_kill, ss.str(), 0, 0, 1, 1);
+			sprite_temp_kill.setPosition(500, 470);
+			animator_jink_counter++;
+			window.draw(sprite_temp_kill); 
+			if (animator_jink_counter == 12) {
+				animator_jink = false;
+				window.setFramerateLimit(30);
+			}
+		}
+		else if (animator_peach) {
+			window.setFramerateLimit(6);
+			Texture texture_temp;
+			Sprite sprite_temp;
+			stringstream ss;
+			ss << "image/animator/peach/" << animator_peach_counter << ".png";
+			Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
+			sprite_temp.setPosition(500, 340);
+			animator_peach_counter++;
+			window.draw(sprite_temp);
+			if (animator_peach_counter == 17) {
+				animator_peach = false;
+				window.setFramerateLimit(30);
+			}
+		}
+		else if (animator_analeptic) {
+			window.setFramerateLimit(6);
+			Texture texture_temp;
+			Sprite sprite_temp;
+			stringstream ss;
+			ss << "image/animator/analeptic/" << animator_analeptic_counter << ".png";
+			Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
+			sprite_temp.setPosition(500, 380);
+			animator_analeptic_counter++;
+			window.draw(sprite_temp);
+			if (animator_analeptic_counter == 17) {
+				animator_analeptic = false;
+				window.setFramerateLimit(30);
+			}
+		}
+		else if (animator_damage) {
+			window.setFramerateLimit(8);
+			Texture texture_temp;
+			Sprite sprite_temp;
+			stringstream ss;
+			ss << "image/animator/damage/" << animator_damage_counter << ".png";
+			Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
+			sprite_temp.setPosition((window_width - 143) / 2-30, 50);
+			animator_damage_counter++;
+			window.draw(sprite_temp);
+			if (animator_damage_counter == 6) {
+				animator_damage = false;
+				window.setFramerateLimit(30);
+			}
+		}
 	}
 	void Draw_Machine() {
 		if (Machine.being_choose){

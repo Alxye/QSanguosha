@@ -76,7 +76,6 @@ int main() {
     //≥ı ºªØ
 
     Game Sanguosha;
-    Skill card_skill;
 
     while (Sanguosha.window.isOpen()) {
         do {
@@ -85,13 +84,12 @@ int main() {
                 //Sanguosha.Input();
                 if (Sanguosha.new_round) Sanguosha.Round_Initialize(Sanguosha.turn);     // where exist new round ,there a turn to judge & initialize player's data
                 Sanguosha.Human_Round();
+                Sanguosha.Machine_Round();
                 Sanguosha.Draw();
             }
         } while (!Sanguosha.gamequit);
     }
 
     cout << "yes" << endl;
-    //cout << "test!" << endl;
-//cout << temp << endl;
     return 0;
 }
