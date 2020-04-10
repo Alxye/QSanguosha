@@ -140,6 +140,23 @@ public:
 		}
 		return false;
 	}
+	bool Detete_Card_Selected() {
+		LinkList T = Pile_Card_Total;
+		while (T->next) {
+			//cout << T->next->card_name << endl;
+			//cout << name << endl;
+			if (T->next->mouse_select_card == true) {
+				LinkList p = T->next;
+				T->next = p->next;
+				Pile_Card_Amount--;
+				delete p;
+				cout << "<<<<抽牌/出牌成功" << endl;
+				return true;
+			}
+			else T = T->next;
+		}
+		return false;
+	}
 	void Bubblesort_Card() {
 		Single_Card* pre, * p, * tail;
 		tail = NULL;
@@ -329,6 +346,7 @@ public:
 	int turn;                             // 轮到谁的 记录量
 	bool gamestart, gameover, gamequit;
 	bool new_round;
+	Vector2i virtual_vector;
 	Event event_global;
 	Pile_Card piles;
 	Player Human, Machine;
@@ -401,11 +419,22 @@ public:
 						cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y<<endl;
 						return mouse_count_clock_two;
 					}
-					else{
-						cout << "Mouse::Left click" << endl;
-						cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
-						return mouse_count_clock_two; 
+					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75)&&!button_ok.is_disabled)
+					{ // the button of ok //(807, 604)++(61,75)
+						button_ok.enable_down_button();
+						cout << "鼠标按下确定" << endl;
 					}
+					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 694 && mouse_count_clock_two.y < (694 + 73)&&!button_cancel.is_disabled)
+					{ // the button of cancel //(807, 604)++(61,75)  
+						button_cancel.enable_down_button();
+						cout << "鼠标按下取消" << endl;
+					}
+					else if (mouse_count_clock_two.x > 874 && mouse_count_clock_two.x < (874 + 33) && mouse_count_clock_two.y > 644 && mouse_count_clock_two.y < (644 + 81) && !button_discard.is_disabled)
+					{ // the button of discard //(807, 604)++(61,75)  
+						button_discard.enable_down_button();
+						cout << "鼠标按下结束" << endl;
+					}
+
 				}
 				if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
 					mouse_count_clock_one = Mouse::getPosition(window);
@@ -414,8 +443,10 @@ public:
 					cout << "Mouse::Left Release" << endl;
 					cout << " released:mouse_two:" << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
 					cout <<" released:mouse_one:" <<mouse_count_clock_one.x << " || " << mouse_count_clock_one.y << endl;
-
-					//return mouse_count_clock_one;
+					if (button_ok.is_down) button_ok.enable_normal_button();
+					if (button_cancel.is_down) button_cancel.enable_normal_button();
+					if (button_discard.is_down) button_discard.enable_normal_button();
+					return mouse_count_clock_one;
 				}
 				
 				if (event_global.type == sf::Event::MouseMoved)
@@ -444,6 +475,7 @@ public:
 							cout << "new mouse y: " << event_global.mouseMove.y << endl;
 							button_ok.enable_hover_button();
 							cout << "鼠标位于确定上" << endl;
+							//return virtual_vector;
 						}
 						else{
 							cout << "new mouse x: " << event_global.mouseMove.x << endl;
@@ -471,6 +503,7 @@ public:
 				}
 			}
 		}
+		
 	}
 
 	int Previous_Draw_Phase() {
@@ -500,6 +533,7 @@ public:
 	}
 	void Human_Round() {
 		Vector2i mouse_select_vector = Input();  // in general there only exist one input function  * wtf! that is matter most
+		//cout << mouse_select_vector.x << "||" << mouse_select_vector.y << endl;
 		if (piles.Pile_Card_Amount < 20) piles.Shuffle_Card(); // if card few ,shuffle
 		// human get 2 cards each time is its round
 		if (Human.round_draw_phase) {
@@ -555,25 +589,31 @@ public:
 					ptr = ptr->next;
 				}
 				if (ptr!=NULL&&ptr->card_info.can_attck) {    // if the select card then choose enemy  (window_width - 143) / 2, 40 // 宽 143 || 高 195
-				    if (mouse_select_vector.x> (window_width - 143) / 2&&mouse_select_vector.x< (window_width - 143) / 2+143&&mouse_select_vector.y>40&&mouse_select_vector.y<195+40&&Machine.being_choose==false) {
+				    if (mouse_select_vector.x> (window_width - 143) / 2&&mouse_select_vector.x< (window_width - 143) / 2+143&&mouse_select_vector.y>40&&mouse_select_vector.y<195+40&&Machine.being_choose==false) {     // when it tends to choose enemy
 						Machine.being_choose = true;
 						button_ok.enable_normal_button();
 						button_cancel.enable_diabled_button();
 						button_discard.enable_diabled_button();
 					}
-					else if (mouse_select_vector.x > (window_width - 143) / 2 && mouse_select_vector.x < (window_width - 143) / 2 + 143 && mouse_select_vector.y>40 && mouse_select_vector.y < 195 + 40 && Machine.being_choose==true) {
+					else if (mouse_select_vector.x > (window_width - 143) / 2 && mouse_select_vector.x < (window_width - 143) / 2 + 143 && mouse_select_vector.y>40 && mouse_select_vector.y < 195 + 40 && Machine.being_choose==true) {       // when it tends to cancel choose
 						Machine.being_choose = false;
 						button_ok.enable_diabled_button();
 						button_cancel.enable_normal_button();
 						button_discard.enable_diabled_button();
 					}
+					else if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75) && Machine.being_choose == true) {     // when it choose enemy & tends to click assure button to fight   the assure button area is 
+						Machine.being_choose = false;
+						Human.cards.Detete_Card_Selected();
+						Human.select_card = false;
+						button_ok.enable_diabled_button();
+						button_cancel.enable_diabled_button();
+						button_discard.enable_normal_button();
+					}
 					//else if(mouse_select_vector.x>)
 				}
+
 				return;
 			}
-// 			if ()
-// 			{
-// 			}
 
 
 		}
@@ -693,6 +733,8 @@ public:
 	Game() {
 		window_width = 1035;
 		window_height = 770;
+		virtual_vector.x = -999;
+		virtual_vector.y = -999;
 		window.create(sf::VideoMode(window_width, window_height), L"三国杀_BY_赵茜茜");
 	}
 };
