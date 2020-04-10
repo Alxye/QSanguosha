@@ -530,7 +530,8 @@ public:
 			}
 			//cout << mouse_select_vector.x << " || " << mouse_select_vector.y << endl;
 			if (Human.cards.Search_Card_Position(mouse_select_vector)){     //play choose cards ,only once each time
-				Single_Card* ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
+				Single_Card* ptr = nullptr;
+					ptr= Human.cards.Search_Card_Position_locate(mouse_select_vector);
 				if (ptr->mouse_select_card==false&&Human.select_card==false) {
 					ptr->mouse_select_card = true;
 					Human.select_card = true;
