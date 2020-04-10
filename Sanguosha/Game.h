@@ -361,6 +361,10 @@ public:
 	Sprite sprite_being_chosen;
 	// for button
 	Button button_cancel, button_discard, button_ok;
+	// for HP
+	Texture texture_Human_HP, texture_Machine_HP;
+	Sprite sprite_Human_HP, sprite_Machine_HP;
+
 	//游戏 类的实现
 	void Initial() {
 		// initialize game state
@@ -399,7 +403,9 @@ public:
 		Load_Image(button_ok.texture_down, button_ok.sprite_down, "image/back_stable/button/ok-down.png", 0, 0, 1, 1);
 		Load_Image(button_ok.texture_hover, button_ok.sprite_hover, "image/back_stable/button/ok-hover.png", 0, 0, 1, 1);
 		Load_Image(button_ok.texture_normal, button_ok.sprite_normal, "image/back_stable/button/ok-normal.png", 0, 0, 1, 1);
-		
+		//---->> Human & Machine Player HP
+		Load_Image(texture_Human_HP, sprite_Human_HP, "image/HP/green_big.png", 0, 0, 1, 1);
+		Load_Image(texture_Machine_HP, sprite_Machine_HP, "image/HP/green_small.png", 0, 0, 1, 1);
 
 		turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
 	}
@@ -610,8 +616,8 @@ public:
 						Machine.being_choose = false;
 						if (ptr->card_info.single_card_number==kill)
 						{
-							animator_kill = true;
-							animator_kill_counter = 0;
+							Human.animator_kill = true;
+							Human.animator_kill_counter = 0;
 							Machine.skill.need_jink = true;
 						}
 						Human.cards.Detete_Card_Selected();
@@ -627,16 +633,16 @@ public:
 				else {
 					if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75)) {  // when it play card & the card is non_choosen   the assure button area is 
 						if (ptr->card_info.single_card_number == jink) {
-							animator_jink = true;
-							animator_jink_counter = 0;
+							Human.animator_jink = true;
+							Human.animator_jink_counter = 0;
 						}
 						else if (ptr->card_info.single_card_number == peach) {
-							animator_peach = true;
-							animator_peach_counter = 0;
+							Human.animator_peach = true;
+							Human.animator_peach_counter = 0;
 						}
 						else if (ptr->card_info.single_card_number == analeptic) {
-							animator_analeptic = true;
-							animator_analeptic_counter = 0;
+							Human.animator_analeptic = true;
+							Human.animator_analeptic_counter = 0;
 						}
 						Machine.being_choose = false;
 						Human.cards.Detete_Card_Selected();
@@ -664,14 +670,14 @@ public:
 	void Machine_Round() {
 		if (Machine.skill.need_jink) {
 			if (Machine.cards.Search_Card(jink)) {
-				animator_jink = true;
-				animator_jink_counter = 0;
+				Machine.animator_jink = true;
+				Machine.animator_jink_counter = 0;
 				Machine.cards.Delete_Card(jink);
 			}
 			else {
 				Machine.HP--;
-				animator_damage = true;
-				animator_damage_counter = 0;
+				Machine.animator_damage = true;
+				Machine.animator_damage_counter = 0;
 			}
 			Machine.skill.need_jink = false;
 		}
@@ -682,6 +688,7 @@ public:
 		Draw_Stable_Background();
 		Draw_HumanPlayer();
 		Draw_Machine();
+		Draw_Animator();
 		window.display();
 	}
 	void Draw_HumanPlayer() {
@@ -753,84 +760,46 @@ public:
 			button_ok.sprite_normal.setPosition(807, 604);
 			window.draw(button_ok.sprite_normal);
 		}
-
-		if (animator_kill) {
-			window.setFramerateLimit(6);
-			Texture texture_temp_kill;
-			Sprite sprite_temp_kill;
-			stringstream ss;
-			ss << "image/animator/killer/" << animator_kill_counter << ".png";
-			Load_Image(texture_temp_kill, sprite_temp_kill, ss.str(), 0, 0, 1, 1);
-			sprite_temp_kill.setPosition(500, 470);
-			animator_kill_counter++;
-			window.draw(sprite_temp_kill);
-			if (animator_kill_counter==13){
-				animator_kill = false;
-				window.setFramerateLimit(30);
-			}
-		}
-		else if (animator_jink) {
-			window.setFramerateLimit(6);
-			Texture texture_temp_kill;
-			Sprite sprite_temp_kill;
-			stringstream ss;
-			ss << "image/animator/jink/" << animator_jink_counter << ".png";
-			Load_Image(texture_temp_kill, sprite_temp_kill, ss.str(), 0, 0, 1, 1);
-			sprite_temp_kill.setPosition(500, 470);
-			animator_jink_counter++;
-			window.draw(sprite_temp_kill); 
-			if (animator_jink_counter == 12) {
-				animator_jink = false;
-				window.setFramerateLimit(30);
-			}
-		}
-		else if (animator_peach) {
-			window.setFramerateLimit(6);
-			Texture texture_temp;
-			Sprite sprite_temp;
-			stringstream ss;
-			ss << "image/animator/peach/" << animator_peach_counter << ".png";
-			Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
-			sprite_temp.setPosition(500, 340);
-			animator_peach_counter++;
-			window.draw(sprite_temp);
-			if (animator_peach_counter == 17) {
-				animator_peach = false;
-				window.setFramerateLimit(30);
-			}
-		}
-		else if (animator_analeptic) {
-			window.setFramerateLimit(6);
-			Texture texture_temp;
-			Sprite sprite_temp;
-			stringstream ss;
-			ss << "image/animator/analeptic/" << animator_analeptic_counter << ".png";
-			Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
-			sprite_temp.setPosition(500, 380);
-			animator_analeptic_counter++;
-			window.draw(sprite_temp);
-			if (animator_analeptic_counter == 17) {
-				animator_analeptic = false;
-				window.setFramerateLimit(30);
-			}
-		}
-		else if (animator_damage) {
-			window.setFramerateLimit(8);
-			Texture texture_temp;
-			Sprite sprite_temp;
-			stringstream ss;
-			ss << "image/animator/damage/" << animator_damage_counter << ".png";
-			Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
-			sprite_temp.setPosition((window_width - 143) / 2-30, 50);
-			animator_damage_counter++;
-			window.draw(sprite_temp);
-			if (animator_damage_counter == 6) {
-				animator_damage = false;
-				window.setFramerateLimit(30);
-			}
+		// draw Human HP
+		for (int i = 0; i < Human.HP; i++){
+			sprite_Human_HP.setPosition(918 + i * 22, window_height - 166);  // the width of image named green big is 23
+			window.draw(sprite_Human_HP);
 		}
 	}
+	void Draw_Animator_Single(bool & animator,int & animator_counter,string file,int limited,int _x,int _y) {
+		window.setFramerateLimit(8);
+		Texture texture_temp;
+		Sprite sprite_temp;
+		stringstream ss;
+		ss << file << animator_counter << ".png";
+		Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
+		sprite_temp.setPosition(_x, _y);
+		animator_counter++;
+		window.draw(sprite_temp);
+		if (animator_counter == limited) {
+			animator = false;
+			window.setFramerateLimit(30);
+		}
+	}
+	void Draw_Animator() {
+		if (Human.animator_kill) { Draw_Animator_Single(Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470);}
+		else if (Machine.animator_kill) { Draw_Animator_Single(Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, 450, 200);}
+		else if (Human.animator_jink) {	Draw_Animator_Single(Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470);}
+		else if (Machine.animator_jink) { Draw_Animator_Single(Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, 450, 240);}
+		else if (Human.animator_peach) { Draw_Animator_Single(Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340);}
+		else if (Machine.animator_peach) { Draw_Animator_Single(Machine.animator_peach,Machine.animator_peach_counter, "image/animator/peach/", 17, 450,140);}
+		else if (Human.animator_analeptic) { Draw_Animator_Single(Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380);}
+		else if (Machine.animator_analeptic) { Draw_Animator_Single(Machine.animator_analeptic,Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, 450, 180);}
+		else if (Human.animator_damage) { Draw_Animator_Single(Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
+		else if (Machine.animator_damage) {	Draw_Animator_Single(Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50);	}
+	}
 	void Draw_Machine() {
+
+		// draw Machine HP
+		for (int i = 0; i < Machine.HP; i++) {
+			sprite_Machine_HP.setPosition((window_width - 143) / 2 +18+ 14 * i, 118);  // the width of image named green small is 14
+			window.draw(sprite_Machine_HP);
+		}
 		if (Machine.being_choose){
 			sprite_being_chosen.setPosition((window_width - 143) / 2, 40);  // 宽 1140 || 高 600
 			window.draw(sprite_being_chosen);
