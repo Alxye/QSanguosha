@@ -110,8 +110,8 @@ public:
 
 class Pile_Card {
 public:
-	LinkList Pile_Card_Total;          /*链表*/
-	int Pile_Card_Amount;              //牌堆中 牌数
+	LinkList Pile_Card_Total;          // LinkList
+	int Pile_Card_Amount;              // the total number of pile card
 	void Insert_Card(int number, int _suit) {
 		//尾插法 新增 结点
 		LinkList S = new Single_Card;
@@ -123,23 +123,21 @@ public:
 		S->file_loaded = false;
     	LinkList P = Pile_Card_Total;
 		while (P->next)
-			P = P->next;/*找到链表队尾指针*/
+			P = P->next;  // find tail node
 		Pile_Card_Amount++;
 		P->next = S;
-		P = S; /*尾插法*/
-		cout << "***********加牌成功 得到牌了！！！" << endl;
+		P = S; 
+		cout << "***********yes get card succeed!!!" << endl;
 	}
 	bool Delete_Card(int number) {
 		LinkList T = Pile_Card_Total;
 		while (T->next) {
-			//cout << T->next->card_name << endl;
-			//cout << name << endl;
 			if (T->next->card_info.single_card_number == number) {
 				LinkList p = T->next;
 				T->next = p->next;
 				Pile_Card_Amount--;
 				delete p;
-				cout << "<<<<抽牌/出牌成功" << endl;
+				cout << "<<<<delete card succeed!!!" << endl;
 				return true;
 			}
 			else T = T->next;
@@ -154,7 +152,7 @@ public:
 				T->next = p->next;
 				Pile_Card_Amount--;
 				delete p;
-				cout << "<<<<抽牌/出牌成功" << endl;
+				cout << "<<<<delete card succeed!!!" << endl;
 				return true;
 			}
 			else T = T->next;
@@ -182,21 +180,21 @@ public:
 			}
 			tail = p;
 		}
-		cout << "排序成功" << endl;
+		cout << "bubble sort succeed!!!" << endl;
 	}
 	bool Search_Card(int value) {
 		Single_Card* ptr = Pile_Card_Total->next;
 		if (ptr == NULL) {
-			printf_s("链表&卡牌为空\n");
+			cout << "the linklist is null,not found!!!" << endl;
 			return false;
 		}
 		while (ptr != NULL && ptr->card_info.single_card_number != value) { ptr = ptr->next; }
 		if (ptr != NULL) {
-			printf_s("找到 %d 了\n", value);
+			cout << "find!>>" << value << endl;
 			return true;
 		}
 		else {
-			printf_s("没有找到 %d\n", value);
+			cout << "NOT-FOUND__XXXXX>>" << value << endl;
 			return false;
 		}
 	}
@@ -210,7 +208,7 @@ public:
 	bool Search_Card_Position(Vector2i target_position) {
 		Single_Card* ptr = Pile_Card_Total->next;
 		if (ptr == NULL) {
-			printf_s("链表&卡牌为空\n");
+			cout << "the linklist is null,not found!!!" << endl;
 			return false;
 		}
 		while (ptr != NULL && !((target_position.x >= ptr->point_one.x) && (target_position.x <= ptr->point_two.x) && (target_position.y >= ptr->point_one.y) && (target_position.y <= ptr->point_two.y))) { ptr = ptr->next; }
@@ -226,7 +224,7 @@ public:
 	Single_Card * Search_Card_Position_locate(Vector2i target_position) {
 		Single_Card* ptr = Pile_Card_Total->next;
 		if (ptr == NULL) {
-			printf_s("链表&卡牌为空\n");
+			cout << "the linklist is null,not found!!!" << endl;
 		}
 		while (ptr != NULL && !((target_position.x >= ptr->point_one.x) && (target_position.x <= ptr->point_two.x) && (target_position.y >= ptr->point_one.y) && (target_position.y <= ptr->point_two.y))) { ptr = ptr->next; }
 		if (ptr != NULL) {
@@ -301,6 +299,9 @@ class Skill
 public:
 	bool need_jink;            // set a state when someone play kill or other skill that need jink , target need play jink
 	bool need_kill;            // also
+	bool need_peach;
+	bool need_analeptic;
+	bool begging_peach;
 	// define skill 
 
 	Skill() {}
@@ -311,8 +312,11 @@ class Player
 public:
 	bool is_Mechine;            // 判断对象是 人 还是 机器
 	int HP;                     // the amount of blood
+	int limited_HP;             // the limited of blood , influenced by role player get
+	bool is_dying;              // whether play have been in dying state
 	int target;                 // 对应目标 对象本身为0；顺时针++
 	bool being_choose;          // being a target to others
+	int kill_power;             // the damage that player us kill && normally the value is 1
 	/**
 	 * 杀的攻击距离是1,可以杀到你左右两边的玩家,装上武器的话，就按武器攻击范围
 	 * 计算。过河拆桥,乐不思蜀没有距离限制。而顺手牵羊,兵粮寸断的距离是1。+1马
@@ -327,6 +331,7 @@ public:
 	bool have_armor;            // 玩家有没有防具
 	bool round_draw_phase;      // 回合开始摸牌阶段
 	bool round_play_phase;      // a signal to judge whether it can play or not
+	bool round_discard_phase;   // a signal to judge whether this round have been over
 	bool select_card;           // each time a player can only select one card to play
 	int button_assure;          // there exist four stage : unable;normal;hover;click
 	int button_cancel;          // there exist four stage : unable;normal;hover;click
@@ -334,8 +339,8 @@ public:
 	bool animator_kill, animator_jink, animator_peach, animator_analeptic, animator_damage;                   // bool to constrain animator of kill
 	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
 	Skill skill;
-	//定义游玩者
-	Player() { HP = 4; }
+	// initialize player's life
+	Player() { HP = 4; limited_HP = HP; }
 };
 
 
@@ -365,7 +370,7 @@ public:
 	Texture texture_Human_HP, texture_Machine_HP;
 	Sprite sprite_Human_HP, sprite_Machine_HP;
 
-	//游戏 类的实现
+	// Game Class
 	void Initial() {
 		// initialize game state
 		gamestart = true;
@@ -538,8 +543,20 @@ public:
 	}
 	void Human_Round() {
 		Vector2i mouse_select_vector = Input();  // in general there only exist one input function  * wtf! that is matter most
-		//cout << mouse_select_vector.x << "||" << mouse_select_vector.y << endl;
 		if (piles.Pile_Card_Amount < 20) piles.Shuffle_Card(); // if card few ,shuffle
+
+		if (Human.skill.need_peach) {
+			if (Human.HP < Human.limited_HP) Human.HP++;
+			Human.skill.need_peach = false;
+		}
+		if (Human.skill.need_analeptic)	{
+			//if (Human.is_dying) { Human.HP++;}
+			Human.kill_power++;
+		}
+		if (Human.is_dying==true){ // when player is dying , begging for peach
+			Machine.skill.begging_peach = true;
+		}
+
 		// human get 2 cards each time is its round
 		if (Human.round_draw_phase) {
 			for (int i = 0; i < 2; i++) {
@@ -626,19 +643,14 @@ public:
 						button_ok.enable_diabled_button();
 						button_cancel.enable_diabled_button();
 						button_discard.enable_normal_button();
-						/////----> skill go
-						//skill.kill(Human, Machine);
 					}
 				}
 				else {
 					if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75)) {  // when it play card & the card is non_choosen   the assure button area is 
-						if (ptr->card_info.single_card_number == jink) {
-							Human.animator_jink = true;
-							Human.animator_jink_counter = 0;
-						}
-						else if (ptr->card_info.single_card_number == peach) {
+						if (ptr->card_info.single_card_number == peach) {
 							Human.animator_peach = true;
 							Human.animator_peach_counter = 0;
+							Human.skill.need_peach;
 						}
 						else if (ptr->card_info.single_card_number == analeptic) {
 							Human.animator_analeptic = true;
@@ -666,7 +678,13 @@ public:
 				return;
 			}
 		}
+		else if (Human.round_discard_phase) {
+
+
+        }
     }
+
+
 	void Machine_Round() {
 		if (Machine.skill.need_jink) {
 			if (Machine.cards.Search_Card(jink)) {
@@ -681,10 +699,20 @@ public:
 			}
 			Machine.skill.need_jink = false;
 		}
+		if (Machine.skill.need_peach){
+			if (Machine.HP < Machine.limited_HP) Machine.HP++;
+			Machine.skill.need_peach = false;
+		}
+		if (Machine.skill.begging_peach){
+			if (Machine.cards.Search_Card(peach)) {
+				Human.skill.need_peach = true;
+				Machine.cards.Delete_Card(peach);
+			}
+			else Machine.skill.begging_peach = false;
+		}
 	}
 
 	void Draw() {
-
 		Draw_Stable_Background();
 		Draw_HumanPlayer();
 		Draw_Machine();
