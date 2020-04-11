@@ -43,6 +43,22 @@ void Load_Image(Texture& texture, Sprite& sprite, string filename, float originX
 		sprite.setScale(factorX, factorY);
 	}
 }
+// load font & text
+void Load_Font(Font& font, Text& text, string filename) {
+	if (!font.loadFromFile(filename)) {
+		int result = MessageBox(NULL, string_To_LPCWSTR("Invalid Path , font is missing : " + filename), TEXT("Error ! Failed to load !"), MB_RETRYCANCEL);
+		switch (result) {
+		case IDRETRY:
+			return Load_Font(font, text, filename);
+		case IDCANCEL:
+			exit(0);
+		}
+	}
+	else {
+		cout << "字体加载成功" << endl; 
+		text.setFont(font);
+	}
+}
 typedef struct Card_Info {
 	int single_card_number;     // 该牌所对应的牌号
 	/**---->>>>suit
@@ -241,13 +257,13 @@ public:
 		{
 			switch (ptr->card_info.single_card_number)
 			{
-			case 0:
+			case 0: // kill
 				ptr->card_name = "杀";
 				break;
-			case 1:
+			case 1:  // jink
 				ptr->card_name = "闪";
 				break;
-			case 2:
+			case 2:  //
 				ptr->card_name = "酒";
 				break;
 			case 3:
@@ -316,7 +332,8 @@ public:
 	bool is_dying;              // whether play have been in dying state
 	int target;                 // 对应目标 对象本身为0；顺时针++
 	bool being_choose;          // being a target to others
-	int kill_power;             // the damage that player us kill && normally the value is 1
+	int kill_power;             // the damage that player use kill && normally the value is 1
+	int kill_limit;             // the limit number that player use kill && normally is 1
 	/**
 	 * 杀的攻击距离是1,可以杀到你左右两边的玩家,装上武器的话，就按武器攻击范围
 	 * 计算。过河拆桥,乐不思蜀没有距离限制。而顺手牵羊,兵粮寸断的距离是1。+1马
@@ -333,13 +350,14 @@ public:
 	bool round_play_phase;      // a signal to judge whether it can play or not
 	bool round_discard_phase;   // a signal to judge whether this round have been over
 	bool select_card;           // each time a player can only select one card to play
+	int selecet_card_amount;    // when discard,it can calculate discard amount
 	int button_assure;          // there exist four stage : unable;normal;hover;click
 	int button_cancel;          // there exist four stage : unable;normal;hover;click
 	int button_over;            // there exist four stage : unable;normal;hover;click
 	bool animator_kill, animator_jink, animator_peach, animator_analeptic, animator_damage;                   // bool to constrain animator of kill
 	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
 	Skill skill;
-	// initialize player's life
-	Player() { HP = 4; limited_HP = HP; }
+	// initialize player's life & other original set
+	Player() { HP = 4; limited_HP = HP; kill_power = 1; kill_limit = 1; selecet_card_amount = 0; select_card = false; }
 };
 

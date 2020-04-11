@@ -169,6 +169,27 @@ public:
 					}
 				}
 			}
+			
+			if (Human.round_discard_phase) {
+				if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+					mouse_count_clock_two = Mouse::getPosition(window);
+					if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
+						cout << "Mouse::Left double click" << endl;
+						cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
+						return mouse_count_clock_two;
+					}
+					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
+					{ // the button of ok //(807, 604)++(61,75)
+						button_ok.enable_down_button();
+						cout << "鼠标按下确定" << endl;
+					}
+
+				}
+				if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+					return Mouse::getPosition(window);
+				}
+			
+			}
 		}
 	}
 
@@ -233,6 +254,7 @@ public:
 			}
 			ptr = ptr->next;
 		}
+		// Human play card
 		if (Human.round_play_phase) {
 			// button stage initialize
 			if ((Human.select_card == false)&&!(button_discard.is_hover||button_discard.is_down)){ // there exist tow kind of situation -- original initialize and no hover & no down
@@ -242,7 +264,7 @@ public:
 			}
 			if (Human.cards.Search_Card_Position(mouse_select_vector)){        //play choose cards ,only once each time   also  it can change button state according to card attribute
 				Single_Card* ptr = nullptr;
-					ptr= Human.cards.Search_Card_Position_locate(mouse_select_vector);
+				ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
 				if (ptr->mouse_select_card==false&&Human.select_card==false) {
 					ptr->mouse_select_card = true;
 					Human.select_card = true;
@@ -264,7 +286,6 @@ public:
 				}
 				return;   // once select one card, return to draw  ?that is needed?
 			}
-			
 			if (Human.select_card){
 				// find node that is chose
 				Single_Card* ptr = Human.cards.Pile_Card_Total->next;
@@ -333,11 +354,39 @@ public:
 				}
 				return;
 			}
+			if (button_discard.is_down) {
+				Human.round_play_phase = false;
+				Human.round_discard_phase = true;
+			}
 		}
-		else if (Human.round_discard_phase) {
+		// Human discard
+		if (Human.round_discard_phase) {
+			// there exist tow kind of situation -- original initialize and no hover & no down
+			if (Human.selecet_card_amount < Human.cards.Pile_Card_Amount - Human.HP) {
+				// discard normal button set
+				button_ok.enable_diabled_button();
+				button_cancel.enable_diabled_button();
+				button_discard.enable_diabled_button();
+			}
+			else {
+				button_ok.enable_normal_button();
+				button_cancel.enable_diabled_button();
+				button_discard.enable_diabled_button();
+			}
+			if (Human.cards.Search_Card_Position(mouse_select_vector)) {
+				Single_Card* ptr = nullptr;
+				ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
+				if (ptr->mouse_select_card == false) {
+					ptr->mouse_select_card = true;
+					Human.selecet_card_amount++;
+				}
+				else if (ptr->mouse_select_card == true) {
+					ptr->mouse_select_card = false;
+					Human.selecet_card_amount--;
+				}
+			}
+		}
 
-
-        }
     }
 
 
@@ -375,26 +424,7 @@ public:
 		Draw_Animator();
 		window.display();
 	}
-	void Draw_HumanPlayer() {
-		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
-		for (int i=0;i<Human.cards.Pile_Card_Amount;i++){  // each card:  width 93 || height 130
-			if (ptr->mouse_select_card) { 
-				ptr->point_one.x = 165 + i * 93;
-				ptr->point_one.y = window_height - 170;
-				ptr->point_two.x = 165 + (i + 1) * 93;
-				ptr->point_two.y = window_height - 170 + 130;
-				ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
-			}
-			else {
-				ptr->point_one.x = 165 + i * 93;
-				ptr->point_one.y = window_height - 135;
-				ptr->point_two.x = 165 + (i + 1) * 93;
-				ptr->point_two.y = window_height - 135 + 130;
-				ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
-			}
-			window.draw(ptr->sprite_card);
-			ptr = ptr->next;
-		} 
+	void Draw_HumanPlayer_Button() {
 		//--->> judge which kind of state of button
 		if (button_cancel.is_disabled) {
 			button_cancel.sprite_disabled.setPosition(807, 694);
@@ -428,11 +458,11 @@ public:
 			button_discard.sprite_normal.setPosition(874, 644);
 			window.draw(button_discard.sprite_normal);
 		}
-		if (button_ok.is_disabled){
+		if (button_ok.is_disabled) {
 			button_ok.sprite_disabled.setPosition(807, 604);
 			window.draw(button_ok.sprite_disabled);
 		}
-		else if (button_ok.is_hover){
+		else if (button_ok.is_hover) {
 			button_ok.sprite_hover.setPosition(807, 604);
 			window.draw(button_ok.sprite_hover);
 		}
@@ -444,10 +474,65 @@ public:
 			button_ok.sprite_normal.setPosition(807, 604);
 			window.draw(button_ok.sprite_normal);
 		}
+	}
+	void Draw_HumanPlayer() {
+		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+		for (int i=0;i<Human.cards.Pile_Card_Amount;i++){  // each card:  width 93 || height 130
+			if (ptr->mouse_select_card) { 
+				ptr->point_one.x = 165 + i * 93;
+				ptr->point_one.y = window_height - 170;
+				ptr->point_two.x = 165 + (i + 1) * 93;
+				ptr->point_two.y = window_height - 170 + 130;
+				ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
+				window.draw(ptr->sprite_card);
+			}
+			else {
+				ptr->point_one.x = 165 + i * 93;
+				ptr->point_one.y = window_height - 135;
+				ptr->point_two.x = 165 + (i + 1) * 93;
+				ptr->point_two.y = window_height - 135 + 130;
+				ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
+				window.draw(ptr->sprite_card);
+
+				RectangleShape rect(Vector2f(93, 130)); // draw rectangle
+				rect.setFillColor(Color(0, 0, 0, 100));
+				rect.setPosition(ptr->point_one.x, ptr->point_one.y);
+				window.draw(rect);
+
+			}
+			//window.draw(ptr->sprite_card);
+			ptr = ptr->next;
+		} 
+		Draw_HumanPlayer_Button();
 		// draw Human HP
 		for (int i = 0; i < Human.HP; i++){
 			sprite_Human_HP.setPosition(918 + i * 22, window_height - 166);  // the width of image named green big is 23
 			window.draw(sprite_Human_HP);
+		}
+		// draw remained note
+		if (Human.round_discard_phase) {
+			if (Human.cards.Pile_Card_Amount - Human.HP > Human.selecet_card_amount) {
+
+				RectangleShape rect(Vector2f(180, 30)); // draw rectangle
+				rect.setFillColor(Color(0, 0, 0, 100));
+				rect.setPosition(370, 500);
+				window.draw(rect);
+
+				Font reminded_note_font;
+				Text reminded_note;
+				Load_Font(reminded_note_font, reminded_note, "font/simsun.ttc");
+				reminded_note.setCharacterSize(20);
+				reminded_note.setFillColor(Color(255, 255, 255, 255));
+				reminded_note.setStyle(Text::Bold);
+				reminded_note.setPosition(370, 500);
+				wstring reminded = L"请弃置";
+				std::stringstream temp_string;
+				temp_string << Human.cards.Pile_Card_Amount - Human.HP;
+				reminded = reminded + temp_string.str() + L"张牌";
+
+				reminded_note.setString(reminded);
+				window.draw(reminded_note);
+			}
 		}
 	}
 	void Draw_Animator_Single(bool & animator,int & animator_counter,string file,int limited,int _x,int _y) {
