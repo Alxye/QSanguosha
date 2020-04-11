@@ -1,4 +1,4 @@
-# QSanguosha
+# Sanguosha
 support by SFML &amp; C++  
 ## 2020.4.7 开发思路  
 * 思考：就是 引入 按钮 确定 取消 结束 和 设置 目标要关联起来   以便以后 国战  单机多人   
