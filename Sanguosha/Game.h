@@ -412,7 +412,6 @@ public:
 				}
 			}
 			if (Human.select_card){
-
 				// find node that is chose
 				Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 				for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
@@ -494,6 +493,7 @@ public:
 				button_ok.enable_diabled_button();
 				button_cancel.enable_diabled_button();
 				button_discard.enable_diabled_button();
+				Human.round_discard_phase = false;
 				new_round = true;
 				turn = 0;
 				return ;
@@ -590,6 +590,32 @@ public:
 					Machine.kill_times++;
 					human_defense = true;
 				}
+				else {
+					Machine.round_play_phase = false;
+					Machine.round_discard_phase = true;
+				}
+			}
+			else {
+				Machine.round_play_phase = false;
+				Machine.round_discard_phase = true;
+			}
+		}
+		if (Machine.round_discard_phase) {
+			if (Machine.cards.Pile_Card_Amount <= Machine.HP) {   // no need to discard
+				Machine.round_discard_phase = false;
+				new_round = true;
+				turn = 1;
+				return;
+			}
+			else if (Machine.selecet_card_amount < Machine.cards.Pile_Card_Amount - Machine.HP) {
+				// discard normal button set
+				for (int i = 0; i < Machine.cards.Pile_Card_Amount - Machine.HP; i++) {
+					Machine.cards.Delete_Card(Machine.cards.Pile_Card_Total->next->card_info.single_card_number);
+				}
+				Machine.round_discard_phase = false;
+				new_round = true;
+				turn = 1;
+				return;
 			}
 		}
 	
