@@ -16,7 +16,7 @@ typedef enum skill_number {
 	analeptic,        // wine
 	peach             // peach
 };
-
+// change string to lpcwstr so that string can display on warning windows
 LPCWSTR string_To_LPCWSTR(string _string) {
 	size_t origsize = _string.length() + 1;
 	const size_t newsize = 100;
@@ -72,7 +72,7 @@ typedef struct Single_Card {  // each card property
 	bool mouse_select_card;     // gameround a flag to show whether the card is selected
 	bool file_loaded;           // flag to judge whether the image has been loaded from file ( to escape R&W to increase game speed)
 	bool own_card;              // 是否被玩家所有
-	bool enable;                // 是否可出牌
+	bool enable_to_play;        // 是否可出牌
 	bool text;
 	string card_name;           // 该牌的名字
 	Texture texture_card;
@@ -334,6 +334,8 @@ public:
 	bool being_choose;          // being a target to others
 	int kill_power;             // the damage that player use kill && normally the value is 1
 	int kill_limit;             // the limit number that player use kill && normally is 1
+	int kill_times;
+
 	/**
 	 * 杀的攻击距离是1,可以杀到你左右两边的玩家,装上武器的话，就按武器攻击范围
 	 * 计算。过河拆桥,乐不思蜀没有距离限制。而顺手牵羊,兵粮寸断的距离是1。+1马

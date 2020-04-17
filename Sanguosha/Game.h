@@ -8,6 +8,7 @@ public:
 	int turn;                             // 轮到谁的 记录量
 	bool gamestart, gameover, gamequit;
 	bool new_round;
+	bool human_defense;                   // bool to see its turn to human defense
 	Vector2i virtual_vector;
 	Event event_global;
 	Pile_Card piles;
@@ -78,118 +79,115 @@ public:
 				window.close();
 				gamequit = true;
 			}
-			if (Human.round_play_phase){
-				if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
-					mouse_count_clock_two = Mouse::getPosition(window);
-					if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
-						cout << "Mouse::Left double click" << endl;
-						cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y<<endl;
-						return mouse_count_clock_two;
-					}
-					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75)&&!button_ok.is_disabled)
-					{ // the button of ok //(807, 604)++(61,75)
-						button_ok.enable_down_button();
-						cout << "鼠标按下确定" << endl;
-					}
-					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 694 && mouse_count_clock_two.y < (694 + 73)&&!button_cancel.is_disabled)
-					{ // the button of cancel //(807, 604)++(61,75)  
-						button_cancel.enable_down_button();
-						cout << "鼠标按下取消" << endl;
-					}
-					else if (mouse_count_clock_two.x > 874 && mouse_count_clock_two.x < (874 + 33) && mouse_count_clock_two.y > 644 && mouse_count_clock_two.y < (644 + 81) && !button_discard.is_disabled)
-					{ // the button of discard //(807, 604)++(61,75)  
-						button_discard.enable_down_button();
-						cout << "鼠标按下结束" << endl;
-					}
+			//if (Human.round_play_phase||1){
+			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+				mouse_count_clock_two = Mouse::getPosition(window);
+				if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
+					cout << "Mouse::Left double click" << endl;
+					cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
+					return mouse_count_clock_two;
+				}
+				else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
+				{ // the button of ok //(807, 604)++(61,75)
+					button_ok.enable_down_button();
+					cout << "鼠标按下确定" << endl;
+				}
+				else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 694 && mouse_count_clock_two.y < (694 + 73) && !button_cancel.is_disabled)
+				{ // the button of cancel //(807, 604)++(61,75)  
+					button_cancel.enable_down_button();
+					cout << "鼠标按下取消" << endl;
+				}
+				else if (mouse_count_clock_two.x > 874 && mouse_count_clock_two.x < (874 + 33) && mouse_count_clock_two.y > 644 && mouse_count_clock_two.y < (644 + 81) && !button_discard.is_disabled)
+				{ // the button of discard //(807, 604)++(61,75)  
+					button_discard.enable_down_button();
+					cout << "鼠标按下结束" << endl;
+				}
 
-				}
-				if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
-					mouse_count_clock_one = Mouse::getPosition(window);
-					//bool card_selected = Human.cards.Search_Card_Position(mouse_count_clock_one);
-					mouse_click_timer.restart();
-					cout << "Mouse::Left Release" << endl;
-					cout << " released:mouse_two:" << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
-					cout <<" released:mouse_one:" <<mouse_count_clock_one.x << " || " << mouse_count_clock_one.y << endl;
-					if (button_ok.is_down) button_ok.enable_normal_button();
-					if (button_cancel.is_down) button_cancel.enable_normal_button();
-					if (button_discard.is_down) button_discard.enable_normal_button();
-					return mouse_count_clock_one;
-				}
-				
-				if (event_global.type == sf::Event::MouseMoved)
-				{
-					// control button of cancel in hover state
-					if (!button_cancel.is_disabled) {
-						if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 694 && event_global.mouseMove.y < (694 + 73))
-						{ // the button of cancel //(807, 694)++(61,73)
-							cout << "new mouse x: " << event_global.mouseMove.x << endl;
-							cout << "new mouse y: " << event_global.mouseMove.y << endl;
-							button_cancel.enable_hover_button();
-							cout << "鼠标位于取消上" << endl;
-						}
-						else{
-							cout << "new mouse x: " << event_global.mouseMove.x << endl;
-							cout << "new mouse y: " << event_global.mouseMove.y << endl;
-							button_cancel.enable_normal_button();
-							cout << "鼠标不在取消上" << endl;
-						}
+			}
+			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+				mouse_count_clock_one = Mouse::getPosition(window);
+				//bool card_selected = Human.cards.Search_Card_Position(mouse_count_clock_one);
+				mouse_click_timer.restart();
+				if (button_ok.is_down) button_ok.enable_normal_button();
+				if (button_cancel.is_down) button_cancel.enable_normal_button();
+				if (button_discard.is_down) button_discard.enable_normal_button();
+				return mouse_count_clock_one;
+			}
+
+			if (event_global.type == sf::Event::MouseMoved)
+			{
+				// control button of cancel in hover state
+				if (!button_cancel.is_disabled) {
+					if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 694 && event_global.mouseMove.y < (694 + 73))
+					{ // the button of cancel //(807, 694)++(61,73)
+						cout << "new mouse x: " << event_global.mouseMove.x << endl;
+						cout << "new mouse y: " << event_global.mouseMove.y << endl;
+						button_cancel.enable_hover_button();
+						cout << "鼠标位于取消上" << endl;
 					}
-					// control button of assure
-					if (!button_ok.is_disabled) {
-						if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 604 && event_global.mouseMove.y < (604 + 75))
-						{ // the button of ok //(807, 604)++(61,75)
-							cout << "new mouse x: " << event_global.mouseMove.x << endl;
-							cout << "new mouse y: " << event_global.mouseMove.y << endl;
-							button_ok.enable_hover_button();
-							cout << "鼠标位于确定上" << endl;
-							//return virtual_vector;
-						}
-						else{
-							cout << "new mouse x: " << event_global.mouseMove.x << endl;
-							cout << "new mouse y: " << event_global.mouseMove.y << endl;
-							button_ok.enable_normal_button();
-							cout << "鼠标不在确定上" << endl;
-						}
+					else {
+						cout << "new mouse x: " << event_global.mouseMove.x << endl;
+						cout << "new mouse y: " << event_global.mouseMove.y << endl;
+						button_cancel.enable_normal_button();
+						cout << "鼠标不在取消上" << endl;
 					}
-					// control button of discard in hover state
-					if (!button_discard.is_disabled) {
-						if (event_global.mouseMove.x > 874 && event_global.mouseMove.x < (874 + 33) && event_global.mouseMove.y > 644 && event_global.mouseMove.y < (644 + 81))
-						{ // the button of ok //(874, 644)++(33,81)
-							cout << "new mouse x: " << event_global.mouseMove.x << endl;
-							cout << "new mouse y: " << event_global.mouseMove.y << endl;
-							button_discard.enable_hover_button();
-							cout << "鼠标位于结束上" << endl;
-						}
-						else{
-							cout << "new mouse x: " << event_global.mouseMove.x << endl;
-							cout << "new mouse y: " << event_global.mouseMove.y << endl;
-							button_discard.enable_normal_button();
-							cout << "鼠标不在结束上" << endl;
-						}
+				}
+				// control button of assure
+				if (!button_ok.is_disabled) {
+					if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 604 && event_global.mouseMove.y < (604 + 75))
+					{ // the button of ok //(807, 604)++(61,75)
+						cout << "new mouse x: " << event_global.mouseMove.x << endl;
+						cout << "new mouse y: " << event_global.mouseMove.y << endl;
+						button_ok.enable_hover_button();
+						cout << "鼠标位于确定上" << endl;
+						//return virtual_vector;
+					}
+					else {
+						cout << "new mouse x: " << event_global.mouseMove.x << endl;
+						cout << "new mouse y: " << event_global.mouseMove.y << endl;
+						button_ok.enable_normal_button();
+						cout << "鼠标不在确定上" << endl;
+					}
+				}
+				// control button of discard in hover state
+				if (!button_discard.is_disabled) {
+					if (event_global.mouseMove.x > 874 && event_global.mouseMove.x < (874 + 33) && event_global.mouseMove.y > 644 && event_global.mouseMove.y < (644 + 81))
+					{ // the button of ok //(874, 644)++(33,81)
+						cout << "new mouse x: " << event_global.mouseMove.x << endl;
+						cout << "new mouse y: " << event_global.mouseMove.y << endl;
+						button_discard.enable_hover_button();
+						cout << "鼠标位于结束上" << endl;
+					}
+					else {
+						cout << "new mouse x: " << event_global.mouseMove.x << endl;
+						cout << "new mouse y: " << event_global.mouseMove.y << endl;
+						button_discard.enable_normal_button();
+						cout << "鼠标不在结束上" << endl;
 					}
 				}
 			}
-			
-			if (Human.round_discard_phase) {
-				if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
-					mouse_count_clock_two = Mouse::getPosition(window);
-					if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
-						cout << "Mouse::Left double click" << endl;
-						cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
-						return mouse_count_clock_two;
-					}
-					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
-					{ // the button of ok //(807, 604)++(61,75)
-						button_ok.enable_down_button();
-						cout << "鼠标按下确定" << endl;
-					}
-
-				}
-				if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
-					return Mouse::getPosition(window);
-				}
-			
-			}
+			//}
+// 			
+// 			if (Human.round_discard_phase) {
+// 				if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+// 					mouse_count_clock_two = Mouse::getPosition(window);
+// 					if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
+// 						cout << "Mouse::Left double click" << endl;
+// 						cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
+// 						return mouse_count_clock_two;
+// 					}
+// 					else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
+// 					{ // the button of ok //(807, 604)++(61,75)
+// 						button_ok.enable_down_button();
+// 						cout << "鼠标按下确定" << endl;
+// 					}
+// 
+// 				}
+// 				if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+// 					return Mouse::getPosition(window);
+// 				}
+// 			
+// 			}
 		}
 	}
 
@@ -211,6 +209,7 @@ public:
 	void Round_Initialize(int turn) { // about turn :  0——machine || 1——Human player
 		if (turn == 0) {  // machine's round
 			Machine.round_draw_phase = true;
+			Machine.round_play_phase = true;
 		}
 		else if (turn == 1) { // humans round
 			Human.round_draw_phase = true;
@@ -218,22 +217,9 @@ public:
 		}
 		new_round = false;
 	}
-	void Human_Round() {
-		Vector2i mouse_select_vector = Input();  // in general there only exist one input function  * wtf! that is matter most
+	void Human_Round_Initialize() {
+
 		if (piles.Pile_Card_Amount < 20) piles.Shuffle_Card(); // if card few ,shuffle
-
-		if (Human.skill.need_peach) {
-			if (Human.HP < Human.limited_HP) Human.HP++;
-			Human.skill.need_peach = false;
-		}
-		if (Human.skill.need_analeptic)	{
-			//if (Human.is_dying) { Human.HP++;}
-			Human.kill_power++;
-		}
-		if (Human.is_dying==true){ // when player is dying , begging for peach
-			Machine.skill.begging_peach = true;
-		}
-
 		// human get 2 cards each time is its round
 		if (Human.round_draw_phase) {
 			for (int i = 0; i < 2; i++) {
@@ -241,9 +227,19 @@ public:
 				Human.cards.Get_Node(Human.cards.Pile_Card_Amount - 1)->mouse_select_card = false;
 				piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
 			}
+			// original position set
+			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {  // each card:  width 93 || height 130
+				ptr->point_one.x = 165 + i * 93;
+				ptr->point_one.y = window_height - 135;
+				ptr->point_two.x = 165 + (i + 1) * 93;
+				ptr->point_two.y = window_height - 135 + 130;
+				ptr = ptr->next;
+			}
+			Human.kill_times = 0;    // set original kill number is 0 when a new round start
 			Human.round_draw_phase = false;
 		}
-		// to update player's card with card_texture,card_sprite,card_vector;
+		// to update player's card with card_texture,card_sprite,card_vector where there add new card in * or update card info
 		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
 			if (!ptr->file_loaded) {
@@ -252,10 +248,137 @@ public:
 				Load_Image(ptr->texture_card, ptr->sprite_card, ss.str(), 0, 0, 1, 1);
 				ptr->file_loaded = true;
 			}
+			ptr->enable_to_play = false;
 			ptr = ptr->next;
 		}
+		// set all card original position
+
+	}
+	void Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
+		// when its first time to defense , set cancel button enable
+		if (human_defense&&button_cancel.is_disabled&& button_ok.is_disabled&& button_discard.is_disabled){
+			button_cancel.enable_normal_button();
+		}
+		// skill judgment
+		if (Human.skill.need_jink) {
+			// set jink card enable to play
+			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+				switch (ptr->card_info.single_card_number) {
+				case jink:
+					ptr->enable_to_play = true;
+					break;
+				default:
+					ptr->enable_to_play = false;
+					break;
+				}
+				ptr = ptr->next;
+			}
+			
+			if (Human.cards.Search_Card_Position(mouse_select_vector)) {
+				Single_Card* ptr = nullptr;
+				ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
+				if (ptr->enable_to_play) {
+					if (ptr->mouse_select_card == false && Human.select_card == false) {
+						ptr->mouse_select_card = true;
+						Human.select_card = true;
+						button_ok.enable_normal_button();
+						button_cancel.enable_normal_button();
+					}
+					else if (ptr->mouse_select_card == true && Human.select_card == true) {
+						ptr->mouse_select_card = false;
+						Human.select_card = false;
+						button_ok.enable_diabled_button();
+						button_cancel.enable_normal_button();
+					}
+				}
+			}
+			if (Human.select_card==true){
+				//// find node that is chose
+				//Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+				//for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+				//	if (ptr->mouse_select_card) break;
+				//	ptr = ptr->next;
+				//}
+				if (button_ok.is_down) {
+					// result
+					Human.cards.Detete_Card_Selected();
+					// initialize data
+					Human.select_card = false;
+					Human.selecet_card_amount = 0;
+					human_defense = false;
+					Human.skill.need_jink = false;
+					// animator go
+					Human.animator_jink = true;
+					Human.animator_jink_counter = 0;
+					// change button unable
+					button_ok.enable_diabled_button();
+					button_cancel.enable_diabled_button();
+					button_discard.enable_diabled_button();
+					return;
+				}
+			}
+			if (button_cancel.is_down) {
+				// result
+				Human.HP--;
+				// initialize data
+				Human.select_card = false;
+				Human.selecet_card_amount = 0;
+				human_defense = false;
+				Human.skill.need_jink = false;
+				// animator go
+				Human.animator_damage = true;
+				Human.animator_damage_counter = 0;
+				// change button unable
+				button_ok.enable_diabled_button();
+				button_cancel.enable_diabled_button();
+				button_discard.enable_diabled_button();
+				return;
+			}
+			if (Human.HP < Human.limited_HP) Human.HP++;
+			Human.skill.need_peach = false;
+		}
+		if (Human.skill.need_peach) {
+			if (Human.HP < Human.limited_HP) Human.HP++;
+			Human.skill.need_peach = false;
+		}
+		if (Human.skill.need_analeptic) {
+			//if (Human.is_dying) { Human.HP++;}
+			Human.kill_power++;
+		}
+		if (Human.is_dying == true) { // when player is dying , begging for peach
+			Machine.skill.begging_peach = true;
+		}
+
+	}
+	void Human_Round() {
+		Vector2i mouse_select_vector = Input();  // in general there only exist one input function  * wtf! that is matter most
+		Human_Round_Initialize();
+		Human_Round_Skill_Judgment(mouse_select_vector);
 		// Human play card
 		if (Human.round_play_phase) {
+            // set each card enable to play or cant 
+			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+				switch (ptr->card_info.single_card_number) {
+				case kill:
+					if(Human.kill_times<Human.kill_limit) ptr->enable_to_play = true;
+					else  ptr->enable_to_play = false;
+					break;
+				case jink:
+					ptr->enable_to_play = false;
+					break;
+				case analeptic:
+					ptr->enable_to_play = true;
+					break;
+				case peach:
+					ptr->enable_to_play = true;
+					break;
+				default:
+					break;
+				}
+				ptr = ptr->next;
+			}
 			// button stage initialize
 			if ((Human.select_card == false)&&!(button_discard.is_hover||button_discard.is_down)){ // there exist tow kind of situation -- original initialize and no hover & no down
 				button_ok.enable_diabled_button();
@@ -265,28 +388,31 @@ public:
 			if (Human.cards.Search_Card_Position(mouse_select_vector)){        //play choose cards ,only once each time   also  it can change button state according to card attribute
 				Single_Card* ptr = nullptr;
 				ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
-				if (ptr->mouse_select_card==false&&Human.select_card==false) {
-					ptr->mouse_select_card = true;
-					Human.select_card = true;
-					if (ptr->card_info.can_attck){
-						button_ok.enable_diabled_button();
-						button_cancel.enable_normal_button();
-						button_discard.enable_diabled_button();
+				if (ptr->enable_to_play) {
+					if (ptr->mouse_select_card == false && Human.select_card == false) {
+						ptr->mouse_select_card = true;
+						Human.select_card = true;
+						if (ptr->card_info.can_attck) {
+							button_ok.enable_diabled_button();
+							button_cancel.enable_normal_button();
+							button_discard.enable_diabled_button();
+						}
+						else {
+							button_ok.enable_normal_button();
+							button_cancel.enable_normal_button();
+							button_discard.enable_diabled_button();
+						}
 					}
-					else {
-						button_ok.enable_normal_button();
-						button_cancel.enable_normal_button();
-						button_discard.enable_diabled_button();
+					else if (ptr->mouse_select_card == true && Human.select_card == true) {
+						ptr->mouse_select_card = false;
+						Human.select_card = false;
+						Machine.being_choose = false;
 					}
+					return;   // once select one card, return to draw  ?that is needed?
 				}
-				else if(ptr->mouse_select_card == true && Human.select_card == true){
-					ptr->mouse_select_card = false;
-					Human.select_card = false;
-					Machine.being_choose = false;
-				}
-				return;   // once select one card, return to draw  ?that is needed?
 			}
 			if (Human.select_card){
+
 				// find node that is chose
 				Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 				for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
@@ -361,22 +487,29 @@ public:
 		}
 		// Human discard
 		if (Human.round_discard_phase) {
+
 			// there exist tow kind of situation -- original initialize and no hover & no down
-			if (Human.selecet_card_amount < Human.cards.Pile_Card_Amount - Human.HP) {
+
+			if (Human.cards.Pile_Card_Amount <= Human.HP) {   // no need to discard
+				button_ok.enable_diabled_button();
+				button_cancel.enable_diabled_button();
+				button_discard.enable_diabled_button();
+				new_round = true;
+				turn = 0;
+				return ;
+			}
+			else if (Human.selecet_card_amount < Human.cards.Pile_Card_Amount - Human.HP) {
 				// discard normal button set
 				button_ok.enable_diabled_button();
 				button_cancel.enable_diabled_button();
 				button_discard.enable_diabled_button();
 			}
-			else {
-				button_ok.enable_normal_button();
-				button_cancel.enable_diabled_button();
-				button_discard.enable_diabled_button();
-			}
+			else if (button_ok.is_disabled)	button_ok.enable_normal_button();
+
 			if (Human.cards.Search_Card_Position(mouse_select_vector)) {
 				Single_Card* ptr = nullptr;
 				ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
-				if (ptr->mouse_select_card == false) {
+				if (ptr->mouse_select_card == false && Human.selecet_card_amount < Human.cards.Pile_Card_Amount - Human.HP) {  // only select limited cards
 					ptr->mouse_select_card = true;
 					Human.selecet_card_amount++;
 				}
@@ -385,12 +518,34 @@ public:
 					Human.selecet_card_amount--;
 				}
 			}
+			if (button_ok.is_down) {
+				for (int i = 0; i < Human.selecet_card_amount; i++) {
+					Human.cards.Detete_Card_Selected();
+				}
+				Human.selecet_card_amount = 0;
+				button_ok.enable_diabled_button();
+				Human.round_discard_phase = false;
+				new_round = true;
+				turn = 0;
+			}
 		}
 
     }
-
-
-	void Machine_Round() {
+	void Machine_Round_Initialize() {
+		if (piles.Pile_Card_Amount < 20) piles.Shuffle_Card(); // if card few ,shuffle
+		// human get 2 cards each time is its round
+		if (Machine.round_draw_phase) {
+			for (int i = 0; i < 2; i++) {
+				Machine.cards.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
+				Machine.cards.Get_Node(Machine.cards.Pile_Card_Amount - 1)->mouse_select_card = false;
+				piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
+			}
+			Machine.kill_times = 0;    // set original kill number is 0 when a new round start
+			Machine.round_draw_phase = false;
+			cout << "机器摸了两张牌" << endl;
+		}
+	}
+	void Machine_Round_Skill_Judgment() {
 		if (Machine.skill.need_jink) {
 			if (Machine.cards.Search_Card(jink)) {
 				Machine.animator_jink = true;
@@ -404,17 +559,40 @@ public:
 			}
 			Machine.skill.need_jink = false;
 		}
-		if (Machine.skill.need_peach){
+		if (Machine.skill.need_peach) {
 			if (Machine.HP < Machine.limited_HP) Machine.HP++;
 			Machine.skill.need_peach = false;
 		}
-		if (Machine.skill.begging_peach){
+		if (Machine.skill.begging_peach) {
 			if (Machine.cards.Search_Card(peach)) {
 				Human.skill.need_peach = true;
 				Machine.cards.Delete_Card(peach);
 			}
 			else Machine.skill.begging_peach = false;
 		}
+	}
+
+	void Machine_Round() {
+
+		Machine_Round_Initialize();
+		Machine_Round_Skill_Judgment();
+		
+		if (Machine.round_play_phase) {
+
+			//cout << "comeing???" << endl;
+			if (Machine.kill_times < Machine.kill_limit) {
+				if (Machine.cards.Search_Card(kill)) {
+					//cout << "comeing???" << endl;
+					Machine.animator_kill = true;
+					Machine.animator_kill_counter = 0;
+					Human.skill.need_jink = true;
+					Machine.cards.Delete_Card(kill);
+					Machine.kill_times++;
+					human_defense = true;
+				}
+			}
+		}
+	
 	}
 
 	void Draw() {
@@ -486,7 +664,7 @@ public:
 				ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
 				window.draw(ptr->sprite_card);
 			}
-			else {
+			else if(ptr->enable_to_play==false){
 				ptr->point_one.x = 165 + i * 93;
 				ptr->point_one.y = window_height - 135;
 				ptr->point_two.x = 165 + (i + 1) * 93;
@@ -499,6 +677,14 @@ public:
 				rect.setPosition(ptr->point_one.x, ptr->point_one.y);
 				window.draw(rect);
 
+			}
+			else{
+				ptr->point_one.x = 165 + i * 93;
+				ptr->point_one.y = window_height - 135;
+				ptr->point_two.x = 165 + (i + 1) * 93;
+				ptr->point_two.y = window_height - 135 + 130;
+				ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
+				window.draw(ptr->sprite_card);
 			}
 			//window.draw(ptr->sprite_card);
 			ptr = ptr->next;
@@ -605,6 +791,7 @@ public:
 		window_height = 770;
 		virtual_vector.x = -999;
 		virtual_vector.y = -999;
+		human_defense = false;
 		window.create(sf::VideoMode(window_width, window_height), L"三国杀_BY_赵茜茜");
 	}
 };
