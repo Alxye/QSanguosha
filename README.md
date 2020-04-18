@@ -31,15 +31,15 @@ support by SFML &amp; C++
 已解决：已完善游戏回合！能实现杀、闪、桃游戏循环，游戏框架已基本搭建完成，可通过skill类在游戏逻辑间判断，实现技能牌使用。   
 已解决：弃牌阶段，多重选择卡牌，并且有上限地选择卡牌，并能实时绘制，同时加入按钮交互。  
 已解决：在Game类中引入human_defense布尔变量，实现在机器回合中，玩家可以采取防御手段，并且实现交互，目前已载入“闪”的用户交互防御logic，并且能独立绘制动画。   
-已解决：被动防御期间，仅能选择一张卡牌打出，玩家可以选择不打牌或者无牌可打。    *
+已解决：被动防御期间，仅能选择一张卡牌打出，玩家可以选择不打牌或者无牌可打。*
 * 待实现：约束杀的次数。    
 * 待实现：增加卡牌技能数。 
 ### 2020.4.18 开发思路
-*已解决：杀的次数可被约束，作用于人类与机器——具体方法，player类引入int类型约束变量，游戏开始回合中通过新增判断实现enable_to_player的变更  *
+*已解决：杀的次数可被约束，作用于人类与机器——具体方法，player类引入int类型约束变量，游戏开始回合中通过新增判断实现enable_to_player的变更*
 ``` 
 int kill_limit;             // the limit number that player use kill && normally is 1
 int kill_times;             // the number that player use kill && normally is 0 when play one kill,it ++  
-#### Human_Round // ptr is a pointer that directs to node of kill card 
+=====>>Human_Round // ptr is a pointer that directs to node of kill card 
 if(Human.kill_times<Human.kill_limit) ptr->enable_to_play = true;
 else  ptr->enable_to_play = false;
 ```  
