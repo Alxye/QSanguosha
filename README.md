@@ -44,10 +44,10 @@ if(Human.kill_times<Human.kill_limit) ptr->enable_to_play = true;
 else  ptr->enable_to_play = false;
 =====>>Machine_Round as same but pointer is not needed
 ```  
-*已解决：修复了被动交互技能阶段，已选择card，点击cancel时，卡牌不能自动回归的bug  
-已解决：完善了按钮动画按下特效，能体现按下特效，并且在松开时才继续执行。  
-已解决：完善了杀、桃、酒、闪的技能逻辑循环，并且能在人类与machine间来回跳转，互相独立    
-已解决：Game类新引入animator_running的bool变量，使得动画播放独立于游戏逻辑，并且动画期间，游戏logic不可用，达到减缓作用——machine技能释放减缓。   *
+*已解决：修复了被动交互技能阶段，已选择card，点击cancel时，卡牌不能自动回归的bug    
+已解决：完善了按钮动画按下特效，能体现按下特效，并且在松开时才继续执行。   
+已解决：完善了杀、桃、酒、闪的技能逻辑循环，并且能在人类与machine间来回跳转，互相独立      
+已解决：Game类新引入animator_running的bool变量，使得动画播放独立于游戏逻辑，并且动画期间，游戏logic不可用，达到减缓作用——machine技能释放减缓。*   
 * 待修复查证：非常非常偶尔出现，出桃变成出闪，尚未发现问题？？？    
 * 待实现：加入马和武器（近期目标）    
 
