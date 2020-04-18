@@ -35,8 +35,12 @@ support by SFML &amp; C++
 * 待实现：约束杀的次数。    
 * 待实现：增加卡牌技能数。 
 ### 2020.4.18 开发思路
-*已解决：杀的次数可被约束，作用于人类与机器——具体方法，player类引入   
+*已解决：杀的次数可被约束，作用于人类与机器——具体方法，player类引入int类型约束变量，游戏开始回合中通过新增判断实现enable_to_player的变更  
 ``` 
 int kill_limit;             // the limit number that player use kill && normally is 1
 int kill_times;             // the number that player use kill && normally is 0 when play one kill,it ++  
+#### Human_Round // ptr is a pointer that directs to node of kill card 
+if(Human.kill_times<Human.kill_limit) ptr->enable_to_play = true;
+else  ptr->enable_to_play = false;
 ```  
+已解决：*
