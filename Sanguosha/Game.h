@@ -294,12 +294,7 @@ public:
 				}
 			}
 			if (Human.select_card==true){
-				//// find node that is chose
-				//Single_Card* ptr = Human.cards.Pile_Card_Total->next;
-				//for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
-				//	if (ptr->mouse_select_card) break;
-				//	ptr = ptr->next;
-				//}
+				
 				if (button_ok.is_down) {
 					// result
 					Human.cards.Detete_Card_Selected();
@@ -321,6 +316,13 @@ public:
 			if (button_cancel.is_down) {
 				// result
 				Human.HP--;
+				// find node that is chose card
+				Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+				for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+					if (ptr->mouse_select_card) break;
+					ptr = ptr->next;
+				}
+				ptr->mouse_select_card = false;
 				// initialize data
 				Human.select_card = false;
 				Human.selecet_card_amount = 0;
@@ -438,6 +440,7 @@ public:
 							Human.animator_kill = true;
 							Human.animator_kill_counter = 0;
 							Machine.skill.need_jink = true;
+							Human.kill_times++;
 						}
 						Human.cards.Detete_Card_Selected();
 						Human.select_card = false;

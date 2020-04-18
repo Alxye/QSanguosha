@@ -34,3 +34,9 @@ support by SFML &amp; C++
 已解决：被动防御期间，仅能选择一张卡牌打出，玩家可以选择不打牌或者无牌可打。    *
 * 待实现：约束杀的次数。    
 * 待实现：增加卡牌技能数。 
+### 2020.4.18 开发思路
+*已解决：杀的次数可被约束，作用于人类与机器——具体方法，player类引入   
+``` 
+int kill_limit;             // the limit number that player use kill && normally is 1
+int kill_times;             // the number that player use kill && normally is 0 when play one kill,it ++  
+```  
