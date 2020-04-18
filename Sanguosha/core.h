@@ -318,6 +318,7 @@ public:
 	bool need_peach;
 	bool need_analeptic;
 	bool begging_peach;
+	bool defense_analeptic_kill;
 	// define skill 
 
 	Skill() {}
@@ -335,6 +336,7 @@ public:
 	int kill_power;             // the damage that player use kill && normally the value is 1
 	int kill_limit;             // the limit number that player use kill && normally is 1
 	int kill_times;
+	bool drank_analeptic;        // judge whether it played analeptic
 
 	/**
 	 * 杀的攻击距离是1,可以杀到你左右两边的玩家,装上武器的话，就按武器攻击范围
@@ -360,6 +362,6 @@ public:
 	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
 	Skill skill;
 	// initialize player's life & other original set
-	Player() { HP = 4; limited_HP = HP; kill_power = 1; kill_limit = 1; selecet_card_amount = 0; select_card = false; }
+	Player() { HP = 4; limited_HP = HP; kill_power = 1; kill_limit = 1; selecet_card_amount = 0; select_card = false; drank_analeptic = false; }
 };
 

@@ -9,6 +9,7 @@ public:
 	bool gamestart, gameover, gamequit;
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense
+	bool animator_running;                // judge animator is running ,so that machine play wont play so fast
 	Vector2i virtual_vector;
 	Event event_global;
 	Pile_Card piles;
@@ -108,9 +109,9 @@ public:
 				mouse_count_clock_one = Mouse::getPosition(window);
 				//bool card_selected = Human.cards.Search_Card_Position(mouse_count_clock_one);
 				mouse_click_timer.restart();
-				if (button_ok.is_down) button_ok.enable_normal_button();
-				if (button_cancel.is_down) button_cancel.enable_normal_button();
-				if (button_discard.is_down) button_discard.enable_normal_button();
+				//if (button_ok.is_down) button_ok.enable_normal_button();
+				//if (button_cancel.is_down) button_cancel.enable_normal_button();
+				//if (button_discard.is_down) button_discard.enable_normal_button();
 				return mouse_count_clock_one;
 			}
 
@@ -237,6 +238,7 @@ public:
 				ptr = ptr->next;
 			}
 			Human.kill_times = 0;    // set original kill number is 0 when a new round start
+			Human.drank_analeptic = false;   // each round no use analeptic
 			Human.round_draw_phase = false;
 		}
 		// to update player's card with card_texture,card_sprite,card_vector where there add new card in * or update card info
@@ -260,7 +262,7 @@ public:
 			button_cancel.enable_normal_button();
 		}
 		// skill judgment
-		if (Human.skill.need_jink) {
+		if (Human.skill.need_jink||Human.skill.defense_analeptic_kill) {
 			// set jink card enable to play
 			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
@@ -274,7 +276,6 @@ public:
 				}
 				ptr = ptr->next;
 			}
-			
 			if (Human.cards.Search_Card_Position(mouse_select_vector)) {
 				Single_Card* ptr = nullptr;
 				ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
@@ -303,9 +304,11 @@ public:
 					Human.selecet_card_amount = 0;
 					human_defense = false;
 					Human.skill.need_jink = false;
+					Human.skill.defense_analeptic_kill = false;
 					// animator go
 					Human.animator_jink = true;
 					Human.animator_jink_counter = 0;
+					animator_running = true;
 					// change button unable
 					button_ok.enable_diabled_button();
 					button_cancel.enable_diabled_button();
@@ -315,14 +318,18 @@ public:
 			}
 			if (button_cancel.is_down) {
 				// result
-				Human.HP--;
+				if (Human.skill.defense_analeptic_kill) Human.HP -= 2;
+				else if (Human.skill.need_jink) Human.HP--;
 				// find node that is chose card
 				Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 				for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
 					if (ptr->mouse_select_card) break;
 					ptr = ptr->next;
 				}
-				ptr->mouse_select_card = false;
+				if (ptr!=nullptr)
+				{
+					ptr->mouse_select_card = false;
+				}
 				// initialize data
 				Human.select_card = false;
 				Human.selecet_card_amount = 0;
@@ -331,27 +338,24 @@ public:
 				// animator go
 				Human.animator_damage = true;
 				Human.animator_damage_counter = 0;
+				animator_running = true;
 				// change button unable
 				button_ok.enable_diabled_button();
 				button_cancel.enable_diabled_button();
 				button_discard.enable_diabled_button();
 				return;
 			}
-			if (Human.HP < Human.limited_HP) Human.HP++;
-			Human.skill.need_peach = false;
 		}
 		if (Human.skill.need_peach) {
 			if (Human.HP < Human.limited_HP) Human.HP++;
 			Human.skill.need_peach = false;
 		}
-		if (Human.skill.need_analeptic) {
+		if (Human.skill.need_analeptic) {   //  when human tends to die , enable card playing analeptic to save life
 			//if (Human.is_dying) { Human.HP++;}
-			Human.kill_power++;
 		}
 		if (Human.is_dying == true) { // when player is dying , begging for peach
 			Machine.skill.begging_peach = true;
 		}
-
 	}
 	void Human_Round() {
 		Vector2i mouse_select_vector = Input();  // in general there only exist one input function  * wtf! that is matter most
@@ -360,7 +364,8 @@ public:
 		// Human play card
 		if (Human.round_play_phase) {
             // set each card enable to play or cant 
-			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+			Single_Card* ptr =nullptr;
+			ptr = Human.cards.Pile_Card_Total->next;
 			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
 				switch (ptr->card_info.single_card_number) {
 				case kill:
@@ -371,7 +376,8 @@ public:
 					ptr->enable_to_play = false;
 					break;
 				case analeptic:
-					ptr->enable_to_play = true;
+					if(Human.drank_analeptic)	ptr->enable_to_play = false;
+					else	ptr->enable_to_play = true;
 					break;
 				case peach:
 					ptr->enable_to_play = true;
@@ -434,20 +440,31 @@ public:
 						button_discard.enable_diabled_button();
 					}
 					else if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75) && Machine.being_choose == true) {  // when it choose enemy & tends to click assure button to fight   the assure button area is 
-						Machine.being_choose = false;
-						if (ptr->card_info.single_card_number==kill)
+						Machine.being_choose = false; 
+						if (ptr->card_info.single_card_number == kill && Human.drank_analeptic)
 						{
 							Human.animator_kill = true;
 							Human.animator_kill_counter = 0;
+							animator_running = true;
+							Machine.skill.defense_analeptic_kill = true;
+							Human.kill_times++;
+							Human.cards.Detete_Card_Selected();
+						}
+						else if (ptr->card_info.single_card_number == kill)
+						{
+							Human.animator_kill = true;
+							Human.animator_kill_counter = 0;
+							animator_running = true;
 							Machine.skill.need_jink = true;
 							Human.kill_times++;
+							Human.cards.Detete_Card_Selected();
 						}
-						Human.cards.Detete_Card_Selected();
 						Human.select_card = false;
 						// then change button state
 						button_ok.enable_diabled_button();
 						button_cancel.enable_diabled_button();
 						button_discard.enable_normal_button();
+						return;
 					}
 				}
 				else {
@@ -455,11 +472,16 @@ public:
 						if (ptr->card_info.single_card_number == peach) {
 							Human.animator_peach = true;
 							Human.animator_peach_counter = 0;
-							Human.skill.need_peach;
+							animator_running = true;
+							if (Human.HP < Human.limited_HP) Human.HP++;
+							//Human.skill.need_peach=true;
 						}
-						else if (ptr->card_info.single_card_number == analeptic) {
+						else if (ptr->card_info.single_card_number == analeptic) { // when human have not die,this kill can doubled kill power
+							Human.kill_power++;
+							Human.drank_analeptic = true;
 							Human.animator_analeptic = true;
 							Human.animator_analeptic_counter = 0;
+							animator_running = true;
 						}
 						Machine.being_choose = false;
 						Human.cards.Detete_Card_Selected();
@@ -482,7 +504,7 @@ public:
 				}
 				return;
 			}
-			if (button_discard.is_down) {
+			if (mouse_select_vector.x > 874 && mouse_select_vector.x < (874 + 33) && mouse_select_vector.y > 644 && mouse_select_vector.y < (644 + 81)) {
 				Human.round_play_phase = false;
 				Human.round_discard_phase = true;
 			}
@@ -533,6 +555,12 @@ public:
 			}
 		}
 
+		// button unable when animator start & go
+		if (animator_running){
+			button_ok.enable_diabled_button();
+			button_cancel.enable_diabled_button();
+			button_discard.enable_diabled_button();
+		}
     }
 	void Machine_Round_Initialize() {
 		if (piles.Pile_Card_Amount < 20) piles.Shuffle_Card(); // if card few ,shuffle
@@ -543,9 +571,12 @@ public:
 				Machine.cards.Get_Node(Machine.cards.Pile_Card_Amount - 1)->mouse_select_card = false;
 				piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
 			}
-			Machine.kill_times = 0;    // set original kill number is 0 when a new round start
 			Machine.round_draw_phase = false;
 			cout << "机器摸了两张牌" << endl;
+
+			Machine.kill_times = 0;    // set original kill number is 0 when a new round start
+			Machine.kill_power = 1;
+			Machine.drank_analeptic = false;
 		}
 	}
 	void Machine_Round_Skill_Judgment() {
@@ -553,14 +584,33 @@ public:
 			if (Machine.cards.Search_Card(jink)) {
 				Machine.animator_jink = true;
 				Machine.animator_jink_counter = 0;
+				animator_running = true;
 				Machine.cards.Delete_Card(jink);
 			}
 			else {
 				Machine.HP--;
 				Machine.animator_damage = true;
 				Machine.animator_damage_counter = 0;
+				animator_running = true;
 			}
 			Machine.skill.need_jink = false;
+			return;
+		}
+		if (Machine.skill.defense_analeptic_kill) {
+			if (Machine.cards.Search_Card(jink)) {
+				Machine.animator_jink = true;
+				Machine.animator_jink_counter = 0;
+				animator_running = true;
+				Machine.cards.Delete_Card(jink);
+			}
+			else {
+				Machine.HP-=2;
+				Machine.animator_damage = true;
+				Machine.animator_damage_counter = 0;
+				animator_running = true;
+			}
+			Machine.skill.defense_analeptic_kill = false;
+			return;
 		}
 		if (Machine.skill.need_peach) {
 			if (Machine.HP < Machine.limited_HP) Machine.HP++;
@@ -580,28 +630,56 @@ public:
 		Machine_Round_Initialize();
 		Machine_Round_Skill_Judgment();
 		
-		if (Machine.round_play_phase) {
+		if (Machine.round_play_phase&& human_defense==false) {
 
-			//cout << "comeing???" << endl;
+			if (Machine.drank_analeptic == false) {
+				if (Machine.cards.Search_Card(analeptic)) {
+					// animator start
+					Machine.animator_analeptic = true;
+					Machine.animator_analeptic_counter = 0;
+					animator_running = true;
+					// result
+					Machine.cards.Delete_Card(analeptic);
+					Machine.drank_analeptic = true;
+					Machine.kill_power++;
+					return;
+				}
+			}
 			if (Machine.kill_times < Machine.kill_limit) {
 				if (Machine.cards.Search_Card(kill)) {
-					//cout << "comeing???" << endl;
+					// animator start
 					Machine.animator_kill = true;
 					Machine.animator_kill_counter = 0;
-					Human.skill.need_jink = true;
-					Machine.cards.Delete_Card(kill);
-					Machine.kill_times++;
+					animator_running = true;
+					// result
+					if (Machine.drank_analeptic) {
+						Human.skill.defense_analeptic_kill = true;
+						Machine.cards.Delete_Card(kill);
+						Machine.kill_times++;
+					}
+					else {
+						Human.skill.need_jink = true;
+						Machine.cards.Delete_Card(kill);
+						Machine.kill_times++;
+					}
 					human_defense = true;
-				}
-				else {
-					Machine.round_play_phase = false;
-					Machine.round_discard_phase = true;
+					return;
 				}
 			}
-			else {
-				Machine.round_play_phase = false;
-				Machine.round_discard_phase = true;
+			if (Machine.HP<Machine.limited_HP){
+				if (Machine.cards.Search_Card(peach)) {
+					// animator start
+					Machine.animator_peach = true;
+					Machine.animator_peach_counter = 0;
+					animator_running = true;
+					// result
+					Machine.cards.Delete_Card(peach);
+					Machine.HP++;
+					return;
+				}
 			}
+			Machine.round_play_phase = false;
+			Machine.round_discard_phase = true;
 		}
 		if (Machine.round_discard_phase) {
 			if (Machine.cards.Pile_Card_Amount <= Machine.HP) {   // no need to discard
@@ -750,8 +828,8 @@ public:
 			}
 		}
 	}
-	void Draw_Animator_Single(bool & animator,int & animator_counter,string file,int limited,int _x,int _y) {
-		window.setFramerateLimit(8);
+	void Draw_Animator_Single(int set_frame, bool& animator, int& animator_counter, string file, int limited, int _x, int _y) {
+		window.setFramerateLimit(set_frame);
 		Texture texture_temp;
 		Sprite sprite_temp;
 		stringstream ss;
@@ -762,20 +840,21 @@ public:
 		window.draw(sprite_temp);
 		if (animator_counter == limited) {
 			animator = false;
+			animator_running = false;
 			window.setFramerateLimit(30);
 		}
 	}
 	void Draw_Animator() {
-		if (Human.animator_kill) { Draw_Animator_Single(Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470);}
-		else if (Machine.animator_kill) { Draw_Animator_Single(Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, 450, 200);}
-		else if (Human.animator_jink) {	Draw_Animator_Single(Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470);}
-		else if (Machine.animator_jink) { Draw_Animator_Single(Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, 450, 240);}
-		else if (Human.animator_peach) { Draw_Animator_Single(Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340);}
-		else if (Machine.animator_peach) { Draw_Animator_Single(Machine.animator_peach,Machine.animator_peach_counter, "image/animator/peach/", 17, 450,140);}
-		else if (Human.animator_analeptic) { Draw_Animator_Single(Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380);}
-		else if (Machine.animator_analeptic) { Draw_Animator_Single(Machine.animator_analeptic,Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, 450, 180);}
-		else if (Human.animator_damage) { Draw_Animator_Single(Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
-		else if (Machine.animator_damage) {	Draw_Animator_Single(Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50);	}
+		if (Human.animator_kill) { Draw_Animator_Single(8,Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470);}
+		else if (Machine.animator_kill) { Draw_Animator_Single(8, Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, 450, 200);}
+		else if (Human.animator_jink) {	Draw_Animator_Single(8, Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470);}
+		else if (Machine.animator_jink) { Draw_Animator_Single(8, Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, 450, 240);}
+		else if (Human.animator_peach) { Draw_Animator_Single(8, Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340);}
+		else if (Machine.animator_peach) { Draw_Animator_Single(8, Machine.animator_peach,Machine.animator_peach_counter, "image/animator/peach/", 17, 450,140);}
+		else if (Human.animator_analeptic) { Draw_Animator_Single(8, Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380);}
+		else if (Machine.animator_analeptic) { Draw_Animator_Single(8, Machine.animator_analeptic,Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, 450, 180);}
+		else if (Human.animator_damage) { Draw_Animator_Single(15, Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
+		else if (Machine.animator_damage) {	Draw_Animator_Single(15,Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50);	}
 	}
 	void Draw_Machine() {
 
@@ -821,6 +900,7 @@ public:
 		virtual_vector.x = -999;
 		virtual_vector.y = -999;
 		human_defense = false;
+		animator_running = false;
 		window.create(sf::VideoMode(window_width, window_height), L"三国杀_BY_赵茜茜");
 	}
 };
