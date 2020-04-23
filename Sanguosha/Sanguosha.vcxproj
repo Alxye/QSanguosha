@@ -144,6 +144,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Draw.cpp" />
+    <ClCompile Include="Human_round.cpp" />
+    <ClCompile Include="Initial.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Logic.cpp" />
+    <ClCompile Include="Machine_round.cpp" />
     <ClCompile Include="Sanguosha.cpp">
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</SDLCheck>

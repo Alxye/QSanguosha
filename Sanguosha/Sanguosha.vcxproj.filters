@@ -18,6 +18,24 @@
     <ClCompile Include="Sanguosha.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Initial.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Logic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Human_round.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine_round.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Draw.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">

@@ -50,4 +50,5 @@ else  ptr->enable_to_play = false;
 已解决：Game类新引入animator_running的bool变量，使得动画播放独立于游戏逻辑，并且动画期间，游戏logic不可用，达到减缓作用——machine技能释放减缓。*   
 * 待修复查证：非常非常偶尔出现，出桃变成出闪，尚未发现问题？？？    
 * 待实现：加入马和武器（近期目标）    
-
+### 2020.4.23 开发思路
+*将类函数结构调整，已initial、input、logic、draw为基本，使得后续代码编辑优化作便捷。*

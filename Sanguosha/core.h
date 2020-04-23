@@ -16,49 +16,6 @@ typedef enum skill_number {
 	analeptic,        // wine
 	peach             // peach
 };
-// change string to lpcwstr so that string can display on warning windows
-LPCWSTR string_To_LPCWSTR(string _string) {
-	size_t origsize = _string.length() + 1;
-	const size_t newsize = 100;
-	size_t convertedChars = 0;
-	wchar_t* _LPCWSTR = (wchar_t*)malloc(sizeof(wchar_t) * (_string.length() - 1));
-	mbstowcs_s(&convertedChars, _LPCWSTR, origsize, _string.c_str(), _TRUNCATE);
-	return _LPCWSTR;
-}
-// load image
-void Load_Image(Texture& texture, Sprite& sprite, string filename, float originX = 0, float originY = 0, float factorX = 1, float factorY = 1) {
-	if (!texture.loadFromFile(filename)) {
-		int result = MessageBox(NULL, string_To_LPCWSTR("Invalid Path , image is missing : " + filename), TEXT("Error ! Failed to load !"), MB_RETRYCANCEL);
-		switch (result) {
-		case IDRETRY:
-			return Load_Image(texture, sprite, filename, originX, originY, factorX, factorY);
-		case IDCANCEL:
-			exit(0);
-		}
-	}
-	else {
-		cout << "贴图加载成功" << endl;
-		sprite.setTexture(texture);
-		sprite.setOrigin(originX, originY);
-		sprite.setScale(factorX, factorY);
-	}
-}
-// load font & text
-void Load_Font(Font& font, Text& text, string filename) {
-	if (!font.loadFromFile(filename)) {
-		int result = MessageBox(NULL, string_To_LPCWSTR("Invalid Path , font is missing : " + filename), TEXT("Error ! Failed to load !"), MB_RETRYCANCEL);
-		switch (result) {
-		case IDRETRY:
-			return Load_Font(font, text, filename);
-		case IDCANCEL:
-			exit(0);
-		}
-	}
-	else {
-		cout << "字体加载成功" << endl; 
-		text.setFont(font);
-	}
-}
 typedef struct Card_Info {
 	int single_card_number;     // 该牌所对应的牌号
 	/**---->>>>suit
@@ -360,8 +317,12 @@ public:
 	int button_over;            // there exist four stage : unable;normal;hover;click
 	bool animator_kill, animator_jink, animator_peach, animator_analeptic, animator_damage;                   // bool to constrain animator of kill
 	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
+	// for dying
+	Texture texture_dying;
+	Sprite sprite_dying;
+
 	Skill skill;
 	// initialize player's life & other original set
-	Player() { HP = 4; limited_HP = HP; kill_power = 1; kill_limit = 1; selecet_card_amount = 0; select_card = false; drank_analeptic = false; }
+	Player() { HP = 1; limited_HP = HP; kill_power = 1; kill_limit = 1; selecet_card_amount = 0; select_card = false; drank_analeptic = false; }
 };
 

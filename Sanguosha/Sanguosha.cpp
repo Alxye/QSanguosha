@@ -81,14 +81,7 @@ int main() {
           do {
               Sanguosha.Initial();
               while (Sanguosha.window.isOpen() && Sanguosha.gameover == false) {
-                  //Sanguosha.Input();
-                  if (Sanguosha.new_round) Sanguosha.Round_Initialize(Sanguosha.turn);     // where exist new round ,there a turn to judge & initialize player's data
-                  //if (Sanguosha.turn == 0) cout << "machine round" << endl;
-                  //if (Sanguosha.turn == 1) cout << "human round" << endl;
-                  if (!Sanguosha.animator_running) {
-					  Sanguosha.Human_Round();
-					  Sanguosha.Machine_Round();
-                  }
+                  Sanguosha.Logic();
                   Sanguosha.Draw();
               }
           } while (!Sanguosha.gamequit);
