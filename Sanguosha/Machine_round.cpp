@@ -16,7 +16,7 @@ void Game::Machine_Round_Initialize() {
 		Machine.drank_analeptic = false;
 	}
 }
-void Game::Machine_Round_Skill_Judgment() {
+int Game::Machine_Round_Skill_Judgment() {
 	if (Machine.skill.need_jink) {
 		if (Machine.cards.Search_Card(jink)) {
 			Machine.animator_jink = true;
@@ -31,7 +31,7 @@ void Game::Machine_Round_Skill_Judgment() {
 			animator_running = true;
 		}
 		Machine.skill.need_jink = false;
-		return;
+		return 0;
 	}
 	if (Machine.skill.defense_analeptic_kill) {
 		if (Machine.cards.Search_Card(jink)) {
@@ -47,7 +47,7 @@ void Game::Machine_Round_Skill_Judgment() {
 			animator_running = true;
 		}
 		Machine.skill.defense_analeptic_kill = false;
-		return;
+		return 0;
 	}
 	if (Machine.skill.need_peach) {
 		if (Machine.HP < Machine.limited_HP) Machine.HP++;
@@ -57,17 +57,20 @@ void Game::Machine_Round_Skill_Judgment() {
 		if (Machine.cards.Search_Card(peach)) {
 			Human.skill.need_peach = true;
 			Machine.cards.Delete_Card(peach);
+			cout << "机器给了一个桃！" << endl;
 		}
-		else Machine.skill.begging_peach = false;
+		Machine.skill.begging_peach = false;
+		return 0;
 	}
+	return 1;
 }
 
 void Game::Machine_Round() {
 
 	Machine_Round_Initialize();
-	Machine_Round_Skill_Judgment();
+	if (Machine_Round_Skill_Judgment() == 0) return;
 
-	if (Machine.round_play_phase && human_defense == false) {
+	if (Machine.round_play_phase && human_defense == false && Human.self_save == false) {
 
 		if (Machine.drank_analeptic == false) {
 			if (Machine.cards.Search_Card(analeptic)) {

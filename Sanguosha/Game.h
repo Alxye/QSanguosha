@@ -48,9 +48,10 @@ public:
 	void Round_Initialize(int turn);
 	void Human_Round_Initialize();
 	void Human_Round_Skill_Judgment(Vector2i mouse_select_vector);
+	void Human_Round_enable_dying_state();
 	void Human_Round();
 	void Machine_Round_Initialize();
-	void Machine_Round_Skill_Judgment();
+	int Machine_Round_Skill_Judgment();
 
 	void Machine_Round();
 

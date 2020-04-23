@@ -2,8 +2,25 @@
 void Game::Logic() {
 	if (new_round) Round_Initialize(turn);     // where exist new round ,there a turn to judge & initialize player's data
 	if (!animator_running) {
-		Human_Round();
-		Machine_Round();
+		if(!Human.die) Human_Round();
+		if(!Machine.die) Machine_Round();
+	}
+	// gameover state judgment
+	if (Human.die && !Machine.die) { 
+		cout << "machine win!!!" << endl;
+		cout << "machine win!!!" << endl;
+		cout << "machine win!!!" << endl;
+		cout << "machine win!!!" << endl;
+		gameover = true;
+		gamequit = true;
+	}
+	else if (Machine.die && !Human.die) {
+		cout << "human win!!!" << endl;
+		cout << "human win!!!" << endl;
+		cout << "human win!!!" << endl;
+		cout << "human win!!!" << endl;
+		gameover = true;
+		gamequit = true;
 	}
 }
 

@@ -33,12 +33,27 @@ void Game::Human_Round_Initialize() {
 		ptr->enable_to_play = false;
 		ptr = ptr->next;
 	}
-	// set all card original position
-
 }
+void Game::Human_Round_enable_dying_state() {
+	if (Human.HP <= 0) {
+		Human.is_dying = true;
+		cout << "±ôËÀÇóÌÒ" << endl;
+		cout << "±ôËÀÇóÌÒ" << endl;
+		cout << "±ôËÀÇóÌÒ" << endl;
+		cout << "±ôËÀÇóÌÒ" << endl;
+		cout << "±ôËÀÇóÌÒ" << endl;
+		cout << "±ôËÀÇóÌÒ" << endl;
+	}
+	if (Human.is_dying == true && Human.skill.begging_peach == false) {
+		Machine.skill.begging_peach = true;
+		Human.skill.begging_peach = true;
+		cout << "Human.skill.begging_peach --->>½øÀ´ÁË" << endl;
+	}
+}
+
 void Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 	// when its first time to defense , set cancel button enable
-	if (human_defense && button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled) {
+	if ((human_defense||Human.self_save) && button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled) {
 		button_cancel.enable_normal_button();
 	}
 	// skill judgment
@@ -115,6 +130,7 @@ void Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			Human.selecet_card_amount = 0;
 			human_defense = false;
 			Human.skill.need_jink = false;
+			Human.skill.defense_analeptic_kill = false;
 			// animator go
 			Human.animator_damage = true;
 			Human.animator_damage_counter = 0;
@@ -123,9 +139,12 @@ void Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			button_ok.enable_diabled_button();
 			button_cancel.enable_diabled_button();
 			button_discard.enable_diabled_button();
+			// judge human is dying?
+			if (Human.HP <= 0) Human_Round_enable_dying_state();
 			return;
 		}
 	}
+	
 	if (Human.skill.need_peach) {
 		if (Human.HP < Human.limited_HP) Human.HP++;
 		Human.skill.need_peach = false;
@@ -133,8 +152,111 @@ void Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 	if (Human.skill.need_analeptic) {   //  when human tends to die , enable card playing analeptic to save life
 		//if (Human.is_dying) { Human.HP++;}
 	}
-	if (Human.is_dying == true) { // when player is dying , begging for peach
-		Machine.skill.begging_peach = true;
+
+	// dying & self_save
+	if (Human.self_save) {
+		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+			switch (ptr->card_info.single_card_number) {
+			case peach:
+				ptr->enable_to_play = true;
+				break;
+			case analeptic:
+				ptr->enable_to_play = true;
+				break;
+			default:
+				ptr->enable_to_play = false;
+				break;
+			}
+			ptr = ptr->next;
+		}
+		if (Human.cards.Search_Card_Position(mouse_select_vector)) {
+			Single_Card* ptr = nullptr;
+			ptr = Human.cards.Search_Card_Position_locate(mouse_select_vector);
+			if (ptr->enable_to_play) {
+				if (ptr->mouse_select_card == false && Human.select_card == false) {
+					ptr->mouse_select_card = true;
+					Human.select_card = true;
+					button_ok.enable_normal_button();
+					button_cancel.enable_normal_button();
+				}
+				else if (ptr->mouse_select_card == true && Human.select_card == true) {
+					ptr->mouse_select_card = false;
+					Human.select_card = false;
+					button_ok.enable_diabled_button();
+					button_cancel.enable_normal_button();
+				}
+			}
+		}
+		if (Human.select_card == true) {
+			if (button_ok.is_down) {
+				// find node that is chose card
+				Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+				for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+					if (ptr->mouse_select_card) break;
+					ptr = ptr->next;
+				}
+				if (ptr != nullptr)
+				{
+					ptr->mouse_select_card = false;
+				}
+				// result
+				int which_animator = ptr->card_info.single_card_number;
+				if (ptr->card_info.single_card_number == peach) Human.HP++;
+				else if (ptr->card_info.single_card_number == analeptic) Human.HP++;
+				out_put(* ptr);
+				Human.cards.Detete_Card_Selected();
+				// initialize data
+				Human.select_card = false;
+				Human.selecet_card_amount = 0;
+				if (Human.HP > 0) {
+					Human.die = false;
+					Human.is_dying = false;
+					Human.self_save = false;
+				}
+				// animator go
+				if (which_animator == peach) {
+					Human.animator_peach = true;
+					Human.animator_peach_counter = 0;
+					animator_running = true;
+				}
+				else if (which_animator == analeptic) {
+					Human.animator_analeptic = true;
+					Human.animator_analeptic_counter = 0;
+					animator_running = true;
+				}
+				// change button unable
+				button_ok.enable_diabled_button();
+				button_cancel.enable_diabled_button();
+				button_discard.enable_diabled_button();
+				return;
+			}
+		}
+		if (button_cancel.is_down) {
+			// result
+			Human.die = true;
+			Human.is_dying = true;
+			Human.self_save = false;
+			// find node that is chose card
+			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+				if (ptr->mouse_select_card) break;
+				ptr = ptr->next;
+			}
+			if (ptr != nullptr)
+			{
+				ptr->mouse_select_card = false;
+			}
+			// initialize data
+			Human.select_card = false;
+			Human.selecet_card_amount = 0;
+			// animator go
+			// change button unable
+			button_ok.enable_diabled_button();
+			button_cancel.enable_diabled_button();
+			button_discard.enable_diabled_button();
+			return;
+		}
 	}
 }
 void Game::Human_Round() {
@@ -142,6 +264,12 @@ void Game::Human_Round() {
 	Human_Round_Initialize();
 	Human_Round_Skill_Judgment(mouse_select_vector);
 	// Human play card
+
+	// where all machine have decided to save or not ,player themselves start save themselves ; for fundation there exist one machine to test
+	if (Machine.skill.begging_peach == false && Human.is_dying == true) {
+		Human.self_save = true;
+	}
+
 	if (Human.round_play_phase) {
 		// set each card enable to play or cant 
 		Single_Card* ptr = nullptr;
@@ -334,6 +462,7 @@ void Game::Human_Round() {
 			turn = 0;
 		}
 	}
+
 
 	// button unable when animator start & go
 	if (animator_running) {

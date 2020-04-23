@@ -143,16 +143,16 @@ void Game::Draw_Animator_Single(int set_frame, bool& animator, int& animator_cou
 	}
 }
 void Game::Draw_Animator() {
-	if (Human.animator_kill) { Draw_Animator_Single(8, Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470); }
-	else if (Machine.animator_kill) { Draw_Animator_Single(8, Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, 450, 200); }
-	else if (Human.animator_jink) { Draw_Animator_Single(8, Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470); }
-	else if (Machine.animator_jink) { Draw_Animator_Single(8, Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, 450, 240); }
-	else if (Human.animator_peach) { Draw_Animator_Single(8, Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340); }
-	else if (Machine.animator_peach) { Draw_Animator_Single(8, Machine.animator_peach, Machine.animator_peach_counter, "image/animator/peach/", 17, 450, 140); }
-	else if (Human.animator_analeptic) { Draw_Animator_Single(8, Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380); }
-	else if (Machine.animator_analeptic) { Draw_Animator_Single(8, Machine.animator_analeptic, Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, 450, 180); }
-	else if (Human.animator_damage) { Draw_Animator_Single(15, Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
-	else if (Machine.animator_damage) { Draw_Animator_Single(15, Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50); }
+	if (Human.animator_kill) { Draw_Animator_Single(16, Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470); }
+	else if (Machine.animator_kill) { Draw_Animator_Single(16, Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, 450, 200); }
+	else if (Human.animator_jink) { Draw_Animator_Single(16, Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470); }
+	else if (Machine.animator_jink) { Draw_Animator_Single(16, Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, 450, 240); }
+	else if (Human.animator_peach) { Draw_Animator_Single(16, Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340); }
+	else if (Machine.animator_peach) { Draw_Animator_Single(16, Machine.animator_peach, Machine.animator_peach_counter, "image/animator/peach/", 17, 450, 140); }
+	else if (Human.animator_analeptic) { Draw_Animator_Single(16, Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380); }
+	else if (Machine.animator_analeptic) { Draw_Animator_Single(16, Machine.animator_analeptic, Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, 450, 180); }
+	else if (Human.animator_damage) { Draw_Animator_Single(22, Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
+	else if (Machine.animator_damage) { Draw_Animator_Single(22, Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50); }
 }
 void Game::Draw_Machine() {
 

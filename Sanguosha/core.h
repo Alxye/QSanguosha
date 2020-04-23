@@ -16,6 +16,11 @@ typedef enum skill_number {
 	analeptic,        // wine
 	peach             // peach
 };
+typedef enum game_state {
+	zhugong_win,
+	fanzei_win,
+	neijing_win
+};
 typedef struct Card_Info {
 	int single_card_number;     // 该牌所对应的牌号
 	/**---->>>>suit
@@ -275,6 +280,7 @@ public:
 	bool need_peach;
 	bool need_analeptic;
 	bool begging_peach;
+	bool asking_peach;
 	bool defense_analeptic_kill;
 	// define skill 
 
@@ -288,6 +294,8 @@ public:
 	int HP;                     // the amount of blood
 	int limited_HP;             // the limited of blood , influenced by role player get
 	bool is_dying;              // whether play have been in dying state
+	bool die;                   // whether player is die assure
+	bool self_save;             // about save themselves
 	int target;                 // 对应目标 对象本身为0；顺时针++
 	bool being_choose;          // being a target to others
 	int kill_power;             // the damage that player use kill && normally the value is 1
@@ -323,6 +331,17 @@ public:
 
 	Skill skill;
 	// initialize player's life & other original set
-	Player() { HP = 1; limited_HP = HP; kill_power = 1; kill_limit = 1; selecet_card_amount = 0; select_card = false; drank_analeptic = false; }
+	Player() { 
+		HP = 1; 
+		limited_HP = HP; 
+		kill_power = 1; 
+		kill_limit = 1; 
+		selecet_card_amount = 0; 
+		select_card = false; 
+		drank_analeptic = false; 
+		die = false; 
+		is_dying = false; 
+		skill.begging_peach = false; 
+	}
 };
 

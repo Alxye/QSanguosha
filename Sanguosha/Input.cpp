@@ -51,13 +51,13 @@ Vector2i Game::Input() {
 					cout << "new mouse x: " << event_global.mouseMove.x << endl;
 					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_cancel.enable_hover_button();
-					cout << "鼠标位于取消上" << endl;
+					//cout << "鼠标位于取消上" << endl;
 				}
 				else {
 					cout << "new mouse x: " << event_global.mouseMove.x << endl;
 					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_cancel.enable_normal_button();
-					cout << "鼠标不在取消上" << endl;
+					//cout << "鼠标不在取消上" << endl;
 				}
 			}
 			// control button of assure
@@ -67,14 +67,14 @@ Vector2i Game::Input() {
 					cout << "new mouse x: " << event_global.mouseMove.x << endl;
 					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_ok.enable_hover_button();
-					cout << "鼠标位于确定上" << endl;
+					//cout << "鼠标位于确定上" << endl;
 					//return virtual_vector;
 				}
 				else {
 					cout << "new mouse x: " << event_global.mouseMove.x << endl;
 					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_ok.enable_normal_button();
-					cout << "鼠标不在确定上" << endl;
+					//cout << "鼠标不在确定上" << endl;
 				}
 			}
 			// control button of discard in hover state
@@ -84,13 +84,13 @@ Vector2i Game::Input() {
 					cout << "new mouse x: " << event_global.mouseMove.x << endl;
 					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_discard.enable_hover_button();
-					cout << "鼠标位于结束上" << endl;
+					//cout << "鼠标位于结束上" << endl;
 				}
 				else {
 					cout << "new mouse x: " << event_global.mouseMove.x << endl;
 					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_discard.enable_normal_button();
-					cout << "鼠标不在结束上" << endl;
+					//cout << "鼠标不在结束上" << endl;
 				}
 			}
 		}
