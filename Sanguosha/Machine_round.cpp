@@ -15,6 +15,33 @@ void Game::Machine_Round_Initialize() {
 		Machine.kill_power = 1;
 		Machine.drank_analeptic = false;
 	}
+	if (Machine.HP > 0) {
+		Machine.is_dying = false;
+		Machine.die = false;
+		Machine.self_save = false;
+	}
+}
+
+void Game::Machine_Round_enable_dying_state() {
+	if (Machine.HP <= 0) {
+		Machine.is_dying = true;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+		cout << "machine濒死求桃" << endl;
+	}
+	if (Machine.is_dying == true) {
+		Human.skill.begging_peach = true;
+		//...Machine2.skill.begging_peach = true;
+		//...Machine3.skill.begging_peach = true;
+		//...Machine4.skill.begging_peach = true;
+		exturn = human;
+		cout << "Machine.skill.begging_peach --->>进来了" << endl;
+	}
 }
 int Game::Machine_Round_Skill_Judgment() {
 	if (Machine.skill.need_jink) {
@@ -31,6 +58,8 @@ int Game::Machine_Round_Skill_Judgment() {
 			animator_running = true;
 		}
 		Machine.skill.need_jink = false;
+		exturn = normal;
+		Machine_Round_enable_dying_state();
 		return 0;
 	}
 	if (Machine.skill.defense_analeptic_kill) {
@@ -47,19 +76,54 @@ int Game::Machine_Round_Skill_Judgment() {
 			animator_running = true;
 		}
 		Machine.skill.defense_analeptic_kill = false;
+		exturn = normal;
+		Machine_Round_enable_dying_state();
 		return 0;
 	}
-	if (Machine.skill.need_peach) {
+	if (Machine.skill.receive_peach) {
 		if (Machine.HP < Machine.limited_HP) Machine.HP++;
-		Machine.skill.need_peach = false;
+		Machine.skill.receive_peach = false;
+		if (Machine.HP <= 0) {
+			exturn = machine_1;
+			Machine.self_save = true;
+			Machine.is_dying = true;
+		}
+		else {
+			exturn = normal;
+			Machine.self_save = false;
+			Machine.is_dying = false;
+		}
 	}
+	
 	if (Machine.skill.begging_peach) {
 		if (Machine.cards.Search_Card(peach)) {
-			Human.skill.need_peach = true;
+			Human.skill.receive_peach = true;
 			Machine.cards.Delete_Card(peach);
 			cout << "机器给了一个桃！" << endl;
 		}
+		// if there exist more machine then change it another machine to judge
 		Machine.skill.begging_peach = false;
+		exturn = human;
+		return 0;
+	}
+	
+	// dying & self_save
+	if (Machine.self_save) {
+		if (Machine.cards.Search_Card(peach)) {
+			// animator start
+			Machine.animator_peach = true;
+			Machine.animator_peach_counter = 0;
+			animator_running = true;
+			// result
+			Machine.cards.Delete_Card(peach);
+			Machine.HP++;
+			exturn = normal;
+		}
+		if(Machine.HP<=0){
+			Machine.die = true;
+			Machine.is_dying = true;
+			Machine.self_save = false;
+		}
 		return 0;
 	}
 	return 1;
@@ -69,9 +133,8 @@ void Game::Machine_Round() {
 
 	Machine_Round_Initialize();
 	if (Machine_Round_Skill_Judgment() == 0) return;
-
-	if (Machine.round_play_phase && human_defense == false && Human.self_save == false) {
-
+	if (Machine.HP <= 0) Machine.self_save = true;
+	if (Machine.round_play_phase && Human.self_save == false) {
 		if (Machine.drank_analeptic == false) {
 			if (Machine.cards.Search_Card(analeptic)) {
 				// animator start
@@ -102,7 +165,8 @@ void Game::Machine_Round() {
 					Machine.cards.Delete_Card(kill);
 					Machine.kill_times++;
 				}
-				human_defense = true;
+				exturn_backup = exturn;
+				exturn = human;
 				return;
 			}
 		}

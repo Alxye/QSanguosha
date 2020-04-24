@@ -21,6 +21,13 @@ typedef enum game_state {
 	fanzei_win,
 	neijing_win
 };
+typedef enum extra_turn {
+	normal,         // normal turn, nobody die or nobody defense
+	human,
+	machine_1,
+	machine_2,
+	machine_3
+};
 typedef struct Card_Info {
 	int single_card_number;     // 该牌所对应的牌号
 	/**---->>>>suit
@@ -277,14 +284,24 @@ class Skill
 public:
 	bool need_jink;            // set a state when someone play kill or other skill that need jink , target need play jink
 	bool need_kill;            // also
-	bool need_peach;
+	bool receive_peach;
 	bool need_analeptic;
 	bool begging_peach;
 	bool asking_peach;
 	bool defense_analeptic_kill;
+	bool have_decide_saving;
 	// define skill 
 
-	Skill() {}
+	Skill() {
+		need_jink = false;
+		need_kill = false;
+		receive_peach = false;
+		need_analeptic = false;
+		begging_peach = false;
+		asking_peach = false;
+		defense_analeptic_kill = false;
+		have_decide_saving=false;
+	}
 };
 
 class Player

@@ -18,6 +18,9 @@ void Game::Initial() {
 	// initialize round state
 	Machine.round_draw_phase = false;
 	Human.round_draw_phase = false;
+	// extra turn initialize
+	exturn = normal;
+	exturn_backup = exturn;
 	// get cards shuffled
 	piles.Shuffle_Card();
 	Load_Image(texture_background, sprite_background, "image/back_stable/background.jpg", 0, 0, 1, 1); // ¼ÓÔØ±³¾°
@@ -49,8 +52,13 @@ void Game::Initial() {
 	//---->> Human & Machine Player HP
 	Load_Image(texture_Human_HP, sprite_Human_HP, "image/HP/green_big.png", 0, 0, 1, 1);
 	Load_Image(texture_Machine_HP, sprite_Machine_HP, "image/HP/green_small.png", 0, 0, 1, 1);
-
+	//---->> Human's dying state saving me
+	Load_Image(texture_Human_save_me, sprite_Human_save_me, "image/gameover/save-me.png", 0, 0, 1, 1);
 	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
+	exturn = 0; // where exturn=0 that mean normal 
+
+	Human.HP = 5;
+	Human.limited_HP = 5;
 }
 
 
@@ -82,13 +90,11 @@ void Game::Load_Image(Texture& texture, Sprite& sprite, string filename, float o
 	}
 }
 // for test to printout
-void Game::out_put(Single_Card& single) {
+void Game::out_put(Single_Card single) {
 	cout << "³öµÄ¿¨ÅÆ£º" << single.card_name << endl;
 	cout << "¿¨ÅÆºÅÂë£º" << single.card_info.single_card_number << endl;
 	cout << "¿¨ÅÆ»¨É«£º" << single.card_name << endl;
 	cout << "¿¨ÅÆÄÜ·ñ¹¥»÷£º" << single.card_info.can_attck << endl;
-	cout << "¿¨ÅÆ£º" << single.card_name << endl;
-	cout << "³öµÄ¿¨ÅÆ£º" << single.card_name << endl;
 }
 // load font & text
 

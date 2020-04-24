@@ -7,6 +7,8 @@ public:
 	RenderWindow window;
 	int window_width, window_height;
 	int turn;                             // 轮到谁的 记录量
+	int exturn;
+	int exturn_backup;
 	bool gamestart, gameover, gamequit;
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense
@@ -28,8 +30,11 @@ public:
 	// for HP
 	Texture texture_Human_HP, texture_Machine_HP;
 	Sprite sprite_Human_HP, sprite_Machine_HP;
+	// for dying state
+	Texture texture_Human_save_me;
+	Sprite sprite_Human_save_me;
 	// Game Class
-	void out_put(Single_Card& single);
+	void out_put(Single_Card single);
 
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows
@@ -47,12 +52,12 @@ public:
 	int Previous_Draw_Phase();
 	void Round_Initialize(int turn);
 	void Human_Round_Initialize();
-	void Human_Round_Skill_Judgment(Vector2i mouse_select_vector);
+	int Human_Round_Skill_Judgment(Vector2i mouse_select_vector);
 	void Human_Round_enable_dying_state();
 	void Human_Round();
-	void Machine_Round_Initialize();
+	void Machine_Round_Initialize(); 
 	int Machine_Round_Skill_Judgment();
-
+	void Machine_Round_enable_dying_state();
 	void Machine_Round();
 
 	void Draw();

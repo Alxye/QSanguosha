@@ -59,6 +59,7 @@ void Game::Draw_HumanPlayer_Button() {
 	}
 }
 void Game::Draw_HumanPlayer() {
+	// draw human_player_card
 	Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 	for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {  // each card:  width 93 || height 130
 		if (ptr->mouse_select_card) {
@@ -81,7 +82,6 @@ void Game::Draw_HumanPlayer() {
 			rect.setFillColor(Color(0, 0, 0, 100));
 			rect.setPosition(ptr->point_one.x, ptr->point_one.y);
 			window.draw(rect);
-
 		}
 		else {
 			ptr->point_one.x = 165 + i * 93;
@@ -124,6 +124,12 @@ void Game::Draw_HumanPlayer() {
 			reminded_note.setString(reminded);
 			window.draw(reminded_note);
 		}
+	}
+	// draw dying state
+
+	if (Human.is_dying==true&&Human.die==false){
+		sprite_Human_save_me.setPosition(500, 530);
+		window.draw(sprite_Human_save_me);
 	}
 }
 void Game::Draw_Animator_Single(int set_frame, bool& animator, int& animator_counter, string file, int limited, int _x, int _y) {

@@ -2,8 +2,10 @@
 void Game::Logic() {
 	if (new_round) Round_Initialize(turn);     // where exist new round ,there a turn to judge & initialize player's data
 	if (!animator_running) {
-		if(!Human.die) Human_Round();
-		if(!Machine.die) Machine_Round();
+		if(!Human.die && (exturn == normal||exturn==human)) Human_Round();
+		if(!Machine.die && (exturn == normal || exturn == machine_1)) Machine_Round();
+		//if(!Machine.die && (exturn == normal || exturn == machine_2)) Machine_Round();
+		//if(!Machine.die && (exturn == normal || exturn == machine_3)) Machine_Round();
 	}
 	// gameover state judgment
 	if (Human.die && !Machine.die) { 

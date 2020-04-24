@@ -77,14 +77,14 @@ int main() {
 	
     Game Sanguosha;
 
-      while (Sanguosha.window.isOpen()) {
+      while (Sanguosha.window.isOpen()&& !Sanguosha.gamequit) {
           do {
               Sanguosha.Initial();
               while (Sanguosha.window.isOpen() && Sanguosha.gameover == false) {
                   Sanguosha.Logic();
                   Sanguosha.Draw();
               }
-          } while (!Sanguosha.gamequit);
+          } while (!Sanguosha.gameover);
       }
     cout << "yes" << endl;
     return 0;
