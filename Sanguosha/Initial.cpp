@@ -15,21 +15,26 @@ void Game::Initial() {
 	gameover = false;
 	gamequit = false;
 	new_round = true;
-	// initialize round state
-	Machine.round_draw_phase = false;
-	Human.round_draw_phase = false;
 	// extra turn initialize
 	exturn = normal;
 	exturn_backup = exturn;
-	// get cards shuffled
+	// record who set signal of begging peach
+	peach_begger=-1; // default no one beg for peach
+	// get cards shuffled (originally)
 	piles.Shuffle_Card();
-	Load_Image(texture_background, sprite_background, "image/back_stable/background.jpg", 0, 0, 1, 1); // 加载背景
+	// load background
+	Load_Image(texture_background, sprite_background, "image/back_stable/background.jpg", 0, 0, 1, 1);
+	// load equipment background in player's interface
 	Load_Image(texture_player_equip_board, sprite_player_equip_board, "image/back_stable/playerboard-equip.png");
+	// load hand background in player's interface
 	Load_Image(texture_player_hand_board, sprite_player_hand_board, "image/back_stable/playerboard-hand.png");
+	// load button container in player's interface
 	Load_Image(texture_player_button_background, sprite_player_button_background, "image/back_stable/playerbutton_background.png");
+	// load player's information in player's interface
+	Load_Image(texture_player_role_background, sprite_player_role_background, "image/back_stable/playerboard-role.png");
+	// load npc's interface
 	Load_Image(texture_npcboard, sprite_npcboard, "image/back_stable/npcboard.png");
 	Load_Image(texture_npc_cards, sprite_npc_cards, "image/back_stable/handcard.png");
-	Load_Image(texture_player_role_background, sprite_player_role_background, "image/back_stable/playerboard-role.png");
 	Load_Image(texture_piles_back, sprite_piles_back, "image/back_stable/pile_back.png");
 	// load npc_being chosen
 	Load_Image(texture_being_chosen, sprite_being_chosen, "image/back_stable/sos.png", 0, 0, 1, 1);
@@ -54,13 +59,34 @@ void Game::Initial() {
 	Load_Image(texture_Machine_HP, sprite_Machine_HP, "image/HP/green_small.png", 0, 0, 1, 1);
 	//---->> Human's dying state saving me
 	Load_Image(texture_Human_save_me, sprite_Human_save_me, "image/gameover/save-me.png", 0, 0, 1, 1);
+	//---->> initialize charactor code to get catch of each member
+	Human.charactor_code = human;
+	Machine[0].charactor_code = machine_0;
+	Machine[1].charactor_code = machine_1;
+	Machine[2].charactor_code = machine_2;
+	Machine[3].charactor_code = machine_3;
+	//---->> initialize pile card
 	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
-	exturn = 0; // where exturn=0 that mean normal 
-
-	Human.HP = 5;
-	Human.limited_HP = 5;
+	exturn = normal;                         // original set is mean normal 
 }
 
+int Game::Previous_Draw_Phase() {
+	// each machine get 4 cards
+	for (int number = 0; number < 4; number++) {
+		for (int i = 0; i < 4; i++) {
+			Machine[number].cards.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
+			piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
+		}
+	}
+	// human get 4 cards
+	for (int i = 0; i < 4; i++) {
+		Human.cards.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
+		Human.cards.Get_Node(Human.cards.Pile_Card_Amount - 1)->mouse_select_card = false;
+		piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
+	}
+	//return rand() % 5 +1;  // the rand function would detenmine which one to play first
+	return human;    // test for human to start whatever situation is
+}
 
 // change string to lpcwstr so that string can display on warning windows
 LPCWSTR Game::string_To_LPCWSTR(string _string) {
@@ -83,7 +109,7 @@ void Game::Load_Image(Texture& texture, Sprite& sprite, string filename, float o
 		}
 	}
 	else {
-		cout << "贴图加载成功" << endl;
+		cout << "Image Load Successfully" << endl;
 		sprite.setTexture(texture);
 		sprite.setOrigin(originX, originY);
 		sprite.setScale(factorX, factorY);
@@ -109,7 +135,7 @@ void Game::Load_Font(Font& font, Text& text, string filename) {
 		}
 	}
 	else {
-		cout << "字体加载成功" << endl;
+		cout << "Font Load Successfully" << endl;
 		text.setFont(font);
 	}
 }

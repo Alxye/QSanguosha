@@ -161,7 +161,6 @@ void Game::Draw_Animator() {
 	else if (Machine.animator_damage) { Draw_Animator_Single(22, Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50); }
 }
 void Game::Draw_Machine() {
-
 	// draw Machine HP
 	for (int i = 0; i < Machine.HP; i++) {
 		sprite_Machine_HP.setPosition((window_width - 143) / 2 + 18 + 14 * i, 118);  // the width of image named green small is 14

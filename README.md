@@ -57,3 +57,44 @@ else  ptr->enable_to_play = false;
 *已解决：将回合结构重新调整，加入exturn&exturn_backup的int形变量，进行约束，新增eunm类型充当每个round可以出牌的对象，通过exturn实现回合之间的跳转。   
 已解决：完善了濒死状态的回合跳转，新增了死亡判断，结合extra可以实现多人模式下，他人出桃救人的逻辑，具体思路如下：本回合出牌者，每出一次攻击类型的牌，然后exturn变更为受攻击者，比如machine，然后回合跳转至machine，开启被动防御，若防御失败若为濒死状态，则将对非濒死者发出begging_peach的信号，并且exturn为攻击者（后期将引入exturn_backup对应攻击者编号），当前exturn 对象选择出桃，则跳转求桃者，回血超过0，则濒死状态结束，exturn回归正常normal状态，继续由攻击者出牌模式；若当前exturn 对象不选择出桃，则跳转下一对象，直到轮到濒死者自救，濒死者若自救失败，死亡，自救成功，则游戏变成normal状态。*
 * 待优化：先实现多人局，再引入濒死状态。
+### 2020.4.28 开发思路
+*已解决：初步引入Machine[]数组实现多人单机回合制*  
+```
+if(!Human.die && (exturn == normal||exturn==human)) Human_Round();
+if (!Machine[0].die && (exturn == normal || exturn == machine_0)) Machine_Round(Machine[0]);
+if (!Machine[1].die && (exturn == normal || exturn == machine_1)) Machine_Round(Machine[1]);
+if (!Machine[2].die && (exturn == normal || exturn == machine_2)) Machine_Round(Machine[2]);
+if (!Machine[3].die && (exturn == normal || exturn == machine_3)) Machine_Round(Machine[3]);
+```
+* 待优化：多人局的turn问题  
+### 2020.5.3 开发思路
+*已解决：开辟枚举变量，并且赋值于turn，使得更直观了，基本实现回合轮转* 
+```
+switch (turn){
+	case human:          // humans round
+		Human.round_draw_phase = true;
+		Human.round_play_phase = true;
+	    break;
+	case machine_0:      // machine's round--->0		
+		Machine[0].round_draw_phase = true;
+		Machine[0].round_play_phase = true;
+		break;
+	case machine_1:      // machine's round--->1	
+		Machine[1].round_draw_phase = true;
+		Machine[1].round_play_phase = true;
+		break;
+	case machine_2:      // machine's round--->2		
+		Machine[2].round_draw_phase = true;
+		Machine[2].round_play_phase = true;
+		break;
+	case machine_3:      // machine's round--->3		
+		Machine[3].round_draw_phase = true;
+		Machine[3].round_play_phase = true;
+		break;
+	default:
+		break;
+	}
+```
+* 待优化：extra-turn被动回合的回合轮转问题
+### 2020.5.12 开发思路
+*已解决：更新了Player类，给每个player对象新增charactor_code的int型变量，用来表明对象身份，可以用于定位对象。

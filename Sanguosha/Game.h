@@ -13,10 +13,12 @@ public:
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense
 	bool animator_running;                // judge animator is running ,so that machine play wont play so fast
-	Vector2i virtual_vector;
+	Vector2i virtual_vector;              // a virtual coordinate for overflow error
+    // record who set signal of begging peach
+	int peach_begger;
 	Event event_global;
 	Pile_Card piles;
-	Player Human, Machine;
+	Player Human, Machine[4];
 	Vector2i mouse_count_clock_one, mouse_count_clock_two;
 	Clock mouse_click_timer;
 	// for stable background
@@ -45,20 +47,23 @@ public:
 	void Load_Font(Font& font, Text& text, string filename);
 
 	void Initial();
+	int Previous_Draw_Phase();
 
 	Vector2i Input();
 
+	// global logic control
 	void Logic();
-	int Previous_Draw_Phase();
-	void Round_Initialize(int turn);
+	void Round_Initialize(int & turn);
+	// human round logic
 	void Human_Round_Initialize();
 	int Human_Round_Skill_Judgment(Vector2i mouse_select_vector);
 	void Human_Round_enable_dying_state();
 	void Human_Round();
-	void Machine_Round_Initialize(); 
-	int Machine_Round_Skill_Judgment();
-	void Machine_Round_enable_dying_state();
-	void Machine_Round();
+	// machine round logic
+	void Machine_Round_Initialize(Player& machine);
+	int Machine_Round_Skill_Judgment(Player& machine);
+	void Machine_Round_enable_dying_state(Player& machine);
+	void Machine_Round(Player & machine);
 
 	void Draw();
 	void Draw_HumanPlayer_Button();

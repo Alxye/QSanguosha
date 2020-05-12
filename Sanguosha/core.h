@@ -22,8 +22,9 @@ typedef enum game_state {
 	neijing_win
 };
 typedef enum extra_turn {
-	normal,         // normal turn, nobody die or nobody defense
+	normal,            // normal turn 
 	human,
+	machine_0,
 	machine_1,
 	machine_2,
 	machine_3
@@ -307,6 +308,7 @@ public:
 class Player
 {
 public:
+	int charactor_code;         // code for player object
 	bool is_Mechine;            // 判断对象是 人 还是 机器
 	int HP;                     // the amount of blood
 	int limited_HP;             // the limited of blood , influenced by role player get
@@ -349,7 +351,9 @@ public:
 	Skill skill;
 	// initialize player's life & other original set
 	Player() { 
-		HP = 1; 
+		// basic character value
+		charactor_code = -1;
+		HP = 4; 
 		limited_HP = HP; 
 		kill_power = 1; 
 		kill_limit = 1; 
@@ -359,6 +363,10 @@ public:
 		die = false; 
 		is_dying = false; 
 		skill.begging_peach = false; 
+		// basic game state
+		round_draw_phase = false;
+		round_play_phase = false;
+		round_discard_phase = false;
 	}
 };
 
