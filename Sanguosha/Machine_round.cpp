@@ -205,72 +205,116 @@ void Game::Machine_Round(Player& machine) {
 		machine.self_save = true;
 		return;
 	}
-	if (Machine.round_play_phase) {
-		if (Machine.drank_analeptic == false) {
-			if (Machine.cards.Search_Card(analeptic)) {
+	if (machine.round_play_phase) {
+		if (machine.drank_analeptic == false) {
+			if (machine.cards.Search_Card(analeptic)) {
 				// animator start
-				Machine.animator_analeptic = true;
-				Machine.animator_analeptic_counter = 0;
+				machine.animator_analeptic = true;
+				machine.animator_analeptic_counter = 0;
 				animator_running = true;
 				// result
-				Machine.cards.Delete_Card(analeptic);
-				Machine.drank_analeptic = true;
-				Machine.kill_power++;
+				machine.cards.Delete_Card(analeptic);
+				machine.drank_analeptic = true;
+				machine.kill_power++;
 				return;
 			}
 		}
-		if (Machine.kill_times < Machine.kill_limit) {
-			if (Machine.cards.Search_Card(kill)) {
+		if (machine.kill_times < machine.kill_limit) {
+			if (machine.cards.Search_Card(kill)) {
 				// animator start
-				Machine.animator_kill = true;
-				Machine.animator_kill_counter = 0;
+				machine.animator_kill = true;
+				machine.animator_kill_counter = 0;
 				animator_running = true;
 				// result
-				if (Machine.drank_analeptic) {
-					Human.skill.defense_analeptic_kill = true;
-					Machine.cards.Delete_Card(kill);
-					Machine.kill_times++;
+				if (machine.drank_analeptic) {
+					int emeny_code = rand() % 5 + 1;
+					while(emeny_code==machine.charactor_code) emeny_code = rand() % 5 + 1;
+					cout << "emeny_code::::" << emeny_code << endl;
+					switch (emeny_code)
+					{
+					case human:
+						Human.skill.defense_analeptic_kill = true;
+						break;
+					case machine_0:
+						Machine[0].skill.defense_analeptic_kill = true;
+						break;
+					case machine_1:
+						Machine[1].skill.defense_analeptic_kill = true;
+						break;
+					case machine_2:
+						Machine[2].skill.defense_analeptic_kill = true;
+						break;
+					case machine_3:
+						Machine[3].skill.defense_analeptic_kill = true;
+						break;
+					default:
+						break;
+					}
+					machine.cards.Delete_Card(kill);
+					machine.kill_times++;
 				}
 				else {
-					Human.skill.need_jink = true;
-					Machine.cards.Delete_Card(kill);
-					Machine.kill_times++;
+					int emeny_code = rand() % 5 + 1;
+					while (emeny_code == machine.charactor_code) emeny_code = rand() % 5 + 1;
+					cout << "emeny_code::::" << emeny_code << endl;
+					switch (emeny_code)
+					{
+					case human:
+						Human.skill.need_jink = true;
+						break;
+					case machine_0:
+						Machine[0].skill.need_jink = true;
+						break;
+					case machine_1:
+						Machine[1].skill.need_jink = true;
+						break;
+					case machine_2:
+						Machine[2].skill.need_jink = true;
+						break;
+					case machine_3:
+						Machine[3].skill.need_jink = true;
+						break;
+					default:
+						break;
+					}
+					machine.cards.Delete_Card(kill);
+					machine.kill_times++;
 				}
-				exturn_backup = exturn;
 				exturn = human;
 				return;
 			}
 		}
-		if (Machine.HP < Machine.limited_HP) {
-			if (Machine.cards.Search_Card(peach)) {
+		if (machine.HP < machine.limited_HP) {
+			if (machine.cards.Search_Card(peach)) {
 				// animator start
-				Machine.animator_peach = true;
-				Machine.animator_peach_counter = 0;
+				machine.animator_peach = true;
+				machine.animator_peach_counter = 0;
 				animator_running = true;
 				// result
-				Machine.cards.Delete_Card(peach);
-				Machine.HP++;
+				machine.cards.Delete_Card(peach);
+				machine.HP++;
 				return;
 			}
 		}
-		Machine.round_play_phase = false;
-		Machine.round_discard_phase = true;
+		machine.round_play_phase = false;
+		machine.round_discard_phase = true;
 	}
-	if (Machine.round_discard_phase) {
-		if (Machine.cards.Pile_Card_Amount <= Machine.HP) {   // no need to discard
-			Machine.round_discard_phase = false;
+	if (machine.round_discard_phase) {
+		if (machine.cards.Pile_Card_Amount <= machine.HP) {   // no need to discard
+			machine.round_discard_phase = false;
 			new_round = true;
 			turn = 1;
 			return;
 		}
-		else if (Machine.selecet_card_amount < Machine.cards.Pile_Card_Amount - Machine.HP) {
+		else if (machine.selecet_card_amount < machine.cards.Pile_Card_Amount - machine.HP) {
 			// discard normal button set
-			for (int i = 0; i < Machine.cards.Pile_Card_Amount - Machine.HP; i++) {
-				Machine.cards.Delete_Card(Machine.cards.Pile_Card_Total->next->card_info.single_card_number);
+			for (int i = 0; i < machine.cards.Pile_Card_Amount - machine.HP; i++) {
+				machine.cards.Delete_Card(machine.cards.Pile_Card_Total->next->card_info.single_card_number);
 			}
-			Machine.round_discard_phase = false;
+			machine.round_discard_phase = false;
 			new_round = true;
-			turn = 1;
+			if (turn == machine_3) turn = human;  // meaning going to a loop
+			else turn++;
 			return;
 		}
 	}

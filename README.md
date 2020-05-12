@@ -139,5 +139,6 @@ else {  // when machine don't mean to give peach ,ask next one
 }
 ```
 *已解决：引入了bool型变量round-loop来辅助濒死阶段是否已完成一个回合，用于保证即使玩家不出桃就自己，后续有npc出桃也能救活，避免不公平性bug。
-已解决：完善了濒死状态（尚未调试），可实现无论从哪一方开始进入濒死，死亡判断只在回合轮过一圈后才判定。结合int型round_loop_starter变量确定loop开始者，用以标记loop的尽头。*  
-* 待实现：完善多人单机的machine-logic模块
+已解决：完善了濒死状态（尚未调试），可实现无论从哪一方开始进入濒死，死亡判断只在回合轮过一圈后才判定。结合int型round_loop_starter变量确定loop开始者，用以标记loop的尽头。     
+已解决：完善多人单机的machine-logic模块*
+* 待实现：完善多人单机的human-logic模块
