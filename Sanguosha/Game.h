@@ -9,6 +9,8 @@ public:
 	int turn;                             // 轮到谁的 记录量
 	int exturn;
 	int exturn_backup;
+	bool round_loop;                      // flag to judge if a loop have been existed
+	int round_loop_starter;               // mark loop starter
 	bool gamestart, gameover, gamequit;
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense

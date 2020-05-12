@@ -25,13 +25,7 @@ void Game::Machine_Round_Initialize(Player& machine) {
 void Game::Machine_Round_enable_dying_state(Player& machine) {
 	if (machine.HP <= 0) {
 		machine.is_dying = true;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
-		cout << "machine"<<machine.charactor_code-1<<"濒死求桃" << endl;
+		cout << "Machine "<<machine.charactor_code-1<<" is begging for peach ! " << endl;
 	}
 	if (machine.is_dying == true) {
 		// sent a begging peach signal to human player
@@ -42,12 +36,40 @@ void Game::Machine_Round_enable_dying_state(Player& machine) {
 		}
 		// change round to extra turn so that it can be in passive round
 		exturn = turn;
+		//round_loop = true;
+		round_loop_starter = turn;
 		// record who set signal of begging peach
-
+		peach_begger = machine.charactor_code;
 		cout << "Machine.skill.begging_peach --->>进来了" << endl;
 	}
 }
 int Game::Machine_Round_Skill_Judgment(Player& machine) {
+	// about begger-life
+	if (machine.skill.begging_peach == false && round_loop && round_loop_starter == machine.charactor_code) {
+		switch (peach_begger)
+		{
+		case human:
+			if (Human.HP <= 0) Human.die = true;
+			break;
+		case machine_0:
+			if (Machine[0].HP <= 0) Machine[0].die = true;
+			break;
+		case machine_1:
+			if (Machine[1].HP <= 1) Machine[1].die = true;
+			break;
+		case machine_2:
+			if (Machine[2].HP <= 2) Machine[2].die = true;
+			break;
+		case machine_3:
+			if (Machine[3].HP <= 3) Machine[3].die = true;
+			break;
+		default:
+			break;
+		}
+		round_loop = false;
+		round_loop_starter = -1; // default value is -1 to escape & found unknown error
+		return 0;
+	}
 	if (machine.skill.need_jink) {
 		if (machine.cards.Search_Card(jink)) {
 			machine.animator_jink = true;
@@ -84,42 +106,66 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 		Machine_Round_enable_dying_state(machine);
 		return 0;
 	}
+	
 	if (machine.skill.receive_peach) {
 		if (machine.HP < machine.limited_HP) machine.HP++;
 		machine.skill.receive_peach = false;
 		if (machine.HP <= 0) {
-			exturn = machine.charactor_code;
-			machine.self_save = true;
-			machine.is_dying = true;
+			/**
+			 *  for the question why don't set the value of next turning one ?
+			 *  answer is >>> make player plays more peach to save player possible
+			 */
+			exturn = exturn_backup;
+			exturn_backup = -1;    // default exturn_backup value in case there got unknown error
 		}
 		else {
 			exturn = normal;
+			exturn_backup = -1;    // default exturn_backup value in case there got unknown error
 			machine.self_save = false;
 			machine.is_dying = false;
 		}
-	}
-	
-	if (machine.skill.begging_peach) {
-		if (machine.cards.Search_Card(peach)) {
-			switch (turn)
-			{
-			case human:
-
-			default:
-				break;
-			}
-			Human.skill.receive_peach = true;
-			machine.cards.Delete_Card(peach);
-			cout << "机器"<<machine.charactor_code-1<<"给了一个桃！" << endl;
-		}
-		machine.skill.begging_peach = false;
-		// if there exist more machine then change it another machine to judge 
-		if (exturn == machine_3) exturn = human;  // meaning going to a loop
-		else exturn++;
 		return 0;
 	}
 	
-	// dying & self_save
+	if (machine.skill.begging_peach) {
+		round_loop = true;
+		if (machine.cards.Search_Card(peach)) {
+			// figure out who sent begging peach signal then give it
+			switch (peach_begger)
+			{
+			case human:
+				Human.skill.receive_peach = true;
+				break;
+			case machine_0:
+				Machine[0].skill.receive_peach = true;
+				break;
+			case machine_1:
+				Machine[1].skill.receive_peach = true;
+				break;
+			case machine_2:
+				Machine[2].skill.receive_peach = true;
+				break;
+			case machine_3:
+				Machine[3].skill.receive_peach = true;
+				break;
+			default:
+				break;
+			}
+			machine.cards.Delete_Card(peach);
+			cout << "Machine " << machine.charactor_code - 1 << " give a peach ！" << endl;
+			// go to peach-begger then having peach;also back up current state of turn for the situation that peach-begger is still in dying state even after get one blood recovered
+			exturn_backup = exturn;
+			exturn = peach_begger;
+		}
+		else {  // when machine don't mean to give peach ,ask next one
+			// if there exist more machine then change it another machine to judge 
+			if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			else exturn++;
+		}
+		machine.skill.begging_peach = false;
+		return 0;
+	}
+
 	if (machine.self_save) {
 		if (machine.cards.Search_Card(peach)) {
 			// animator start
@@ -129,24 +175,37 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			// result
 			machine.cards.Delete_Card(peach);
 			machine.HP++;
-			exturn = normal;
 		}
-		if(machine.HP<=0){
-			machine.die = true;
-			machine.is_dying = true;
-			machine.self_save = false;
+		else if (machine.cards.Search_Card(analeptic)) {
+			// animator start
+			machine.animator_analeptic = true;
+			machine.animator_analeptic_counter = 0;
+			animator_running = true;
+			// result
+			machine.cards.Delete_Card(analeptic);
+			machine.HP++;
+		}
+		else {
+			if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			else exturn++;
 		}
 		return 0;
 	}
-	return 1;
+
+	return 1;  // if it don't get any kind of passive skill then default return 1 to get normal round
 }
 
 void Game::Machine_Round(Player& machine) {
 
 	Machine_Round_Initialize(machine);
+
 	if (Machine_Round_Skill_Judgment(machine) == 0) return;
-	if (machine.HP <= 0) machine.self_save = true;
-	if (Machine.round_play_phase && Human.self_save == false) {
+
+	if (machine.HP <= 0) {
+		machine.self_save = true;
+		return;
+	}
+	if (Machine.round_play_phase) {
 		if (Machine.drank_analeptic == false) {
 			if (Machine.cards.Search_Card(analeptic)) {
 				// animator start

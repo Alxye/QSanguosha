@@ -7,6 +7,7 @@ Game::Game() {
 	virtual_vector.y = -999;
 	human_defense = false;
 	animator_running = false;
+	round_loop = false;
 	window.create(sf::VideoMode(window_width, window_height), L"Èı¹úÉ±_BY_ÕÔÜçÜç");
 }
 void Game::Initial() {

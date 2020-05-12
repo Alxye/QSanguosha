@@ -97,4 +97,47 @@ switch (turn){
 ```
 * 待优化：extra-turn被动回合的回合轮转问题
 ### 2020.5.12 开发思路
-*已解决：更新了Player类，给每个player对象新增charactor_code的int型变量，用来表明对象身份，可以用于定位对象。
+*已解决：更新了Player类，给每个player对象新增charactor_code的int型变量，用来表明对象身份，可以用于定位对象。  
+已解决：Machine对象的player回合采用传递参数的方法进行执行，确保安全性，封装起来便于后期维护,此外，还可以在machine回合内对其他machine对象的值的搜寻，使得一般化游戏逻辑，为后续人数设置保留接口*
+```
+// machine round logic
+void Machine_Round_Initialize(Player& machine);
+int Machine_Round_Skill_Judgment(Player& machine);
+void Machine_Round_enable_dying_state(Player& machine);
+void Machine_Round(Player & machine);
+```
+*已解决：在Game类引入了peach-begger来标志目前濒死者（即发送求桃信号的玩家对象），便于后期给桃能正确地给到求桃对象。
+*已解决：完善int型exta-turn-backup变量的应用情况，在濒死状态下，可用于保存当前出桃者回合，回合可中途调整至求桃者回合回血，并且再加以判断是否仍然处于濒死状态，同时，还可以实现出桃者出多个桃救求桃者，exta-turn-backup非应用场合下，其值为-1，以防未知错误，同时出现回合逻辑错误，也便于追踪。
+```
+// >>>>>>>求桃者>>>>>>血量判定>>>>>回合跳转判定
+if (machine.HP <= 0) {
+	exturn = machine.charactor_code;
+	machine.self_save = true;
+	machine.is_dying = true;
+	exturn = exturn_backup;// make player plays more peach to save player possible
+	exturn_backup = -1;    // default exturn_backup value in case there got unknown error
+}
+else {
+	exturn = normal;
+	exturn_backup = -1;    // default exturn_backup value in case there got unknown error
+	machine.self_save = false;
+	machine.is_dying = false;
+}
+// >>>>>>>出桃者>>>>>>回合跳转判定
+if (machine.cards.Search_Card(peach)) {
+	// figure out who sent begging peach signal then give it
+    ...
+	...
+	// go to peach-begger then having peach;also back up current state of turn for the situation that peach-begger is still in dying state even after get one blood recovered
+	exturn_backup = exturn;
+	exturn = peach_begger;
+}
+else {  // when machine don't mean to give peach ,ask next one
+	// if there exist more machine then change it another machine to judge 
+	if (exturn == machine_3) exturn = human;  // meaning going to a loop
+	else exturn++;
+}
+```
+*已解决：引入了bool型变量round-loop来辅助濒死阶段是否已完成一个回合，用于保证即使玩家不出桃就自己，后续有npc出桃也能救活，避免不公平性bug。
+已解决：完善了濒死状态（尚未调试），可实现无论从哪一方开始进入濒死，死亡判断只在回合轮过一圈后才判定。结合int型round_loop_starter变量确定loop开始者，用以标记loop的尽头。*  
+* 待实现：完善多人单机的machine-logic模块
