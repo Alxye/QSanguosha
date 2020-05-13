@@ -19,6 +19,12 @@ void Game::Machine_Round_Initialize(Player& machine) {
 		machine.is_dying = false;
 		machine.die = false;
 		machine.self_save = false;
+		exturn = normal;
+// 		Human.skill.asking_peach = false;
+// 		Machine[0].skill.begging_peach = false;
+// 		Machine[1].skill.begging_peach = false;
+// 		Machine[2].skill.begging_peach = false;
+// 		Machine[3].skill.begging_peach = false;
 	}
 }
 
@@ -121,6 +127,13 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 		else {
 			exturn = normal;
 			exturn_backup = -1;    // default exturn_backup value in case there got unknown error
+			// reset begging peach value
+			Human.skill.asking_peach = false;
+			Machine[0].skill.begging_peach = false;
+			Machine[1].skill.begging_peach = false;
+			Machine[2].skill.begging_peach = false;
+			Machine[3].skill.begging_peach = false;
+			peach_begger = -1;    // default one is -1 in case unknown error
 			machine.self_save = false;
 			machine.is_dying = false;
 		}
@@ -166,6 +179,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 		return 0;
 	}
 
+	// dying & self_save
 	if (machine.self_save) {
 		if (machine.cards.Search_Card(peach)) {
 			// animator start
@@ -174,7 +188,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			animator_running = true;
 			// result
 			machine.cards.Delete_Card(peach);
-			machine.HP++;
+			machine.skill.receive_peach = true;
+			exturn_backup = exturn;
 		}
 		else if (machine.cards.Search_Card(analeptic)) {
 			// animator start
@@ -183,11 +198,14 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			animator_running = true;
 			// result
 			machine.cards.Delete_Card(analeptic);
-			machine.HP++;
+			machine.skill.receive_peach = true;
+			exturn_backup = exturn;
 		}
 		else {
 			if (exturn == machine_3) exturn = human;  // meaning going to a loop
 			else exturn++;
+			machine.is_dying = true;
+			machine.self_save = false;
 		}
 		return 0;
 	}

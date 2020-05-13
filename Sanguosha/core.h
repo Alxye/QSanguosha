@@ -309,13 +309,15 @@ class Player
 {
 public:
 	int charactor_code;         // code for player object
+	Vector2i location_one;    // in order to locate machine's position--Upper left corner
+	Vector2i location_two;    // in order to locate machine's position--Lower right corner
 	bool is_Mechine;            // 判断对象是 人 还是 机器
 	int HP;                     // the amount of blood
 	int limited_HP;             // the limited of blood , influenced by role player get
 	bool is_dying;              // whether play have been in dying state
 	bool die;                   // whether player is die assure
 	bool self_save;             // about save themselves
-	int target;                 // 对应目标 对象本身为0；顺时针++
+	//int target;                 // 对应目标 对象本身为0；顺时针++
 	bool being_choose;          // being a target to others
 	int kill_power;             // the damage that player use kill && normally the value is 1
 	int kill_limit;             // the limit number that player use kill && normally is 1
@@ -339,9 +341,9 @@ public:
 	bool round_discard_phase;   // a signal to judge whether this round have been over
 	bool select_card;           // each time a player can only select one card to play
 	int selecet_card_amount;    // when discard,it can calculate discard amount
-	int button_assure;          // there exist four stage : unable;normal;hover;click
-	int button_cancel;          // there exist four stage : unable;normal;hover;click
-	int button_over;            // there exist four stage : unable;normal;hover;click
+	//int button_assure;          // there exist four stage : unable;normal;hover;click
+	//int button_cancel;          // there exist four stage : unable;normal;hover;click
+	//int button_over;            // there exist four stage : unable;normal;hover;click
 	bool animator_kill, animator_jink, animator_peach, animator_analeptic, animator_damage;                   // bool to constrain animator of kill
 	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
 	// for dying

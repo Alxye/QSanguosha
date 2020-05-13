@@ -348,3 +348,13 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/Sanguosha/code_from_syh/Sanguosha.cpp
+/Sanguosha/code_from_syh/Machine_round.cpp
+/Sanguosha/code_from_syh/Logic.cpp
+/Sanguosha/code_from_syh/Input.cpp
+/Sanguosha/code_from_syh/Initial.cpp
+/Sanguosha/code_from_syh/Human_round.cpp
+/Sanguosha/code_from_syh/Game.h
+/Sanguosha/code_from_syh/Draw.cpp
+/Sanguosha/code_from_syh/core.h
+/Sanguosha/code_from_syh

@@ -66,6 +66,31 @@ void Game::Initial() {
 	Machine[1].charactor_code = machine_1;
 	Machine[2].charactor_code = machine_2;
 	Machine[3].charactor_code = machine_3;
+	//---->> initialize charactor location
+	Human.location_one.x = -1;
+	Human.location_one.y = -1;
+	Human.location_two.x = -1;
+	Human.location_two.y = -1;
+	// for machine-0
+	Machine[0].location_one.x = 100;
+	Machine[0].location_one.y = 300;
+	Machine[0].location_two.x = 242;
+	Machine[0].location_two.y = 495;
+	// for machine-1
+	Machine[1].location_one.x = 390;
+	Machine[1].location_one.y = 36;
+	Machine[1].location_two.x = 532;
+	Machine[1].location_two.y = 231;
+	// for machine-2
+	Machine[2].location_one.x = 650;
+	Machine[2].location_one.y = 36;
+	Machine[2].location_two.x = 792;
+	Machine[2].location_two.y = 231;
+	// for machine-3
+	Machine[3].location_one.x = 900;
+	Machine[3].location_one.y = 300;
+	Machine[3].location_two.x = 1042;
+	Machine[3].location_two.y = 495;
 	//---->> initialize pile card
 	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
 	exturn = normal;                         // original set is mean normal 

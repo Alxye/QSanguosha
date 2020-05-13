@@ -142,3 +142,11 @@ else {  // when machine don't mean to give peach ,ask next one
 已解决：完善了濒死状态（尚未调试），可实现无论从哪一方开始进入濒死，死亡判断只在回合轮过一圈后才判定。结合int型round_loop_starter变量确定loop开始者，用以标记loop的尽头。     
 已解决：完善多人单机的machine-logic模块*
 * 待实现：完善多人单机的human-logic模块
+### 2020.5.13 开发思路
+*已解决：改进了多人状态下濒死的判断，并且解决了非濒死状态下，求桃的bug。   
+已解决：完善了human-logic多人单机的函数，玩家模块引入了坐标对象，使得更方便的进行enemy定位*
+```
+Vector2i location_one;    // in order to locate machine's position--Upper left corner
+Vector2i location_two;    // in order to locate machine's position--Lower right corner
+```
+* 待解决：实现draw模块的多人单机函数的纠正同化
