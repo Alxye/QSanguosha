@@ -71,8 +71,9 @@ public:
 	void Draw_HumanPlayer_Button();
 	void Draw_HumanPlayer();
 	void Draw_Animator_Single(int set_frame, bool& animator, int& animator_counter, string file, int limited, int _x, int _y);
-	void Draw_Animator();
-	void Draw_Machine();
+	void Draw_Animator_Machine(Player& Machine);
+	void Draw_Animator_Human();
+	void Draw_Machine(Player& Machine);
 	void Draw_Stable_Background();
 	Game();
 };

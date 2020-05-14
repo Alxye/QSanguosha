@@ -3,8 +3,11 @@
 void Game::Draw() {
 	Draw_Stable_Background();
 	Draw_HumanPlayer();
-	Draw_Machine();
-	Draw_Animator();
+	for (int number=0; number < 4; number++) {
+		Draw_Machine(Machine[number]);
+		Draw_Animator_Machine(Machine[number]);
+	}
+	Draw_Animator_Human();
 	window.display();
 }
 void Game::Draw_HumanPlayer_Button() {
@@ -148,26 +151,29 @@ void Game::Draw_Animator_Single(int set_frame, bool& animator, int& animator_cou
 		window.setFramerateLimit(30);
 	}
 }
-void Game::Draw_Animator() {
-	if (Human.animator_kill) { Draw_Animator_Single(16, Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470); }
-	else if (Machine.animator_kill) { Draw_Animator_Single(16, Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, 450, 200); }
-	else if (Human.animator_jink) { Draw_Animator_Single(16, Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470); }
-	else if (Machine.animator_jink) { Draw_Animator_Single(16, Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, 450, 240); }
-	else if (Human.animator_peach) { Draw_Animator_Single(16, Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340); }
-	else if (Machine.animator_peach) { Draw_Animator_Single(16, Machine.animator_peach, Machine.animator_peach_counter, "image/animator/peach/", 17, 450, 140); }
-	else if (Human.animator_analeptic) { Draw_Animator_Single(16, Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380); }
-	else if (Machine.animator_analeptic) { Draw_Animator_Single(16, Machine.animator_analeptic, Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, 450, 180); }
-	else if (Human.animator_damage) { Draw_Animator_Single(22, Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
-	else if (Machine.animator_damage) { Draw_Animator_Single(22, Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, (window_width - 143) / 2 - 30, 50); }
+
+void Game::Draw_Animator_Machine(Player & Machine) {
+	if (Machine.animator_kill) { Draw_Animator_Single(16, Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, Machine.location_two.x, Machine.location_two.y); }
+	else if (Machine.animator_jink) { Draw_Animator_Single(16, Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, Machine.location_two.x, Machine.location_two.y); }
+	else if (Machine.animator_peach) { Draw_Animator_Single(16, Machine.animator_peach, Machine.animator_peach_counter, "image/animator/peach/", 17, Machine.location_two.x, Machine.location_two.y); }
+	else if (Machine.animator_analeptic) { Draw_Animator_Single(16, Machine.animator_analeptic, Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, Machine.location_two.x, Machine.location_two.y); }
+	else if (Machine.animator_damage) { Draw_Animator_Single(22, Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, Machine.location_one.x, Machine.location_one.y); }
 }
-void Game::Draw_Machine() {
+void Game::Draw_Animator_Human() {
+	if (Human.animator_kill) { Draw_Animator_Single(16, Human.animator_kill, Human.animator_kill_counter, "image/animator/killer/", 13, 500, 470); }
+	else if (Human.animator_jink) { Draw_Animator_Single(16, Human.animator_jink, Human.animator_jink_counter, "image/animator/jink/", 12, 500, 470); }
+	else if (Human.animator_peach) { Draw_Animator_Single(16, Human.animator_peach, Human.animator_peach_counter, "image/animator/peach/", 17, 500, 340); }
+	else if (Human.animator_analeptic) { Draw_Animator_Single(16, Human.animator_analeptic, Human.animator_analeptic_counter, "image/animator/analeptic/", 17, 500, 380); }
+	else if (Human.animator_damage) { Draw_Animator_Single(22, Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
+}
+void Game::Draw_Machine(Player & Machine) {
 	// draw Machine HP
 	for (int i = 0; i < Machine.HP; i++) {
-		sprite_Machine_HP.setPosition((window_width - 143) / 2 + 18 + 14 * i, 118);  // the width of image named green small is 14
+		sprite_Machine_HP.setPosition(Machine.location_one.x + 18 + 14 * i, Machine.location_one.y+30);  // the width of image named green small is 14
 		window.draw(sprite_Machine_HP);
 	}
 	if (Machine.being_choose) {
-		sprite_being_chosen.setPosition((window_width - 143) / 2, 40);  // 宽 1140 || 高 600
+		sprite_being_chosen.setPosition(Machine.location_one.x, Machine.location_one.y);  // 宽 1140 || 高 600
 		window.draw(sprite_being_chosen);
 	}
 }
@@ -187,12 +193,15 @@ void Game::Draw_Stable_Background() {
 	// draw player general & role board
 	sprite_player_role_background.setPosition(910, window_height - 170); // 宽 125 || 高 170
 	window.draw(sprite_player_role_background);
-	// draw npc board
-	sprite_npcboard.setPosition((window_width - 143) / 2, 40); // 宽 143 || 高 195
-	window.draw(sprite_npcboard);
-	// draw npc cards board
-	sprite_npc_cards.setPosition((window_width - 143) / 2, 103); // 宽 143 || 高 195
-	window.draw(sprite_npc_cards);
+	// draw npc info
+	for (int number=0;number<4;number++)	{
+		// draw npc board
+		sprite_npcboard.setPosition(Machine[number].location_one.x, Machine[number].location_one.y); // 宽 143 || 高 195
+		window.draw(sprite_npcboard);
+		// draw npc cards board
+		sprite_npc_cards.setPosition(Machine[number].location_one.x, Machine[number].location_one.y+60); // 宽 143 || 高 195
+		window.draw(sprite_npc_cards);
+	}
 	// draw piles & cards background
 	sprite_piles_back.setPosition(window_width / 3, 300); // 宽 93 || 高 130
 	window.draw(sprite_piles_back);

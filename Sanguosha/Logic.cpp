@@ -17,7 +17,7 @@ void Game::Logic() {
 		gameover = true;
 		gamequit = true;
 	}
-	else  {
+	else if(Machine[0].die)  {
 		cout << "human win!!!" << endl;
 		cout << "human win!!!" << endl;
 		cout << "human win!!!" << endl;

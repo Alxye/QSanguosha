@@ -37,7 +37,7 @@ void Game::Machine_Round_enable_dying_state(Player& machine) {
 		// sent a begging peach signal to human player
 		Human.skill.begging_peach = true;
 		// sent a begging peach signal to other machine player
-		for (int number; number < 4; number++) {
+		for (int number=0; number < 4; number++) {
 			if (Machine[number].charactor_code != machine.charactor_code) Machine[number].skill.begging_peach = true;
 		}
 		// change round to extra turn so that it can be in passive round

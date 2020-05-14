@@ -149,4 +149,6 @@ else {  // when machine don't mean to give peach ,ask next one
 Vector2i location_one;    // in order to locate machine's position--Upper left corner
 Vector2i location_two;    // in order to locate machine's position--Lower right corner
 ```
-* 待解决：实现draw模块的多人单机函数的纠正同化
+* 待解决：实现draw模块的多人单机函数的纠正同化   
+### 2020.5.14 开发思路
+*已解决：将多人单机所有logic&drew函数修正完毕，并且能相对正常显示再程序当中。

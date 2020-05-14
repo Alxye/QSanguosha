@@ -51,7 +51,7 @@ void Game::Human_Round_enable_dying_state() {
 	}
 	if (Human.is_dying == true) {
 		// sent begging for peach signal to other machines(all of them)
-		for (int number; number < 4; number++) {
+		for (int number=0; number < 4; number++) {
 			Machine[number].skill.begging_peach = true;
 		}
 		exturn = turn;
