@@ -151,4 +151,129 @@ Vector2i location_two;    // in order to locate machine's position--Lower right 
 ```
 * 待解决：实现draw模块的多人单机函数的纠正同化   
 ### 2020.5.14 开发思路
-*已解决：将多人单机所有logic&drew函数修正完毕，并且能相对正常显示再程序当中。
+*已解决：将多人单机所有logic&drew函数修正完毕，并且能相对正常显示再程序当中。*
+### 2020.5.16 开发思路
+*已解决：round-轮转bug，回合问题bug。*
+* 待实现：动画一个一个播放，加入文字内容提示，当前回合位，提示当前操作
+### 2020.5.20 开发思路
+*已解决：回合bug，使得真正回合轮转*
+``` // 修正--Machine_Round_Initialize--下此下代码片段（附修正代码）
+if (machine.HP > 0 /* 新增判断变量 && Human.is_dying */ ) {
+	machine.is_dying = false;
+	machine.die = false;
+	machine.self_save = false;
+	exturn = normal;
+}
+```
+* 待实现：引入出牌阶段、弃牌阶段、摸牌阶段、判断阶段、濒死求桃阶段的界面提示框。
+### 2020.5.21 开发思路
+*已解决：初步引入出牌阶段、弃牌阶段、摸牌阶段、判断阶段、濒死求桃阶段的界面提示框*
+``` 
+//在core.h中 player类引入 texture&sprite成员
+class Player{
+...
+    // for dying to beg peach
+	Texture texture_sos_phase;
+	Sprite sprite_sos_phase;
+	// for draw phase
+	Texture texture_draw_phase;
+	Sprite sprite_draw_phase;
+	// for play phase
+	Texture texture_play_phase;
+	Sprite sprite_play_phase;
+	// for discard phase
+	Texture texture_discard_phase;
+	Sprite sprite_discard_phase;
+	// for judge phase
+	Texture texture_judge_phase;
+	Sprite sprite_judge_phase;
+	// for response phase
+	Texture texture_response_phase;
+	Sprite sprite_response_phase;
+...
+}
+// 在initial函数素材加载中初始化
+//---->> Phase mask border for machine
+for (int number = 0; number < 4; number++) {
+	Load_Image(Machine[number].texture_draw_phase, Machine[number].sprite_draw_phase, "image/phase/draw.png", 0, 0, 1, 1);
+	Load_Image(Machine[number].texture_play_phase, Machine[number].sprite_play_phase, "image/phase/play.png", 0, 0, 1, 1);
+	Load_Image(Machine[number].texture_discard_phase, Machine[number].sprite_discard_phase, "image/phase/discard.png", 0, 0, 1, 1);
+	Load_Image(Machine[number].texture_judge_phase, Machine[number].sprite_judge_phase, "image/phase/judge.png", 0, 0, 1, 1);
+	Load_Image(Machine[number].texture_response_phase, Machine[number].sprite_response_phase, "image/phase/response.png", 0, 0, 1, 1);
+	Load_Image(Machine[number].texture_sos_phase, Machine[number].sprite_sos_phase, "image/phase/sos.png", 0, 0, 1, 1);
+}
+```
+*已解决：修复了交互时候，玩家不能正确杀machine的姿势，在logic-human中的exturn变更swich中附加break;(详情代码不附）*
+*已解决：使动画逐一播放，拖延ai速度，防止混乱，解决方案：将!animator_running的判断条件附在每一个round-logic中*
+* 待实现：引入出牌阶段、弃牌阶段、摸牌阶段、判断阶段、濒死求桃阶段的界面提示框。
+### 2020.5.29 开发思路
+*已解决：解决了，一到human濒死就死机且不循环的bug。苍天大地啊...bug居然是enable_state后面小小一行 exturn=normal;找问题数天....*
+### 2020.6.3 开发思路
+*已解决：更改游戏模式，变成无尽模式，引入killing_number计数玩家杀敌统计，并且显示,下附代码（更正版本），其中玩家死亡，则置标志位为true，该条件只在攻击者求桃轮转一圈且自救无效后才触发。*
+```
+// about begger-life
+	if (Human.skill.begging_peach == false && round_loop && round_loop_starter == human) {
+		switch (peach_begger)
+		{
+		case human:
+			if (Human.HP <= 0) Human.die = true;
+			break;
+		case machine_0:
+			if (Machine[0].HP <= 0) {
+				//Machine[0].die = true;
+				Machine[0].die = false;
+				Machine[0].skill.begging_peach = false;
+				Machine[0].self_save = false;
+				Machine[0].HP = 4;
+				Machine[0].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		case machine_1:
+			if (Machine[1].HP <= 0) {
+				//Machine[1].die = true;
+				Machine[1].die = false;
+				Machine[1].skill.begging_peach = false;
+				Machine[1].self_save = false;
+				Machine[1].HP = 4;
+				Machine[1].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		case machine_2:
+			if (Machine[2].HP <= 0) {
+				//Machine[2].die = true;
+				Machine[2].die = false;
+				Machine[2].skill.begging_peach = false;
+				Machine[2].self_save = false;
+				Machine[2].HP = 4;
+				Machine[2].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		case machine_3:
+			if (Machine[3].HP <= 0) {
+				//Machine[3].die = true;
+				Machine[3].die = false;
+				Machine[3].skill.begging_peach = false;
+				Machine[3].self_save = false;
+				Machine[3].HP = 4;
+				Machine[3].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		default:
+			break;
+		}
+		round_loop = false;
+		round_loop_starter = -1; // default value is -1 to escape & found unknown error
+		exturn = normal;
+		exturn_backup = -1;
+		return 0;
+	}
+```
+*已实现：新增了自定义玩家局数，可双人局、三人局、四人局、五人局。*
+```
+// Game类新增machine_number用于计数当前局数
+// Logic 模块新增 swich 对人数的逻辑判定
+```

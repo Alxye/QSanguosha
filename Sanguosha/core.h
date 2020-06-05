@@ -29,6 +29,7 @@ typedef enum extra_turn {
 	machine_2,
 	machine_3
 };
+
 typedef struct Card_Info {
 	int single_card_number;     // 该牌所对应的牌号
 	/**---->>>>suit
@@ -52,6 +53,11 @@ typedef struct Single_Card {  // each card property
 	Vector2i point_two;
 	Single_Card* next;
 }Single_Card, * LinkList;
+
+typedef struct Message {  // message box
+	char text[100];
+	Message* next;
+}Message, * Message_Box;
 
 class Button
 {
@@ -187,7 +193,7 @@ public:
 	bool Card_Can_Attack(int number) {
 		switch (number)
 		{
-		case 0: return true;
+		case kill: return true;
 		default: return false;
 		}
 	}
@@ -227,7 +233,7 @@ public:
 		{
 			switch (ptr->card_info.single_card_number)
 			{
-			case 0: // kill
+			case 0:  // kill
 				ptr->card_name = "杀";
 				break;
 			case 1:  // jink
@@ -288,7 +294,6 @@ public:
 	bool receive_peach;
 	bool need_analeptic;
 	bool begging_peach;
-	bool asking_peach;
 	bool defense_analeptic_kill;
 	bool have_decide_saving;
 	// define skill 
@@ -299,7 +304,6 @@ public:
 		receive_peach = false;
 		need_analeptic = false;
 		begging_peach = false;
-		asking_peach = false;
 		defense_analeptic_kill = false;
 		have_decide_saving=false;
 	}
@@ -324,6 +328,9 @@ public:
 	int kill_times;
 	bool drank_analeptic;        // judge whether it played analeptic
 
+	// emery can choose
+	int chosen_number;
+
 	/**
 	 * 杀的攻击距离是1,可以杀到你左右两边的玩家,装上武器的话，就按武器攻击范围
 	 * 计算。过河拆桥,乐不思蜀没有距离限制。而顺手牵羊,兵粮寸断的距离是1。+1马
@@ -341,21 +348,35 @@ public:
 	bool round_discard_phase;   // a signal to judge whether this round have been over
 	bool select_card;           // each time a player can only select one card to play
 	int selecet_card_amount;    // when discard,it can calculate discard amount
-	//int button_assure;          // there exist four stage : unable;normal;hover;click
-	//int button_cancel;          // there exist four stage : unable;normal;hover;click
-	//int button_over;            // there exist four stage : unable;normal;hover;click
 	bool animator_kill, animator_jink, animator_peach, animator_analeptic, animator_damage;                   // bool to constrain animator of kill
 	int animator_kill_counter, animator_jink_counter, animator_peach_counter, animator_analeptic_counter, animator_damage_counter;            // counter to remember each texture
-	// for dying
-	Texture texture_dying;
-	Sprite sprite_dying;
+
+	// for dying to beg peach
+	Texture texture_sos_phase;
+	Sprite sprite_sos_phase;
+	// for draw phase
+	Texture texture_draw_phase;
+	Sprite sprite_draw_phase;
+	// for play phase
+	Texture texture_play_phase;
+	Sprite sprite_play_phase;
+	// for discard phase
+	Texture texture_discard_phase;
+	Sprite sprite_discard_phase;
+	// for judge phase
+	Texture texture_judge_phase;
+	Sprite sprite_judge_phase;
+	// for response phase
+	Texture texture_response_phase;
+	Sprite sprite_response_phase;
 
 	Skill skill;
+
 	// initialize player's life & other original set
 	Player() { 
 		// basic character value
 		charactor_code = -1;
-		HP = 4; 
+		HP = 1; 
 		limited_HP = HP; 
 		kill_power = 1; 
 		kill_limit = 1; 
@@ -369,6 +390,8 @@ public:
 		round_draw_phase = false;
 		round_play_phase = false;
 		round_discard_phase = false;
+		// chosen 
+		chosen_number = 0;
 	}
 };
 

@@ -33,20 +33,17 @@ void Game::Human_Round_Initialize() {
 		ptr->enable_to_play = false;
 		ptr = ptr->next;
 	}
-	if (Human.HP > 0) {
+	if (Human.HP > 0 && Human.is_dying ) {
 		Human.is_dying = false;
 		Human.die = false;
 		Human.self_save = false;
 		exturn = normal;
 	}
 }
+
 void Game::Human_Round_enable_dying_state() {
 	if (Human.HP <= 0) {
 		Human.is_dying = true;
-		cout << "Human-->>濒死求桃" << endl;
-		cout << "Human-->>濒死求桃" << endl;
-		cout << "Human-->>濒死求桃" << endl;
-		cout << "Human-->>濒死求桃" << endl;
 		cout << "Human-->>濒死求桃" << endl;
 	}
 	if (Human.is_dying == true) {
@@ -54,7 +51,9 @@ void Game::Human_Round_enable_dying_state() {
 		for (int number=0; number < 4; number++) {
 			Machine[number].skill.begging_peach = true;
 		}
-		exturn = turn;
+		exturn = turn; /// alaso ==>>  exturn=Human.charactor_code;
+		cout << exturn << endl;
+		cout << "攻击者为：" << turn<<endl;
 		round_loop_starter = turn;
 		peach_begger = Human.charactor_code;
 		cout << "Human.skill.begging_peach --->>进来了" << endl;
@@ -65,6 +64,66 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 	// when its first time to defense , set cancel button enable
 	if ((exturn==human||Human.self_save|| Human.skill.begging_peach) && button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled) {
 		button_cancel.enable_normal_button();
+	}
+	// about begger-life
+	if (Human.skill.begging_peach == false && round_loop && round_loop_starter == human) {
+		switch (peach_begger)
+		{
+		case human:
+			if (Human.HP <= 0) Human.die = true;
+			break;
+		case machine_0:
+			if (Machine[0].HP <= 0) {
+				//Machine[0].die = true;
+				Machine[0].die = false;
+				Machine[0].skill.begging_peach = false;
+				Machine[0].self_save = false;
+				Machine[0].HP = 4;
+				Machine[0].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		case machine_1:
+			if (Machine[1].HP <= 0) {
+				//Machine[1].die = true;
+				Machine[1].die = false;
+				Machine[1].skill.begging_peach = false;
+				Machine[1].self_save = false;
+				Machine[1].HP = 4;
+				Machine[1].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		case machine_2:
+			if (Machine[2].HP <= 0) {
+				//Machine[2].die = true;
+				Machine[2].die = false;
+				Machine[2].skill.begging_peach = false;
+				Machine[2].self_save = false;
+				Machine[2].HP = 4;
+				Machine[2].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		case machine_3:
+			if (Machine[3].HP <= 0) {
+				//Machine[3].die = true;
+				Machine[3].die = false;
+				Machine[3].skill.begging_peach = false;
+				Machine[3].self_save = false;
+				Machine[3].HP = 4;
+				Machine[3].limited_HP = 4;
+				killing_number++;
+			}
+			break;
+		default:
+			break;
+		}
+		round_loop = false;
+		round_loop_starter = -1; // default value is -1 to escape & found unknown error
+		exturn = normal;
+		exturn_backup = -1;
+		return 0;
 	}
 	// skill judgment
 	if (Human.skill.need_jink || Human.skill.defense_analeptic_kill) {
@@ -127,7 +186,7 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			if (Human.skill.defense_analeptic_kill) Human.HP -= 2;
 			else if (Human.skill.need_jink) Human.HP--;
 			// judge human is dying?
-			if (Human.HP <= 0) Human_Round_enable_dying_state();
+			Human_Round_enable_dying_state();
 			// find node that is chose card
 			Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 			for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
@@ -142,7 +201,7 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			Human.select_card = false;
 			Human.selecet_card_amount = 0;
 			//human_defense = false;
-			exturn = normal;
+			if(Human.HP>0)exturn = normal;
 			Human.skill.need_jink = false;
 			Human.skill.defense_analeptic_kill = false;
 			// animator go
@@ -157,7 +216,7 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 		}
 		return 0;
 	}
-	
+
 	if (Human.skill.receive_peach==true) {
 		if (Human.HP < Human.limited_HP) Human.HP++;
 		Human.skill.receive_peach = false;
@@ -168,7 +227,6 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 		else {
 			exturn = normal;
 			exturn_backup = -1; 
-			Human.skill.asking_peach = false;
 			Machine[0].skill.begging_peach = false;
 			Machine[1].skill.begging_peach = false;
 			Machine[2].skill.begging_peach = false;
@@ -469,11 +527,14 @@ void Game::Human_Round() {
 						mouse_select_vector.x < Machine[number].location_two.x &&
 						mouse_select_vector.y > Machine[number].location_one.y && 
 						mouse_select_vector.y < Machine[number].location_two.y && 
-						Machine[number].being_choose == false) {     // when it tends to choose enemy
+						Machine[number].being_choose == false &&
+						Human.chosen_number==0) {     // when it tends to choose enemy
 						Machine[number].being_choose = true;
 						button_ok.enable_normal_button();
 						button_cancel.enable_diabled_button();
 						button_discard.enable_diabled_button();
+						cout << "choseen:::" << number << endl;
+						Human.chosen_number = 1;
 					}
 					else if (mouse_select_vector.x > Machine[number].location_one.x && 
 						mouse_select_vector.x < Machine[number].location_two.x && 
@@ -484,11 +545,18 @@ void Game::Human_Round() {
 						button_ok.enable_diabled_button();
 						button_cancel.enable_normal_button();
 						button_discard.enable_diabled_button();
+						Human.chosen_number = 0;
 					}
-					else if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 604 && mouse_select_vector.y < (604 + 75) && Machine[number].being_choose == true) {  // when it choose enemy & tends to click assure button to fight   the assure button area is 
+					else if (mouse_select_vector.x > 807 &&
+						mouse_select_vector.x < (807 + 61) &&
+						mouse_select_vector.y > 604 && 
+						mouse_select_vector.y < (604 + 75) &&
+						Machine[number].being_choose == true) {  // when it choose enemy & tends to click assure button to fight   the assure button area is 
 						Machine[number].being_choose = false;
-						if (ptr->card_info.single_card_number == kill && Human.drank_analeptic)
-						{
+
+						if (ptr->card_info.single_card_number == kill && Human.drank_analeptic) {
+
+							cout << "analeptic__killllit:::" << number << endl;
 							//  animator running
 							Human.animator_kill = true;
 							Human.animator_kill_counter = 0;
@@ -499,20 +567,26 @@ void Game::Human_Round() {
 							{
 							case 0:
 								exturn = machine_0;
+								break;
 							case 1:
 								exturn = machine_1;
+								break;
 							case 2:
 								exturn = machine_2;
+								break;
 							case 3:
 								exturn = machine_3;
-							default:
 								break;
 							}
 							Human.kill_times++;
 							Human.cards.Detete_Card_Selected();
+
+							cout << "exturn is :::" << exturn << endl;
 						}
 						else if (ptr->card_info.single_card_number == kill)
 						{
+
+							cout << "__killllit:::" << number << endl;
 							//  animator running
 							Human.animator_kill = true;
 							Human.animator_kill_counter = 0;
@@ -523,17 +597,23 @@ void Game::Human_Round() {
 							{
 							case 0:
 								exturn = machine_0;
+								break;
 							case 1:
 								exturn = machine_1;
+								break;
 							case 2:
 								exturn = machine_2;
+								break;
 							case 3:
 								exturn = machine_3;
+								break;
 							default:
 								break;
 							}
 							Human.kill_times++;
 							Human.cards.Detete_Card_Selected();
+
+							cout << "exturn is :::" << exturn << endl;
 						}
 						Human.select_card = false;
 						// then change button state
@@ -603,7 +683,8 @@ void Game::Human_Round() {
 			button_discard.enable_diabled_button();
 			Human.round_discard_phase = false;
 			new_round = true;
-			turn = 0;
+			if (turn == machine_3) turn = human;  // meaning going to a loop
+			else turn++;
 			return;
 		}
 		else if (Human.selecet_card_amount < Human.cards.Pile_Card_Amount - Human.HP) {

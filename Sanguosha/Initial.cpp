@@ -9,6 +9,8 @@ Game::Game() {
 	animator_running = false;
 	round_loop = false;
 	window.create(sf::VideoMode(window_width, window_height), L"Èý¹úÉ±_BY_ÕÔÜçÜç");
+	Human.HP = 2;
+	Human.limited_HP = Human.HP;
 }
 void Game::Initial() {
 	// initialize game state
@@ -60,6 +62,16 @@ void Game::Initial() {
 	Load_Image(texture_Machine_HP, sprite_Machine_HP, "image/HP/green_small.png", 0, 0, 1, 1);
 	//---->> Human's dying state saving me
 	Load_Image(texture_Human_save_me, sprite_Human_save_me, "image/gameover/save-me.png", 0, 0, 1, 1);
+    //---->> Phase mask border for machine
+	for (int number = 0; number < 4; number++) {
+		Load_Image(Machine[number].texture_draw_phase, Machine[number].sprite_draw_phase, "image/phase/draw.png", 0, 0, 1, 1);
+		Load_Image(Machine[number].texture_play_phase, Machine[number].sprite_play_phase, "image/phase/play.png", 0, 0, 1, 1);
+		Load_Image(Machine[number].texture_discard_phase, Machine[number].sprite_discard_phase, "image/phase/discard.png", 0, 0, 1, 1);
+		Load_Image(Machine[number].texture_judge_phase, Machine[number].sprite_judge_phase, "image/phase/judge.png", 0, 0, 1, 1);
+		Load_Image(Machine[number].texture_response_phase, Machine[number].sprite_response_phase, "image/phase/response.png", 0, 0, 1, 1);
+		Load_Image(Machine[number].texture_sos_phase, Machine[number].sprite_sos_phase, "image/phase/sos.png", 0, 0, 1, 1);
+	}
+	Load_Image(texture_Human_save_me, sprite_Human_save_me, "image/gameover/save-me.png", 0, 0, 1, 1);
 	//---->> initialize charactor code to get catch of each member
 	Human.charactor_code = human;
 	Machine[0].charactor_code = machine_0;
@@ -77,23 +89,31 @@ void Game::Initial() {
 	Machine[0].location_two.x = 242;
 	Machine[0].location_two.y = 495;
 	// for machine-1
-	Machine[1].location_one.x = 390;
+	Machine[1].location_one.x = 290;
 	Machine[1].location_one.y = 36;
-	Machine[1].location_two.x = 532;
+	Machine[1].location_two.x = 432;
 	Machine[1].location_two.y = 231;
 	// for machine-2
-	Machine[2].location_one.x = 650;
+	Machine[2].location_one.x = 550;
 	Machine[2].location_one.y = 36;
-	Machine[2].location_two.x = 792;
+	Machine[2].location_two.x = 692;
 	Machine[2].location_two.y = 231;
 	// for machine-3
-	Machine[3].location_one.x = 900;
+	Machine[3].location_one.x = 750;
 	Machine[3].location_one.y = 300;
-	Machine[3].location_two.x = 1042;
+	Machine[3].location_two.x = 892;
 	Machine[3].location_two.y = 495;
 	//---->> initialize pile card
 	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
 	exturn = normal;                         // original set is mean normal 
+	//---->> initialize killing number
+	killing_number = 0;
+    //---->> diable all the button
+	button_ok.enable_diabled_button();
+	button_discard.enable_diabled_button();
+	button_cancel.enable_diabled_button();
+	//---->> machine number
+	machine_number = 4;                     // default is 4 yeh
 }
 
 int Game::Previous_Draw_Phase() {
@@ -111,7 +131,8 @@ int Game::Previous_Draw_Phase() {
 		piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
 	}
 	//return rand() % 5 +1;  // the rand function would detenmine which one to play first
-	return human;    // test for human to start whatever situation is
+	//return human;    // test for human to start whatever situation is
+	return machine_0;    // test for human to start whatever situation is
 }
 
 // change string to lpcwstr so that string can display on warning windows
