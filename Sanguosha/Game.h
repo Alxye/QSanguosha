@@ -15,8 +15,6 @@ public:
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense
 	bool animator_running;                // judge animator is running ,so that machine play wont play so fast
-	// for human player to decide how many machines he&she want play with
-	int machine_number;                   // also limited number is 4
 	Vector2i virtual_vector;              // a virtual coordinate for overflow error
     // record who set signal of begging peach
 	int peach_begger;
@@ -41,9 +39,6 @@ public:
 	Sprite sprite_Human_save_me;
 	// Game Class
 	void out_put(Single_Card single);
-	// for count the killing number
-	int killing_number;
-
 
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows

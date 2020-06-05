@@ -36,6 +36,9 @@ Vector2i Game::Input() {
 			mouse_count_clock_one = Mouse::getPosition(window);
 			//bool card_selected = Human.cards.Search_Card_Position(mouse_count_clock_one);
 			mouse_click_timer.restart();
+			//if (button_ok.is_down) button_ok.enable_normal_button();
+			//if (button_cancel.is_down) button_cancel.enable_normal_button();
+			//if (button_discard.is_down) button_discard.enable_normal_button();
 			return mouse_count_clock_one;
 		}
 
@@ -45,14 +48,14 @@ Vector2i Game::Input() {
 			if (!button_cancel.is_disabled) {
 				if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 694 && event_global.mouseMove.y < (694 + 73))
 				{ // the button of cancel //(807, 694)++(61,73)
-					//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-					//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					cout << "new mouse x: " << event_global.mouseMove.x << endl;
+					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_cancel.enable_hover_button();
 					//cout << "鼠标位于取消上" << endl;
 				}
 				else {
-					//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-					//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					cout << "new mouse x: " << event_global.mouseMove.x << endl;
+					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_cancel.enable_normal_button();
 					//cout << "鼠标不在取消上" << endl;
 				}
@@ -61,15 +64,15 @@ Vector2i Game::Input() {
 			if (!button_ok.is_disabled) {
 				if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 604 && event_global.mouseMove.y < (604 + 75))
 				{ // the button of ok //(807, 604)++(61,75)
-					//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-					//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					cout << "new mouse x: " << event_global.mouseMove.x << endl;
+					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_ok.enable_hover_button();
 					//cout << "鼠标位于确定上" << endl;
 					//return virtual_vector;
 				}
 				else {
-					//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-					//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					cout << "new mouse x: " << event_global.mouseMove.x << endl;
+					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_ok.enable_normal_button();
 					//cout << "鼠标不在确定上" << endl;
 				}
@@ -78,14 +81,14 @@ Vector2i Game::Input() {
 			if (!button_discard.is_disabled) {
 				if (event_global.mouseMove.x > 874 && event_global.mouseMove.x < (874 + 33) && event_global.mouseMove.y > 644 && event_global.mouseMove.y < (644 + 81))
 				{ // the button of ok //(874, 644)++(33,81)
-					//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-					//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					cout << "new mouse x: " << event_global.mouseMove.x << endl;
+					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_discard.enable_hover_button();
 					//cout << "鼠标位于结束上" << endl;
 				}
 				else {
-					//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-					//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					cout << "new mouse x: " << event_global.mouseMove.x << endl;
+					cout << "new mouse y: " << event_global.mouseMove.y << endl;
 					button_discard.enable_normal_button();
 					//cout << "鼠标不在结束上" << endl;
 				}

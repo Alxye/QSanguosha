@@ -1,19 +1,13 @@
 #include "Game.h"
 
 void Game::Draw() {
-	// draw stable part
 	Draw_Stable_Background();
-
-	// draw human part
 	Draw_HumanPlayer();
-	Draw_Animator_Human();
-
-	//draw machine part
 	for (int number=0; number < 4; number++) {
 		Draw_Machine(Machine[number]);
 		Draw_Animator_Machine(Machine[number]);
 	}
-
+	Draw_Animator_Human();
 	window.display();
 }
 void Game::Draw_HumanPlayer_Button() {
@@ -154,7 +148,6 @@ void Game::Draw_Animator_Single(int set_frame, bool& animator, int& animator_cou
 	if (animator_counter == limited) {
 		animator = false;
 		animator_running = false;
-		//Sleep(500);
 		window.setFramerateLimit(30);
 	}
 }
@@ -162,8 +155,8 @@ void Game::Draw_Animator_Single(int set_frame, bool& animator, int& animator_cou
 void Game::Draw_Animator_Machine(Player & Machine) {
 	if (Machine.animator_kill) { Draw_Animator_Single(16, Machine.animator_kill, Machine.animator_kill_counter, "image/animator/killer/", 13, Machine.location_two.x, Machine.location_two.y); }
 	else if (Machine.animator_jink) { Draw_Animator_Single(16, Machine.animator_jink, Machine.animator_jink_counter, "image/animator/jink/", 12, Machine.location_two.x, Machine.location_two.y); }
-	else if (Machine.animator_peach) { Draw_Animator_Single(16, Machine.animator_peach, Machine.animator_peach_counter, "image/animator/peach/", 17, Machine.location_two.x-150, Machine.location_two.y - 50); }
-	else if (Machine.animator_analeptic) { Draw_Animator_Single(16, Machine.animator_analeptic, Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, Machine.location_two.x - 150, Machine.location_two.y - 50); }
+	else if (Machine.animator_peach) { Draw_Animator_Single(16, Machine.animator_peach, Machine.animator_peach_counter, "image/animator/peach/", 17, Machine.location_two.x, Machine.location_two.y); }
+	else if (Machine.animator_analeptic) { Draw_Animator_Single(16, Machine.animator_analeptic, Machine.animator_analeptic_counter, "image/animator/analeptic/", 17, Machine.location_two.x, Machine.location_two.y); }
 	else if (Machine.animator_damage) { Draw_Animator_Single(22, Machine.animator_damage, Machine.animator_damage_counter, "image/animator/damage/", 6, Machine.location_one.x, Machine.location_one.y); }
 }
 void Game::Draw_Animator_Human() {
@@ -179,13 +172,10 @@ void Game::Draw_Machine(Player & Machine) {
 		sprite_Machine_HP.setPosition(Machine.location_one.x + 18 + 14 * i, Machine.location_one.y+30);  // the width of image named green small is 14
 		window.draw(sprite_Machine_HP);
 	}
-	
 	if (Machine.being_choose) {
 		sprite_being_chosen.setPosition(Machine.location_one.x, Machine.location_one.y);  // 宽 1140 || 高 600
 		window.draw(sprite_being_chosen);
 	}
-	Machine.sprite_draw_phase.setPosition(Machine.location_two.x-25, Machine.location_one.y );  // 宽 1140 || 高 600
-	window.draw(Machine.sprite_draw_phase);
 }
 void Game::Draw_Stable_Background() {
 	// draw background
@@ -215,25 +205,4 @@ void Game::Draw_Stable_Background() {
 	// draw piles & cards background
 	sprite_piles_back.setPosition(window_width / 3, 300); // 宽 93 || 高 130
 	window.draw(sprite_piles_back);
-
-	// draw killing enemy note
-	RectangleShape rect(Vector2f(140, 30)); // draw rectangle
-	rect.setFillColor(Color(0, 0, 0, 100));
-	rect.setPosition(800,20);
-	window.draw(rect);
-
-	Font reminded_note_font;
-	Text reminded_note;
-	Load_Font(reminded_note_font, reminded_note, "font/simsun.ttc");
-	reminded_note.setCharacterSize(20);
-	reminded_note.setFillColor(Color(255, 255, 255, 255));
-	reminded_note.setStyle(Text::Bold);
-	reminded_note.setPosition(810, 20);
-	wstring reminded = L"已杀敌： ";
-	std::stringstream temp_string;
-	temp_string << killing_number;
-	reminded = reminded + temp_string.str() + L"！";
-
-	reminded_note.setString(reminded);
-	window.draw(reminded_note);
 }
