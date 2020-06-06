@@ -9,7 +9,8 @@ void Game::Draw() {
 	Draw_Animator_Human();
 
 	//draw machine part
-	for (int number=0; number < 4; number++) {
+	for (int number=0; number < machine_number ; number++) {
+		
 		Draw_Machine(Machine[number]);
 		Draw_Animator_Machine(Machine[number]);
 	}
@@ -174,6 +175,29 @@ void Game::Draw_Animator_Human() {
 	else if (Human.animator_damage) { Draw_Animator_Single(22, Human.animator_damage, Human.animator_damage_counter, "image/animator/damage/", 6, 910, window_height - 170); }
 }
 void Game::Draw_Machine(Player & Machine) {
+	// draw Machine backboard & info
+	sprite_npcboard.setPosition(Machine.location_one.x, Machine.location_one.y); // 宽 143 || 高 195
+	window.draw(sprite_npcboard);
+	// draw npc cards board
+	sprite_npc_cards.setPosition(Machine.location_one.x, Machine.location_one.y + 60); // 宽 143 || 高 195
+	window.draw(sprite_npc_cards);
+
+	// draw npc card-number
+	Font reminded_note_font;
+	Text reminded_note;
+	Load_Font(reminded_note_font, reminded_note, "font/simsun.ttc");
+	reminded_note.setCharacterSize(20);
+	reminded_note.setFillColor(Color(0, 0, 0, 255));
+	reminded_note.setStyle(Text::Bold);
+	reminded_note.setPosition(Machine.location_one.x+5, Machine.location_one.y + 60);
+	wstring reminded;
+	std::stringstream temp_string;
+	temp_string << Machine.cards.Pile_Card_Amount;
+	reminded = reminded + temp_string.str();
+
+	reminded_note.setString(reminded);
+	window.draw(reminded_note);
+
 	// draw Machine HP
 	for (int i = 0; i < Machine.HP; i++) {
 		sprite_Machine_HP.setPosition(Machine.location_one.x + 18 + 14 * i, Machine.location_one.y+30);  // the width of image named green small is 14
@@ -203,15 +227,7 @@ void Game::Draw_Stable_Background() {
 	// draw player general & role board
 	sprite_player_role_background.setPosition(910, window_height - 170); // 宽 125 || 高 170
 	window.draw(sprite_player_role_background);
-	// draw npc info
-	for (int number=0;number<4;number++)	{
-		// draw npc board
-		sprite_npcboard.setPosition(Machine[number].location_one.x, Machine[number].location_one.y); // 宽 143 || 高 195
-		window.draw(sprite_npcboard);
-		// draw npc cards board
-		sprite_npc_cards.setPosition(Machine[number].location_one.x, Machine[number].location_one.y+60); // 宽 143 || 高 195
-		window.draw(sprite_npc_cards);
-	}
+
 	// draw piles & cards background
 	sprite_piles_back.setPosition(window_width / 3, 300); // 宽 93 || 高 130
 	window.draw(sprite_piles_back);

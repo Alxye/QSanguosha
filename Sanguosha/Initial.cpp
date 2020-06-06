@@ -8,7 +8,7 @@ Game::Game() {
 	human_defense = false;
 	animator_running = false;
 	round_loop = false;
-	window.create(sf::VideoMode(window_width, window_height), L"Èı¹úÉ±_BY_ÕÔÜçÜç");
+	window.create(sf::VideoMode(window_width, window_height), L"Èı¹úÉ±_BY_ÕÔÜçÜç", sf::Style::Close);
 	Human.HP = 2;
 	Human.limited_HP = Human.HP;
 }
@@ -113,7 +113,7 @@ void Game::Initial() {
 	button_discard.enable_diabled_button();
 	button_cancel.enable_diabled_button();
 	//---->> machine number
-	machine_number = 4;                     // default is 4 yeh
+	machine_number = 2;                     // default is 4 yeh
 }
 
 int Game::Previous_Draw_Phase() {

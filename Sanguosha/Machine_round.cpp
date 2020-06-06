@@ -32,7 +32,7 @@ void Game::Machine_Round_enable_dying_state(Player& machine) {
 		// sent a begging peach signal to human player
 		Human.skill.begging_peach = true;
 		// sent a begging peach signal to other machine player
-		for (int number=0; number < 4; number++) {
+		for (int number=0; number < machine_number; number++) {
 			if (Machine[number].charactor_code != machine.charactor_code) Machine[number].skill.begging_peach = true;
 		}
 		// change round to extra turn so that it can be in passive round
@@ -59,8 +59,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[0].die = false;
 				Machine[0].skill.begging_peach = false;
 				Machine[0].self_save = false;
-				Machine[0].HP = 4;
-				Machine[0].limited_HP = 4;
+				Machine[0].HP = 2;
+				Machine[0].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -70,8 +70,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[1].die = false;
 				Machine[1].skill.begging_peach = false;
 				Machine[1].self_save = false;
-				Machine[1].HP = 4;
-				Machine[1].limited_HP = 4;
+				Machine[1].HP = 2;
+				Machine[1].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -81,8 +81,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[2].die = false;
 				Machine[2].skill.begging_peach = false;
 				Machine[2].self_save = false;
-				Machine[2].HP = 4;
-				Machine[2].limited_HP = 4;
+				Machine[2].HP = 2;
+				Machine[2].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -92,8 +92,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[3].die = false;
 				Machine[3].skill.begging_peach = false;
 				Machine[3].self_save = false;
-				Machine[3].HP = 4;
-				Machine[3].limited_HP = 4;
+				Machine[3].HP = 2;
+				Machine[3].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -229,7 +229,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 		}
 		else {  // when machine don't mean to give peach ,ask next one
 			// if there exist more machine then change it another machine to judge 
-			if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			if (exturn == machine_number+1) exturn = human;  // meaning going to a loop
 			else exturn++;
 
 			cout << exturn << endl;
@@ -263,7 +263,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			exturn_backup = exturn;
 		}
 		else {
-			if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			if (exturn == machine_number+1) exturn = human;  // meaning going to a loop
 			else exturn++;
 			machine.is_dying = true;
 			machine.self_save = false;
@@ -307,8 +307,8 @@ void Game::Machine_Round(Player& machine) {
 					animator_running = true;
 					// result
 					if (machine.drank_analeptic) {
-						int emeny_code = rand() % 5 + 1;
-						while (emeny_code == machine.charactor_code) emeny_code = rand() % 5 + 1;
+						int emeny_code = rand() % (machine_number+1) + 1;
+						while (emeny_code == machine.charactor_code) emeny_code = rand() % (machine_number + 1) + 1;
 						cout << "emeny_code::::" << emeny_code << endl;
 						switch (emeny_code)
 						{
@@ -336,8 +336,8 @@ void Game::Machine_Round(Player& machine) {
 						exturn = emeny_code;
 					}
 					else {
-						int emeny_code = rand() % 5 + 1;
-						while (emeny_code == machine.charactor_code) emeny_code = rand() % 5 + 1;
+						int emeny_code = rand() % (machine_number + 1) + 1;
+						while (emeny_code == machine.charactor_code) emeny_code = rand() % (machine_number + 1) + 1;
 						cout << "emeny_code::::" << emeny_code << endl;
 						switch (emeny_code)
 						{
@@ -386,18 +386,18 @@ void Game::Machine_Round(Player& machine) {
 			if (machine.cards.Pile_Card_Amount <= machine.HP) {   // no need to discard
 				machine.round_discard_phase = false;
 				new_round = true;
-				if (turn == machine_3) turn = human;  // meaning going to a loop
+				if (turn == machine_number + 1) turn = human;  // meaning going to a loop
 				else turn++;
 				return;
 			}
-			else if (machine.selecet_card_amount < machine.cards.Pile_Card_Amount - machine.HP) {
+			else {
 				// discard normal button set
-				for (int i = 0; i < machine.cards.Pile_Card_Amount - machine.HP; i++) {
+				while (machine.cards.Pile_Card_Amount > machine.HP){
 					machine.cards.Delete_Card(machine.cards.Pile_Card_Total->next->card_info.single_card_number);
 				}
 				machine.round_discard_phase = false;
 				new_round = true;
-				if (turn == machine_3) turn = human;  // meaning going to a loop
+				if (turn == machine_number + 1) turn = human;  // meaning going to a loop
 				else turn++;
 				return;
 			}

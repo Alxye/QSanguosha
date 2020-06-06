@@ -26,15 +26,12 @@ void Game::Logic() {
 	// gameover state judgment ===>> that need to be improved
 	if (Human.die) { 
 		cout << "machine win!!!" << endl;
-		cout << "machine win!!!" << endl;
-		cout << "machine win!!!" << endl;
-		cout << "machine win!!!" << endl;
 		gameover = true;
 		gamequit = true;
 	}
 }
 
-void Game::Round_Initialize(int &turn) { // 
+void Game::Round_Initialize(int &turn) {
 	switch (turn)
 	{
 	case human:          // humans round

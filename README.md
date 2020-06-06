@@ -277,3 +277,12 @@ for (int number = 0; number < 4; number++) {
 // Game类新增machine_number用于计数当前局数
 // Logic 模块新增 swich 对人数的逻辑判定
 ```
+### 2020.6.3 开发思路
+*已实现：解决窗口拉伸&最大化问题，禁用！*
+*已实现：增加绘制machine卡牌数量。*
+*已实现：修正machine无法正确弃牌的bug*
+```
+while (machine.cards.Pile_Card_Amount > machine.HP) {
+	machine.cards.Delete_Card(machine.cards.Pile_Card_Total->next->card_info.single_card_number);
+}
+```

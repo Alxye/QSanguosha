@@ -18,17 +18,17 @@ Vector2i Game::Input() {
 			else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
 			{ // the button of ok //(807, 604)++(61,75)
 				button_ok.enable_down_button();
-				cout << "鼠标按下确定" << endl;
+				//cout << "鼠标按下确定" << endl;
 			}
 			else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 694 && mouse_count_clock_two.y < (694 + 73) && !button_cancel.is_disabled)
 			{ // the button of cancel //(807, 604)++(61,75)  
 				button_cancel.enable_down_button();
-				cout << "鼠标按下取消" << endl;
+				//cout << "鼠标按下取消" << endl;
 			}
 			else if (mouse_count_clock_two.x > 874 && mouse_count_clock_two.x < (874 + 33) && mouse_count_clock_two.y > 644 && mouse_count_clock_two.y < (644 + 81) && !button_discard.is_disabled)
 			{ // the button of discard //(807, 604)++(61,75)  
 				button_discard.enable_down_button();
-				cout << "鼠标按下结束" << endl;
+				//cout << "鼠标按下结束" << endl;
 			}
 
 		}

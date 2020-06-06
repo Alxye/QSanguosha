@@ -48,7 +48,7 @@ void Game::Human_Round_enable_dying_state() {
 	}
 	if (Human.is_dying == true) {
 		// sent begging for peach signal to other machines(all of them)
-		for (int number=0; number < 4; number++) {
+		for (int number=0; number < machine_number; number++) {
 			Machine[number].skill.begging_peach = true;
 		}
 		exturn = turn; /// alaso ==>>  exturn=Human.charactor_code;
@@ -78,8 +78,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[0].die = false;
 				Machine[0].skill.begging_peach = false;
 				Machine[0].self_save = false;
-				Machine[0].HP = 4;
-				Machine[0].limited_HP = 4;
+				Machine[0].HP = 2;
+				Machine[0].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -89,8 +89,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[1].die = false;
 				Machine[1].skill.begging_peach = false;
 				Machine[1].self_save = false;
-				Machine[1].HP = 4;
-				Machine[1].limited_HP = 4;
+				Machine[1].HP = 2;
+				Machine[1].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -100,8 +100,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[2].die = false;
 				Machine[2].skill.begging_peach = false;
 				Machine[2].self_save = false;
-				Machine[2].HP = 4;
-				Machine[2].limited_HP = 4;
+				Machine[2].HP = 2;
+				Machine[2].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -111,8 +111,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[3].die = false;
 				Machine[3].skill.begging_peach = false;
 				Machine[3].self_save = false;
-				Machine[3].HP = 4;
-				Machine[3].limited_HP = 4;
+				Machine[3].HP = 2;
+				Machine[3].limited_HP = 2;
 				killing_number++;
 			}
 			break;
@@ -200,7 +200,6 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			// initialize data
 			Human.select_card = false;
 			Human.selecet_card_amount = 0;
-			//human_defense = false;
 			if(Human.HP>0)exturn = normal;
 			Human.skill.need_jink = false;
 			Human.skill.defense_analeptic_kill = false;
@@ -318,7 +317,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 		if (button_cancel.is_down) {
 			// result
 			/** where exist more player, it turn to next player */
-			if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			//if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			if (exturn == machine_number+1) exturn = human;  // meaning going to a loop
 			else exturn++;
 			Human.skill.begging_peach = false;
 			// find node that is chose card
@@ -341,7 +341,7 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			button_discard.enable_diabled_button();
 			return 0;
 		}
-		cout << "come yet??" << endl;
+		//cout << "come yet??" << endl;
 		return 0;
 	}
 
@@ -419,7 +419,7 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 		}
 		if (button_cancel.is_down) {
 			// result
-			if (exturn == machine_3) exturn = human;  // meaning going to a loop
+			if (exturn == machine_number+1) exturn = human;  // meaning going to a loop
 			else exturn++;
 			Human.is_dying = true;
 			Human.self_save = false;
@@ -522,7 +522,7 @@ void Game::Human_Round() {
 			}
 			if (ptr != NULL && ptr->card_info.can_attck) {    // if the select card then choose enemy  (window_width - 143) / 2, 40 // ¿í 143 || ¸ß 195
 				// machine-0 to machine-3 Traverse each situation;though it seem a little bit inefficient;looking for further improvement
-				for (int number = 0; number < 4; number++) {
+				for (int number = 0; number < machine_number; number++) {
 					if (mouse_select_vector.x > Machine[number].location_one.x && 
 						mouse_select_vector.x < Machine[number].location_two.x &&
 						mouse_select_vector.y > Machine[number].location_one.y && 
@@ -615,6 +615,7 @@ void Game::Human_Round() {
 
 							cout << "exturn is :::" << exturn << endl;
 						}
+						Human.chosen_number = 0;
 						Human.select_card = false;
 						// then change button state
 						button_ok.enable_diabled_button();
@@ -644,6 +645,7 @@ void Game::Human_Round() {
 					Machine[1].being_choose = false;
 					Machine[2].being_choose = false;
 					Machine[3].being_choose = false;
+					Human.chosen_number = 0;
 					Human.cards.Detete_Card_Selected();
 					Human.select_card = false;
 					// then change button state
@@ -658,6 +660,7 @@ void Game::Human_Round() {
 				Machine[1].being_choose = false;
 				Machine[2].being_choose = false;
 				Machine[3].being_choose = false;
+				Human.chosen_number = 0;
 				Human.select_card = false;
 				ptr->mouse_select_card = false;
 				// then change button state
@@ -683,7 +686,7 @@ void Game::Human_Round() {
 			button_discard.enable_diabled_button();
 			Human.round_discard_phase = false;
 			new_round = true;
-			if (turn == machine_3) turn = human;  // meaning going to a loop
+			if (turn == machine_number+1) turn = human;  // meaning going to a loop
 			else turn++;
 			return;
 		}
@@ -715,7 +718,7 @@ void Game::Human_Round() {
 			button_ok.enable_diabled_button();
 			Human.round_discard_phase = false;
 			new_round = true;
-			if (turn == machine_3) turn = human;  // meaning going to a loop
+			if (turn == machine_number+1) turn = human;  // meaning going to a loop
 			else turn++;
 		}
 	}
