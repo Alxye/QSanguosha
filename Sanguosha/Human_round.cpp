@@ -1,6 +1,15 @@
 #include "Game.h"
 void Game::Human_Round_Initialize() {
-	if (piles.Pile_Card_Amount < 20) piles.Shuffle_Card(); // if card few ,shuffle
+	if (piles.Pile_Card_Amount < 150) {
+		Single_Card* ptr = discard_pile.Pile_Card_Total->next;
+		while (ptr){
+			ptr = ptr->next;
+			int card_number;
+			card_number = discard_pile.Pile_Card_Total->next->card_info.single_card_number;
+			discard_pile.Delete_Card(card_number);
+			piles.Insert_Card(card_number, rand()%4);
+		}
+	}
 	// human get 2 cards each time is its round
 	if (Human.round_draw_phase) {
 		for (int i = 0; i < 2; i++) {

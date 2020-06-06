@@ -18,9 +18,6 @@
     <ClCompile Include="Sanguosha.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Initial.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Logic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -34,6 +31,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Draw.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Initial.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

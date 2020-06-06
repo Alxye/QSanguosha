@@ -55,7 +55,7 @@ typedef struct Single_Card {  // each card property
 }Single_Card, * LinkList;
 
 typedef struct Message {  // message box
-	char text[100];
+	wstring single_message;
 	Message* next;
 }Message, * Message_Box;
 
@@ -282,6 +282,22 @@ public:
 		for (int i = 0; i < order; i++) { ptr = ptr->next; }
 		return ptr;
 	}
+	void Converse(Single_Card * head)
+	{
+		Single_Card * p, * q;
+		p = head->next;
+		while (p)
+		{
+			/*向后挪动一个位置*/
+			q = p;
+			p = p->next;
+
+			/*头插*/
+			q->next = head->next;
+			head->next = q;
+		}
+	}
+
 	Pile_Card() {
 		Pile_Card_Total = new Single_Card;
 		Pile_Card_Total->next = NULL;

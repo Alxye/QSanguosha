@@ -287,3 +287,105 @@ while (machine.cards.Pile_Card_Amount > machine.HP) {
 }
 ```
 *已实现：修正了动画显示被遮挡的bug...*
+*已实现：新增了弃牌堆的显示，前六张,引入texture&sprite反复绘制，通过start-draw来标记开始要绘制的张数*
+```
+void Game::Draw_Discard_Pile() {
+	Single_Card* ptr = discard_pile.Pile_Card_Total->next;
+	int start_draw = 1;
+	if (discard_pile.Pile_Card_Amount - start_draw > 6) {
+		Load_Image(texture_discard_pile, sprite_discard_pile, "image/back_stable/pile_back.png");
+		sprite_discard_pile.setPosition(window_width / 2, 300);
+		window.draw(sprite_discard_pile);
+	}
+	while (discard_pile.Pile_Card_Amount - start_draw > 6) {
+		start_draw++;
+		ptr = ptr->next;
+	}
+	int dx = 1;
+	while (ptr) {
+		switch (ptr->card_info.single_card_number)
+		{
+		case kill:
+			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/0.jpg");
+			break;
+		case jink:
+			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/1.jpg");
+			break;
+		case analeptic:
+			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/2.jpg");
+			break;
+		case peach:
+			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/3.jpg");
+			break;
+		default:
+			break;
+		}
+		sprite_discard_pile.setPosition(window_width / 2 + dx * 20, 300);
+		window.draw(sprite_discard_pile);
+		dx++;
+		ptr = ptr->next;
+	}
+}
+```
+*已实现：引入了Message_Box链表，来实现消息框的实时展现,新增信息插入&信息删除的Game成员函数*
+```
+typedef struct Message {  // message box
+	wstring single_message;
+	Message* next;
+}Message, * Message_Box;
+void Insert_Message(wstring str) {
+	Message_Box S = new Message;
+	S->next = NULL;
+	S->single_message = str;
+	Message_Box P = message;
+	while (P->next)
+		P = P->next;  // find tail node
+	P->next = S;
+	P = S;
+	cout << "***********yes insert message succeed!!!" << endl;
+	message_amount++;
+}
+void Delete_Message() {
+	Message_Box T = message;
+	while (T->next) {
+		Message_Box p = T->next;
+		T->next = p->next;
+		delete p;
+		message_amount--;
+		cout << "<<<<message card succeed!!!" << endl;
+		break;
+	}
+	return;
+}
+```
+*已实现：同步绘制消息框，并加以约束，限定在15条。*
+```
+void Game::Draw_Text_Console() {
+	RectangleShape rect(Vector2f(330,230)); // draw rectangle
+	rect.setFillColor(Color(0, 0, 0, 100));
+	rect.setPosition(700, 60);
+	window.draw(rect);
+	// when message amount is out of 15 ,then delete previous message in case the latest message is overflow
+	while (message_amount > 15) {
+		Delete_Message();
+	}
+	// show each message in message box
+	Message_Box ptr = message->next;
+	int dx = 0;
+	while (ptr) {
+		Font text_font;
+		Text text;
+		Load_Font(text_font, text, "font/simsun.ttc");
+		text.setCharacterSize(15);
+		text.setFillColor(Color(255, 255, 255, 255));
+		text.setStyle(Text::Bold);
+		text.setPosition(705, 60+dx*15);
+		wstring each_line = L"";
+		each_line = each_line + ptr->single_message;
+		text.setString(each_line);
+		window.draw(text);
+		dx++;
+		ptr = ptr->next;
+	}
+}
+```

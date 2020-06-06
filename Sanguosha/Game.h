@@ -6,7 +6,7 @@ class Game
 public:
 	RenderWindow window;
 	int window_width, window_height;
-	int turn;                             // 轮到谁的 记录量
+	int turn;                             // the mask of turning
 	int exturn;
 	int exturn_backup;
 	bool round_loop;                      // flag to judge if a loop have been existed
@@ -47,7 +47,9 @@ public:
 	Pile_Card discard_pile;
 	Texture texture_discard_pile;
 	Sprite sprite_discard_pile;
-
+	// for message boxes
+	Message_Box message;
+	int message_amount;
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows
 	LPCWSTR string_To_LPCWSTR(string _string);
@@ -77,6 +79,7 @@ public:
 
 	void Draw();
 	void Draw_Discard_Pile();
+	void Draw_Text_Console();
 	void Draw_HumanPlayer_Button();
 	void Draw_HumanPlayer();
 	void Draw_Animator_Single(int set_frame, bool& animator, int& animator_counter, string file, int limited, int _x, int _y);
@@ -84,5 +87,34 @@ public:
 	void Draw_Animator_Human();
 	void Draw_Machine(Player& Machine);
 	void Draw_Stable_Background();
+
+	//other function
+	void Insert_Message(wstring str) {
+		//尾插法 新增 结点
+		Message_Box S = new Message;
+		S->next = NULL;
+		//赋值
+		S->single_message = str;
+		Message_Box P = message;
+		while (P->next)
+			P = P->next;  // find tail node
+		P->next = S;
+		P = S;
+		cout << "***********yes insert message succeed!!!" << endl;
+		message_amount++;
+	}
+	void Delete_Message() {
+		Message_Box T = message;
+		while (T->next) {
+			Message_Box p = T->next;
+			T->next = p->next;
+			delete p;
+			message_amount--;
+			cout << "<<<<message card succeed!!!" << endl;
+			break;
+		}
+		return;
+	}
+
 	Game();
 };
