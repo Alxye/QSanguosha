@@ -282,8 +282,27 @@ void Game::Draw_Machine(Player& Machine) {
 		sprite_being_chosen.setPosition(Machine.location_one.x, Machine.location_one.y);  // 宽 1140 || 高 600
 		window.draw(sprite_being_chosen);
 	}
-	Machine.sprite_draw_phase.setPosition(Machine.location_two.x - 25, Machine.location_one.y);  // 宽 1140 || 高 600
-	window.draw(Machine.sprite_draw_phase);
+	// draw machine round state
+	if (Machine.round_draw_phase) {
+		Machine.sprite_draw_phase.setPosition(Machine.location_two.x - 25, Machine.location_one.y);  // 宽 1140 || 高 600
+		window.draw(Machine.sprite_draw_phase);
+	}
+	else if (Machine.round_play_phase) {
+		Machine.sprite_play_phase.setPosition(Machine.location_two.x - 25, Machine.location_one.y);  // 宽 1140 || 高 600
+		window.draw(Machine.sprite_play_phase);
+	}
+	else if (Machine.round_discard_phase) {
+		Machine.sprite_discard_phase.setPosition(Machine.location_two.x - 25, Machine.location_one.y);  // 宽 1140 || 高 600
+		window.draw(Machine.sprite_discard_phase);
+	}
+	else if (Machine.is_dying) {
+		Machine.sprite_sos_phase.setPosition(Machine.location_two.x - 25, Machine.location_one.y);  // 宽 1140 || 高 600
+		window.draw(Machine.sprite_sos_phase);
+	}
+	else if (exturn == Machine.charactor_code) {
+		Machine.sprite_response_phase.setPosition(Machine.location_two.x - 25, Machine.location_one.y);  // 宽 1140 || 高 600
+		window.draw(Machine.sprite_response_phase);
+	}
 }
 void Game::Draw_Stable_Background() {
 	// draw background

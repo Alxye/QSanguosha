@@ -389,3 +389,5 @@ void Game::Draw_Text_Console() {
 	}
 }
 ```
+*已实现：完善了machine不同阶段的绘制,具体实现在draw模块，实现方法：在Player对象引入多组texture&sprite对应不同的阶段，在initial中初始化素材，在draw中根据machine对象的回合参数分别定位并确定绘制。*
+*已实现：完成了所有消息的发送显示。遍布于logic函数中。主要思路：在每次的操作于状态位，都插入消息语句并显示。*

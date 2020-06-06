@@ -109,7 +109,11 @@ void Game::Initial() {
 	Machine[3].location_two.y = 495;
 
 	//---->> machine amount
-	machine_number = 4;                     // default is 4
+	machine_number = 1;                     // default is 4
+
+
+	// insert message of sending signal of game start
+	Insert_Message(L"         ·  游戏开始 ·");
 
 	//---->> initialize pile card
 	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
@@ -121,43 +125,30 @@ void Game::Initial() {
 	button_discard.enable_diabled_button();
 	button_cancel.enable_diabled_button();
 
-	// insert message !
-	Insert_Message(L"rqwe");
-	Insert_Message(L"aaa");
-	Insert_Message(L"r11");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-	Insert_Message(L"噶大幅度反对法");
-
-
-
-
 }
 
 int Game::Previous_Draw_Phase() {
+	Insert_Message(L">>游戏开局,每个玩家摸4张牌");
 	// each machine get 4 cards
-	for (int number = 0; number < 4; number++) {
+	for (int number = 0; number < machine_number; number++) {
 		for (int i = 0; i < 4; i++) {
 			Machine[number].cards.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
 			piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
+		}
+		switch (number)
+		{
+		case 0:
+			Insert_Message(L"电脑-1 摸了4张牌");
+			break;
+		case 1:
+			Insert_Message(L"电脑-2 摸了4张牌");
+			break;
+		case 2:
+			Insert_Message(L"电脑-3 摸了4张牌");
+			break;
+		case 3:
+			Insert_Message(L"电脑-4 摸了4张牌");
+			break;
 		}
 	}
 	// human get 4 cards
@@ -166,7 +157,28 @@ int Game::Previous_Draw_Phase() {
 		Human.cards.Get_Node(Human.cards.Pile_Card_Amount - 1)->mouse_select_card = false;
 		piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
 	}
-	return rand() % (machine_number) +1;  // the rand function would detenmine which one to play first
+	Insert_Message(L"人类玩家摸了4张牌");
+	int first_hand = rand() % (machine_number)+1;
+	switch (first_hand)
+	{
+	case human:
+		Insert_Message(L"》》》人类玩家抽得先手出牌！");
+		break;
+	case machine_0:
+		Insert_Message(L"》》》电脑-1 抽得先手出牌！");
+		break;
+	case machine_1:
+		Insert_Message(L"》》》电脑-2 抽得先手出牌！");
+		break;
+	case machine_2:
+		Insert_Message(L"》》》电脑-3 抽得先手出牌！");
+		break;
+	case machine_3:
+		Insert_Message(L"》》》电脑-4 抽得先手出牌！");
+		break;
+	}
+
+	return first_hand;  // the rand function would determine which one to play first
 	//return human;    // test for human to start whatever situation is
 	//return machine_0;    // test for human to start whatever situation is
 }

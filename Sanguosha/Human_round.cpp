@@ -1,6 +1,6 @@
 #include "Game.h"
 void Game::Human_Round_Initialize() {
-	if (piles.Pile_Card_Amount < 150) {
+	if (piles.Pile_Card_Amount < 20) {
 		Single_Card* ptr = discard_pile.Pile_Card_Total->next;
 		while (ptr){
 			ptr = ptr->next;
@@ -9,14 +9,17 @@ void Game::Human_Round_Initialize() {
 			discard_pile.Delete_Card(card_number);
 			piles.Insert_Card(card_number, rand()%4);
 		}
+		Insert_Message(L">>>>>>>>>>>牌堆洗牌<<<<<<<<<<<<<");
 	}
 	// human get 2 cards each time is its round
 	if (Human.round_draw_phase) {
+		Insert_Message(L"————人类玩家-----回合开始————");
 		for (int i = 0; i < 2; i++) {
 			Human.cards.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
 			Human.cards.Get_Node(Human.cards.Pile_Card_Amount - 1)->mouse_select_card = false;
 			piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
 		}
+		Insert_Message(L" 人类玩家 摸了 2 张牌");
 		// original position set
 		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {  // each card:  width 93 || height 130
@@ -53,7 +56,6 @@ void Game::Human_Round_Initialize() {
 void Game::Human_Round_enable_dying_state() {
 	if (Human.HP <= 0) {
 		Human.is_dying = true;
-		cout << "Human-->>濒死求桃" << endl;
 	}
 	if (Human.is_dying == true) {
 		// sent begging for peach signal to other machines(all of them)
@@ -61,11 +63,11 @@ void Game::Human_Round_enable_dying_state() {
 			Machine[number].skill.begging_peach = true;
 		}
 		exturn = turn; /// alaso ==>>  exturn=Human.charactor_code;
-		cout << exturn << endl;
-		cout << "攻击者为：" << turn<<endl;
+		//cout << exturn << endl;
+		//cout << "攻击者为：" << turn<<endl;
 		round_loop_starter = turn;
 		peach_begger = Human.charactor_code;
-		cout << "Human.skill.begging_peach --->>进来了" << endl;
+		Insert_Message(L"人类玩家 濒死求桃 X(");
 	}
 }
 
@@ -83,46 +85,46 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			break;
 		case machine_0:
 			if (Machine[0].HP <= 0) {
-				//Machine[0].die = true;
 				Machine[0].die = false;
 				Machine[0].skill.begging_peach = false;
 				Machine[0].self_save = false;
 				Machine[0].HP = 2;
 				Machine[0].limited_HP = 2;
 				killing_number++;
+				Insert_Message(L"求助失败！电脑-1 重生了！");
 			}
 			break;
 		case machine_1:
 			if (Machine[1].HP <= 0) {
-				//Machine[1].die = true;
 				Machine[1].die = false;
 				Machine[1].skill.begging_peach = false;
 				Machine[1].self_save = false;
 				Machine[1].HP = 2;
 				Machine[1].limited_HP = 2;
 				killing_number++;
+				Insert_Message(L"求助失败！电脑-2 重生了！");
 			}
 			break;
 		case machine_2:
 			if (Machine[2].HP <= 0) {
-				//Machine[2].die = true;
 				Machine[2].die = false;
 				Machine[2].skill.begging_peach = false;
 				Machine[2].self_save = false;
 				Machine[2].HP = 2;
 				Machine[2].limited_HP = 2;
 				killing_number++;
+				Insert_Message(L"求助失败！电脑-3 重生了！");
 			}
 			break;
 		case machine_3:
 			if (Machine[3].HP <= 0) {
-				//Machine[3].die = true;
 				Machine[3].die = false;
 				Machine[3].skill.begging_peach = false;
 				Machine[3].self_save = false;
 				Machine[3].HP = 2;
 				Machine[3].limited_HP = 2;
 				killing_number++;
+				Insert_Message(L"求助失败！电脑-4 重生了！");
 			}
 			break;
 		default:
@@ -188,6 +190,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				button_ok.enable_diabled_button();
 				button_cancel.enable_diabled_button();
 				button_discard.enable_diabled_button();
+				// show message box
+				Insert_Message(L"人类玩家 出 闪 抵抗！");
 				return 0;
 			}
 		}
@@ -195,6 +199,10 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			// result
 			if (Human.skill.defense_analeptic_kill) Human.HP -= 2;
 			else if (Human.skill.need_jink) Human.HP--;
+
+			// show message
+			Insert_Message(L"人类玩家 HP 减少了！");
+
 			// judge human is dying?
 			Human_Round_enable_dying_state();
 			// find node that is chose card
@@ -230,6 +238,26 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 		if (Human.HP < Human.limited_HP) Human.HP++;
 		Human.skill.receive_peach = false;
 		if (Human.HP <= 0) {
+			switch (exturn_backup)
+			{
+			case human:
+				Human.skill.begging_peach = true;
+				break;
+			case machine_0:
+				Machine[0].skill.begging_peach = true;
+				break;
+			case machine_1:
+				Machine[1].skill.begging_peach = true;
+				break;
+			case machine_2:
+				Machine[2].skill.begging_peach = true;
+				break;
+			case machine_3:
+				Machine[3].skill.begging_peach = true;
+				break;
+			default:
+				break;
+			}
 			exturn = exturn_backup;
 			exturn_backup = -1;
 		}
@@ -247,7 +275,6 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 	}
 	
 	if (Human.skill.begging_peach) {
-		cout << "是否出桃救machine？？" << endl;
 		round_loop = true;
 		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
@@ -296,15 +323,19 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 					break;
 				case machine_0:
 					Machine[0].skill.receive_peach = true;
+					Insert_Message(L"人类玩家 给 电脑-1 出了一个桃");
 					break;
 				case machine_1:
 					Machine[1].skill.receive_peach = true;
+					Insert_Message(L"人类玩家 给 电脑-2 出了一个桃");
 					break;
 				case machine_2:
 					Machine[2].skill.receive_peach = true;
+					Insert_Message(L"人类玩家 给 电脑-3 出了一个桃");
 					break;
 				case machine_3:
 					Machine[3].skill.receive_peach = true;
+					Insert_Message(L"人类玩家 给 电脑-4 出了一个桃");
 					break;
 				default:
 					break;
@@ -351,9 +382,10 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			button_ok.enable_diabled_button();
 			button_cancel.enable_diabled_button();
 			button_discard.enable_diabled_button();
+			// show message 
+			Insert_Message(L"人类玩家 拒绝出桃");
 			return 0;
 		}
-		//cout << "come yet??" << endl;
 		return 0;
 	}
 
@@ -417,11 +449,13 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 					Human.animator_peach = true;
 					Human.animator_peach_counter = 0;
 					animator_running = true;
+					Insert_Message(L"人类玩家 出 桃 自救");
 				}
 				else if (which_animator == analeptic) {
 					Human.animator_analeptic = true;
 					Human.animator_analeptic_counter = 0;
 					animator_running = true;
+					Insert_Message(L"人类玩家 出 酒 自救");
 				}
 				// change button unable
 				button_ok.enable_diabled_button();
@@ -580,15 +614,19 @@ void Game::Human_Round() {
 							{
 							case 0:
 								exturn = machine_0;
+								Insert_Message(L"人类玩家 对 电脑-1 施展 酒杀");
 								break;
 							case 1:
 								exturn = machine_1;
+								Insert_Message(L"人类玩家 对 电脑-2 施展 酒杀");
 								break;
 							case 2:
 								exturn = machine_2;
+								Insert_Message(L"人类玩家 对 电脑-3 施展 酒杀");
 								break;
 							case 3:
 								exturn = machine_3;
+								Insert_Message(L"人类玩家 对 电脑-4 施展 酒杀");
 								break;
 							}
 							Human.kill_times++;
@@ -611,15 +649,19 @@ void Game::Human_Round() {
 							{
 							case 0:
 								exturn = machine_0;
+								Insert_Message(L"人类玩家 对 电脑-1 施展 杀");
 								break;
 							case 1:
 								exturn = machine_1;
+								Insert_Message(L"人类玩家 对 电脑-2 施展 杀");
 								break;
 							case 2:
 								exturn = machine_2;
+								Insert_Message(L"人类玩家 对 电脑-3 施展 杀");
 								break;
 							case 3:
 								exturn = machine_3;
+								Insert_Message(L"人类玩家 对 电脑-4 施展 杀");
 								break;
 							default:
 								break;
@@ -648,6 +690,7 @@ void Game::Human_Round() {
 						animator_running = true;
 						if (Human.HP < Human.limited_HP) Human.HP++;
 						discard_pile.Insert_Card(peach, 1);
+						Insert_Message(L"人类玩家 施展 桃");
 						//Human.skill.need_peach=true;
 					}
 					else if (ptr->card_info.single_card_number == analeptic) { // when human have not die,this kill can doubled kill power
@@ -657,6 +700,7 @@ void Game::Human_Round() {
 						Human.animator_analeptic_counter = 0;
 						animator_running = true;
 						discard_pile.Insert_Card(analeptic, 1);
+						Insert_Message(L"人类玩家 施展 酒");
 					}
 					Machine[0].being_choose = false;
 					Machine[1].being_choose = false;
@@ -705,6 +749,7 @@ void Game::Human_Round() {
 			new_round = true;
 			if (turn == machine_number+1) turn = human;  // meaning going to a loop
 			else turn++;
+			Insert_Message(L"————人类玩家-----回合结束————");
 			return;
 		}
 		else if (Human.selecet_card_amount < Human.cards.Pile_Card_Amount - Human.HP) {
@@ -749,6 +794,7 @@ void Game::Human_Round() {
 			new_round = true;
 			if (turn == machine_number+1) turn = human;  // meaning going to a loop
 			else turn++;
+			Insert_Message(L"————人类玩家-----回合结束————");
 		}
 	}
 
