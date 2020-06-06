@@ -11,7 +11,8 @@ public:
 	int exturn_backup;
 	bool round_loop;                      // flag to judge if a loop have been existed
 	int round_loop_starter;               // mark loop starter
-	bool gamestart, gameover, gamequit;
+	bool restart;                         // signal of gamer restart
+	bool gamestart, gameover, gamequit,gamerun,gamechoose,gamepause;
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense
 	bool animator_running;                // judge animator is running ,so that machine play wont play so fast
@@ -50,6 +51,22 @@ public:
 	// for message boxes
 	Message_Box message;
 	int message_amount;
+
+	// globe input sent
+	Vector2i input_sent;
+
+    // GAME-START texture & sprite
+	Texture texture_gamestart_bg;
+	Sprite sprite_gamestart_bg;
+	int img_bg_number;
+	bool change_bg;
+	int start_style_mode;
+	// GAME-START Button
+	Button gamestart_go;
+	Button gamestart_info;
+	Button gamestart_quit;
+	int button_animate_count;
+
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows
 	LPCWSTR string_To_LPCWSTR(string _string);
@@ -61,6 +78,7 @@ public:
 	void Initial();
 	int Previous_Draw_Phase();
 
+	void Input_Globe();
 	Vector2i Input();
 
 	// global logic control

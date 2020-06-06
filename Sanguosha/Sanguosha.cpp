@@ -77,14 +77,14 @@ int main() {
 	
     Game Sanguosha;
 
-    while (Sanguosha.window.isOpen() && !Sanguosha.gamequit) {
-        do {
-            Sanguosha.Initial();
-            while (Sanguosha.window.isOpen() && Sanguosha.gameover == false) {
-                Sanguosha.Logic();
-                Sanguosha.Draw();
-            }
-        } while (!Sanguosha.gameover);
-    }
+	do {
+		Sanguosha.Initial();
+		while (Sanguosha.window.isOpen() && Sanguosha.restart == false) {
+			if (!Sanguosha.gamerun) Sanguosha.Input(); 
+			Sanguosha.Logic();
+			Sanguosha.Draw();
+		}
+	} while (!Sanguosha.gamequit);
+
     return 0;
 }

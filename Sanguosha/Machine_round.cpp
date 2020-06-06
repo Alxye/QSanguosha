@@ -263,6 +263,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			{
 			case human:
 				Human.skill.receive_peach = true;
+				reminded = reminded + temp_string.str() + L"给 人类玩家 出了一个桃";
+				Insert_Message(reminded);
 				break;
 			case machine_0:
 				Machine[0].skill.receive_peach = true;
@@ -351,6 +353,12 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			else exturn++;
 			machine.is_dying = true;
 			machine.self_save = false;
+			// show message
+			wstring reminded = L"电脑-";
+			std::stringstream temp_string;
+			temp_string << machine.charactor_code - 1;
+			reminded = reminded + temp_string.str() + L"  自救结束";
+			Insert_Message(reminded);
 		}
 		return 0;
 	}

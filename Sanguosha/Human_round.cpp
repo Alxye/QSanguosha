@@ -488,6 +488,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 			button_ok.enable_diabled_button();
 			button_cancel.enable_diabled_button();
 			button_discard.enable_diabled_button();
+			// show message box
+			Insert_Message(L"人类玩家 自救结束");
 			return 0;
 		}
 	}

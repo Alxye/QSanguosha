@@ -1,24 +1,118 @@
 #include "Game.h"
 
 void Game::Draw() {
-	// draw stable part
-	Draw_Stable_Background();
 
-	// draw text console
-	Draw_Text_Console();
+	if (gamestart) {
+        // draw background
+		if (change_bg) {
+			button_animate_count = 0;
+			if (start_style_mode==0){
+				// for background
+				Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_dark.png", 0, 0, 1, 1);
+				// for normal button
+				Load_Image(gamestart_go.texture_normal, gamestart_go.sprite_normal, "image/back_stable/start-surface/start-light-button-go.png", 0, 0, 1, 1);
+				Load_Image(gamestart_info.texture_normal, gamestart_info.sprite_normal, "image/back_stable/start-surface/start-light-button-info.png", 0, 0, 1, 1);
+				Load_Image(gamestart_quit.texture_normal, gamestart_quit.sprite_normal, "image/back_stable/start-surface/start-light-button-quit.png", 0, 0, 1, 1);
+				// for high light button
+				Load_Image(gamestart_go.texture_hover, gamestart_go.sprite_hover, "image/back_stable/start-surface/start-dark-button-go.png", 0, 0, 1, 1);
+				Load_Image(gamestart_info.texture_hover, gamestart_info.sprite_hover, "image/back_stable/start-surface/start-dark-button-info.png", 0, 0, 1, 1);
+				Load_Image(gamestart_quit.texture_hover, gamestart_quit.sprite_hover, "image/back_stable/start-surface/start-dark-button-quit.png", 0, 0, 1, 1);
+				start_style_mode = 1;
+			}
+			else if (start_style_mode == 1) {
+				// for background
+				Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_light.png", 0, 0, 1, 1);
+				// for normal button
+				Load_Image(gamestart_go.texture_normal, gamestart_go.sprite_normal, "image/back_stable/start-surface/start-dark-button-go.png", 0, 0, 1, 1);
+				Load_Image(gamestart_info.texture_normal, gamestart_info.sprite_normal, "image/back_stable/start-surface/start-dark-button-info.png", 0, 0, 1, 1);
+				Load_Image(gamestart_quit.texture_normal, gamestart_quit.sprite_normal, "image/back_stable/start-surface/start-dark-button-quit.png", 0, 0, 1, 1);
+				// for high light button
+				Load_Image(gamestart_go.texture_hover, gamestart_go.sprite_hover, "image/back_stable/start-surface/start-light-button-go.png", 0, 0, 1, 1);
+				Load_Image(gamestart_info.texture_hover, gamestart_info.sprite_hover, "image/back_stable/start-surface/start-light-button-info.png", 0, 0, 1, 1);
+				Load_Image(gamestart_quit.texture_hover, gamestart_quit.sprite_hover, "image/back_stable/start-surface/start-light-button-quit.png", 0, 0, 1, 1);
+				start_style_mode = 0;
+			}
+			change_bg = false;
+		}
 
-	// draw discard pile
-	Draw_Discard_Pile();
+		sprite_gamestart_bg.setPosition(0, 0);
+		window.draw(sprite_gamestart_bg);
+		if (button_animate_count < 81) {
+			window.setFramerateLimit(200);
+			if(gamestart_go.is_hover)	gamestart_go.sprite_hover.setTextureRect(IntRect(0, 0, 80, button_animate_count * 5));
+			if (gamestart_info.is_hover)gamestart_info.sprite_hover.setTextureRect(IntRect(0, 0, 80, button_animate_count * 5));
+			if (gamestart_quit.is_hover)gamestart_quit.sprite_hover.setTextureRect(IntRect(0, 0, 80, button_animate_count * 5));
+			button_animate_count++;
+			if (button_animate_count == 81)
+				window.setFramerateLimit(300);
+		}
+		/// for start go button
+		gamestart_go.sprite_normal.setPosition(570, 50);
+		window.draw(gamestart_go.sprite_normal);
+		if (gamestart_go.is_hover) {
+			gamestart_go.sprite_hover.setPosition(570, 50);
+			window.draw(gamestart_go.sprite_hover);
+		}
+		else if (gamestart_go.is_down) {
+			gamestart_go.sprite_down.setPosition(570, 50);
+			window.draw(gamestart_go.sprite_down);
+		}
+		/// for start info button
+		gamestart_info.sprite_normal.setPosition(470, 90);
+		window.draw(gamestart_info.sprite_normal);
+		if (gamestart_info.is_hover) {
+			gamestart_info.sprite_hover.setPosition(470, 90);
+			window.draw(gamestart_info.sprite_hover);
+		}
+		else if (gamestart_info.is_down) {
+			gamestart_info.sprite_down.setPosition(470, 90);
+			window.draw(gamestart_info.sprite_down);
+		}
+		/// for start quit button
+		gamestart_quit.sprite_normal.setPosition(370, 130);
+		window.draw(gamestart_quit.sprite_normal);
+		if (gamestart_quit.is_hover) {
+			gamestart_quit.sprite_hover.setPosition(370, 130);
+			window.draw(gamestart_quit.sprite_hover);
+		}
+		else if (gamestart_quit.is_down) {
+			gamestart_quit.sprite_down.setPosition(370, 130);
+			window.draw(gamestart_quit.sprite_down);
+		}
+	}
 
-	// draw human part
-	Draw_HumanPlayer();
-	Draw_Animator_Human();
+	if (gamechoose) {
 
-	//draw machine part
-	for (int number = 0; number < machine_number; number++) {
+	}
 
-		Draw_Machine(Machine[number]);
-		Draw_Animator_Machine(Machine[number]);
+	if (gamepause) {
+
+	}
+
+	if (gameover) {
+
+	}
+
+	if (gamerun) {
+		// draw stable part
+		Draw_Stable_Background();
+
+		// draw text console
+		Draw_Text_Console();
+
+		// draw discard pile
+		Draw_Discard_Pile();
+
+		// draw human part
+		Draw_HumanPlayer();
+		Draw_Animator_Human();
+
+		//draw machine part
+		for (int number = 0; number < machine_number; number++) {
+
+			Draw_Machine(Machine[number]);
+			Draw_Animator_Machine(Machine[number]);
+		}
 	}
 
 	window.display();
@@ -306,7 +400,13 @@ void Game::Draw_Machine(Player& Machine) {
 }
 void Game::Draw_Stable_Background() {
 	// draw background
-	sprite_background.setPosition(0, 0);  // 宽 1140 || 高 600
+	if (change_bg) {
+		stringstream ss;
+		ss << "image/back_stable/background-cover" << img_bg_number << ".jpg";
+		Load_Image(texture_background, sprite_background, ss.str(), 0, 0, 1, 1);
+		change_bg = false;
+	}
+	sprite_background.setPosition(0, 0);  // 宽 1140 || 高 770
 	window.draw(sprite_background);
 	// draw player equipment board
 	sprite_player_equip_board.setPosition(0, window_height - 170);//宽 164 || 高 170
@@ -338,10 +438,10 @@ void Game::Draw_Stable_Background() {
 	reminded_note.setFillColor(Color(255, 255, 255, 255));
 	reminded_note.setStyle(Text::Bold);
 	reminded_note.setPosition(810, 20);
-	wstring reminded = L"已杀敌： ";
+	wstring reminded = L"已杀敌：";
 	std::stringstream temp_string;
 	temp_string << killing_number;
-	reminded = reminded + temp_string.str() + L"！";
+	reminded = reminded + temp_string.str() ;
 
 	reminded_note.setString(reminded);
 	window.draw(reminded_note);

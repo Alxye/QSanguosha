@@ -277,17 +277,19 @@ for (int number = 0; number < 4; number++) {
 // Game类新增machine_number用于计数当前局数
 // Logic 模块新增 swich 对人数的逻辑判定
 ```
-### 2020.6.3 开发思路
+### 2020.6.6 开发思路
 *已实现：解决窗口拉伸&最大化问题，禁用！*
 *已实现：增加绘制machine卡牌数量。*
-*已实现：修正machine无法正确弃牌的bug*
+*已实现：修正machine无法正确弃牌的bug *
+
 ```
 while (machine.cards.Pile_Card_Amount > machine.HP) {
 	machine.cards.Delete_Card(machine.cards.Pile_Card_Total->next->card_info.single_card_number);
 }
 ```
-*已实现：修正了动画显示被遮挡的bug...*
+*已实现：修正了动画显示被遮挡的bug... *
 *已实现：新增了弃牌堆的显示，前六张,引入texture&sprite反复绘制，通过start-draw来标记开始要绘制的张数*
+
 ```
 void Game::Draw_Discard_Pile() {
 	Single_Card* ptr = discard_pile.Pile_Card_Total->next;
@@ -327,7 +329,9 @@ void Game::Draw_Discard_Pile() {
 	}
 }
 ```
+
 *已实现：引入了Message_Box链表，来实现消息框的实时展现,新增信息插入&信息删除的Game成员函数*
+
 ```
 typedef struct Message {  // message box
 	wstring single_message;
@@ -358,7 +362,9 @@ void Delete_Message() {
 	return;
 }
 ```
+
 *已实现：同步绘制消息框，并加以约束，限定在15条。*
+
 ```
 void Game::Draw_Text_Console() {
 	RectangleShape rect(Vector2f(330,230)); // draw rectangle
@@ -391,3 +397,27 @@ void Game::Draw_Text_Console() {
 ```
 *已实现：完善了machine不同阶段的绘制,具体实现在draw模块，实现方法：在Player对象引入多组texture&sprite对应不同的阶段，在initial中初始化素材，在draw中根据machine对象的回合参数分别定位并确定绘制。*
 *已实现：完成了所有消息的发送显示。遍布于logic函数中。主要思路：在每次的操作于状态位，都插入消息语句并显示。*
+*已实现：完成了不同玩家局数，绘制不同面板。并且对高度进行了替代调整。*
+*已实现：重大模块新增——游戏开始模块、游戏暂停模块、游戏退出模块、游戏结束统计模块、游戏关卡旋转模块、游戏说明与感谢模块。*
+* 待实现：完善各个模块，且不要冲突。 
+* 待实现：Input 全局与human局部会冲突卡顿的bug带解除。
+
+### 2020.6.7 开发思路
+*已实现：游戏开始模块。具体思路：|| 在Game类中引入3个Button类型对象||Initial函数中默认纹理素材||Draw函数中对不同情况下Button成员的值进行判定并绘制||借用animate-counter计数来实现擦除动画效果||Input模块中以鼠标交互对应按钮，通过启用Button成员函数，实现Button跨模块的同步||*
+
+```
+// 擦除动画实现 全局增设 int 型 button_animate_count 变量
+if (button_animate_count < 81) {
+	window.setFramerateLimit(200);
+	if (gamestart_go.is_hover)	gamestart_go.sprite_hover.setTextureRect(IntRect(0, 0, 80, button_animate_count * 5));
+	if (gamestart_info.is_hover)gamestart_info.sprite_hover.setTextureRect(IntRect(0, 0, 80, button_animate_count * 5));
+	if (gamestart_quit.is_hover)gamestart_quit.sprite_hover.setTextureRect(IntRect(0, 0, 80, button_animate_count * 5));
+	button_animate_count++;
+	if (button_animate_count == 81)
+		window.setFramerateLimit(300);
+}
+```
+* 已实现：解决了全局Input & Human_input 局部模块的冲突，解决方案：全局约束 Input函数，在gamerun为真时，不允许运行。*
+```
+if (!Sanguosha.gamerun) Sanguosha.Input(); 
+```

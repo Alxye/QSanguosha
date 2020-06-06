@@ -21,6 +21,14 @@ void Game::Initial() {
 	gamestart = true;
 	gameover = false;
 	gamequit = false;
+	gamerun = false;
+	gamechoose = false;
+	gamepause = false;
+	restart = false;
+	start_style_mode = 0;    // default is 0--light,1--dark
+	// initialize background number
+	img_bg_number = 0;
+	// for original round
 	new_round = true;
 	// extra turn initialize
 	exturn = normal;
@@ -29,8 +37,8 @@ void Game::Initial() {
 	peach_begger = -1; // default no one beg for peach
 	// get cards shuffled (originally)
 	piles.Shuffle_Card();
-	// load background
-	Load_Image(texture_background, sprite_background, "image/back_stable/background.jpg", 0, 0, 1, 1);
+	// load background(default)
+	Load_Image(texture_background, sprite_background, "image/back_stable/background-cover0.jpg", 0, 0, 1, 1);                  
 	// load equipment background in player's interface
 	Load_Image(texture_player_equip_board, sprite_player_equip_board, "image/back_stable/playerboard-equip.png");
 	// load hand background in player's interface
@@ -76,6 +84,38 @@ void Game::Initial() {
 		Load_Image(Machine[number].texture_sos_phase, Machine[number].sprite_sos_phase, "image/phase/sos.png", 0, 0, 1, 1);
 	}
 	Load_Image(texture_Human_save_me, sprite_Human_save_me, "image/gameover/save-me.png", 0, 0, 1, 1);
+
+	//---->> START surface image loading (default image)
+	Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_light.png", 0, 0, 1, 1);
+	//---->> START button enable & texture,sprite tied
+    // normal (default is mode ==0)
+	Load_Image(gamestart_go.texture_normal, gamestart_go.sprite_normal, "image/back_stable/start-surface/start-dark-button-go.png", 0, 0, 1, 1);
+	Load_Image(gamestart_info.texture_normal, gamestart_info.sprite_normal, "image/back_stable/start-surface/start-dark-button-info.png", 0, 0, 1, 1);
+	Load_Image(gamestart_quit.texture_normal, gamestart_quit.sprite_normal, "image/back_stable/start-surface/start-dark-button-quit.png", 0, 0, 1, 1);
+    // high light (default is mode ==0)
+	Load_Image(gamestart_go.texture_hover, gamestart_go.sprite_hover, "image/back_stable/start-surface/start-light-button-go.png", 0, 0, 1, 1);
+	Load_Image(gamestart_info.texture_hover, gamestart_info.sprite_hover, "image/back_stable/start-surface/start-light-button-info.png", 0, 0, 1, 1);
+	Load_Image(gamestart_quit.texture_hover, gamestart_quit.sprite_hover, "image/back_stable/start-surface/start-light-button-quit.png", 0, 0, 1, 1);
+	// down
+	Load_Image(gamestart_go.texture_down, gamestart_go.sprite_down, "image/back_stable/start-surface/start-button-go-down.png", 0, 0, 1, 1);
+	Load_Image(gamestart_info.texture_down, gamestart_info.sprite_down, "image/back_stable/start-surface/start-button-info-down.png", 0, 0, 1, 1);
+	Load_Image(gamestart_quit.texture_down, gamestart_quit.sprite_down, "image/back_stable/start-surface/start-button-quit-down.png", 0, 0, 1, 1);
+
+	// enable button state
+	gamestart_go.enable_normal_button();
+	gamestart_info.enable_normal_button();
+	gamestart_quit.enable_normal_button();
+	button_animate_count = 0;
+
+
+
+	//---->> machine amount
+	machine_number = 3;                     // default is 4
+
+
+	// insert message of sending signal of game start
+	Insert_Message(L"         ·  游戏开始 ·");
+
 	//---->> initialize charactor code to get catch of each member
 	Human.charactor_code = human;
 	Machine[0].charactor_code = machine_0;
@@ -87,34 +127,69 @@ void Game::Initial() {
 	Human.location_one.y = -1;
 	Human.location_two.x = -1;
 	Human.location_two.y = -1;
-	// for machine-0
-	Machine[0].location_one.x = 100;
-	Machine[0].location_one.y = 300;
-	Machine[0].location_two.x = 242;
-	Machine[0].location_two.y = 495;
-	// for machine-1
-	Machine[1].location_one.x = 290;
-	Machine[1].location_one.y = 36;
-	Machine[1].location_two.x = 432;
-	Machine[1].location_two.y = 231;
-	// for machine-2
-	Machine[2].location_one.x = 550;
-	Machine[2].location_one.y = 36;
-	Machine[2].location_two.x = 692;
-	Machine[2].location_two.y = 231;
-	// for machine-3
-	Machine[3].location_one.x = 750;
-	Machine[3].location_one.y = 300;
-	Machine[3].location_two.x = 892;
-	Machine[3].location_two.y = 495;
-
-	//---->> machine amount
-	machine_number = 1;                     // default is 4
-
-
-	// insert message of sending signal of game start
-	Insert_Message(L"         ·  游戏开始 ·");
-
+	switch (machine_number)
+	{
+	case 1:
+		// for machine-0
+		Machine[0].location_one.x = window_width * 2 / 5;
+		Machine[0].location_one.y = window_height / 15;
+		Machine[0].location_two.x = Machine[0].location_one.x +142;
+		Machine[0].location_two.y = Machine[0].location_one.y +195;
+		break;
+	case 2:
+		// for machine-0
+		Machine[0].location_one.x = 290;
+		Machine[0].location_one.y = 36;
+		Machine[0].location_two.x = Machine[0].location_one.x + 142;
+		Machine[0].location_two.y = Machine[0].location_one.y + 195;
+		// for machine-1
+		Machine[1].location_one.x = 550;
+		Machine[1].location_one.y = 36;
+		Machine[1].location_two.x = Machine[1].location_one.x + 142;
+		Machine[1].location_two.y = Machine[1].location_one.y + 195;
+		break;
+	case 3:
+		// for machine-0
+		Machine[0].location_one.x = 100;
+		Machine[0].location_one.y = 300;
+		Machine[0].location_two.x = Machine[0].location_one.x + 142;
+		Machine[0].location_two.y = Machine[0].location_one.y + 195;
+		// for machine-1
+		Machine[1].location_one.x = window_width * 2 / 5;
+		Machine[1].location_one.y = window_height/15;
+		Machine[1].location_two.x = Machine[1].location_one.x + 142;
+		Machine[1].location_two.y = Machine[1].location_one.y + 195;
+		// for machine-2
+		Machine[2].location_one.x = 750;
+		Machine[2].location_one.y = 300;
+		Machine[2].location_two.x = Machine[2].location_one.x + 142;
+		Machine[2].location_two.y = Machine[2].location_one.y + 195;
+		break;
+	case 4:
+		// for machine-0
+		Machine[0].location_one.x = 100;
+		Machine[0].location_one.y = 300;
+		Machine[0].location_two.x = Machine[0].location_one.x + 142;
+		Machine[0].location_two.y = Machine[0].location_one.y + 195;
+		// for machine-1
+		Machine[1].location_one.x = 290;
+		Machine[1].location_one.y = 36;
+		Machine[1].location_two.x = Machine[1].location_one.x + 142;
+		Machine[1].location_two.y = Machine[1].location_one.y + 195;
+		// for machine-2
+		Machine[2].location_one.x = 550;
+		Machine[2].location_one.y = 36;
+		Machine[2].location_two.x = Machine[2].location_one.x + 142;
+		Machine[2].location_two.y = Machine[2].location_one.y + 195;
+		// for machine-3
+		Machine[3].location_one.x = 750;
+		Machine[3].location_one.y = 300;
+		Machine[3].location_two.x = Machine[3].location_one.x + 142;
+		Machine[3].location_two.y = Machine[3].location_one.y + 195;
+		break;
+	default:
+		break;
+	}
 	//---->> initialize pile card
 	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
 	exturn = normal;                         // original set is mean normal 
