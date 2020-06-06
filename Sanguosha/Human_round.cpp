@@ -162,7 +162,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 
 			if (button_ok.is_down) {
 				// result
-				Human.cards.Detete_Card_Selected();
+				Human.cards.Delete_Card_Selected();
+				discard_pile.Insert_Card(jink, 1);
 				// initialize data
 				Human.select_card = false;
 				Human.selecet_card_amount = 0;
@@ -302,7 +303,9 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				// round change
 				exturn_backup = exturn;
 				exturn = peach_begger;
-				Human.cards.Detete_Card_Selected();
+				// pile card change
+				Human.cards.Delete_Card_Selected();
+				discard_pile.Insert_Card(peach, 1);
 				Human.skill.begging_peach = false;
 				// initialize data
 				Human.select_card = false;
@@ -392,7 +395,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				int which_animator = ptr->card_info.single_card_number;
 				if (which_animator == peach || which_animator == analeptic) {
 					out_put(*ptr);
-					Human.cards.Detete_Card_Selected();
+					Human.cards.Delete_Card_Selected();
+					discard_pile.Insert_Card(peach, 1);
 					Human.skill.receive_peach = true;
 					exturn_backup = exturn;
 				}
@@ -579,7 +583,8 @@ void Game::Human_Round() {
 								break;
 							}
 							Human.kill_times++;
-							Human.cards.Detete_Card_Selected();
+							Human.cards.Delete_Card_Selected();
+							discard_pile.Insert_Card(kill, 1);
 
 							cout << "exturn is :::" << exturn << endl;
 						}
@@ -611,7 +616,8 @@ void Game::Human_Round() {
 								break;
 							}
 							Human.kill_times++;
-							Human.cards.Detete_Card_Selected();
+							Human.cards.Delete_Card_Selected();
+							discard_pile.Insert_Card(kill, 1);
 
 							cout << "exturn is :::" << exturn << endl;
 						}
@@ -632,6 +638,7 @@ void Game::Human_Round() {
 						Human.animator_peach_counter = 0;
 						animator_running = true;
 						if (Human.HP < Human.limited_HP) Human.HP++;
+						discard_pile.Insert_Card(peach, 1);
 						//Human.skill.need_peach=true;
 					}
 					else if (ptr->card_info.single_card_number == analeptic) { // when human have not die,this kill can doubled kill power
@@ -640,13 +647,14 @@ void Game::Human_Round() {
 						Human.animator_analeptic = true;
 						Human.animator_analeptic_counter = 0;
 						animator_running = true;
+						discard_pile.Insert_Card(analeptic, 1);
 					}
 					Machine[0].being_choose = false;
 					Machine[1].being_choose = false;
 					Machine[2].being_choose = false;
 					Machine[3].being_choose = false;
 					Human.chosen_number = 0;
-					Human.cards.Detete_Card_Selected();
+					Human.cards.Delete_Card_Selected();
 					Human.select_card = false;
 					// then change button state
 					button_ok.enable_diabled_button();
@@ -712,7 +720,19 @@ void Game::Human_Round() {
 		}
 		if (button_ok.is_down) {
 			for (int i = 0; i < Human.selecet_card_amount; i++) {
-				Human.cards.Detete_Card_Selected();
+				int temp_delete_number;
+				// find that card
+				LinkList ptr = Human.cards.Pile_Card_Total;
+				while (ptr->next) {
+					if (ptr->next->mouse_select_card == true) {
+						temp_delete_number = ptr->next->card_info.single_card_number;
+						break;
+					}
+					ptr = ptr->next;
+				}
+
+				Human.cards.Delete_Card_Selected();
+				discard_pile.Insert_Card(temp_delete_number, 1);
 			}
 			Human.selecet_card_amount = 0;
 			button_ok.enable_diabled_button();

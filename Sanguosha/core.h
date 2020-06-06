@@ -121,6 +121,7 @@ public:
 		P = S;
 		cout << "***********yes get card succeed!!!" << endl;
 	}
+
 	bool Delete_Card(int number) {
 		LinkList T = Pile_Card_Total;
 		while (T->next) {
@@ -136,7 +137,8 @@ public:
 		}
 		return false;
 	}
-	bool Detete_Card_Selected() {
+
+	bool Delete_Card_Selected() {
 		LinkList T = Pile_Card_Total;
 		while (T->next) {
 			if (T->next->mouse_select_card == true) {
@@ -151,6 +153,7 @@ public:
 		}
 		return false;
 	}
+
 	void Bubblesort_Card() {
 		Single_Card* pre, * p, * tail;
 		tail = NULL;

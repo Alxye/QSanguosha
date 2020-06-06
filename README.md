@@ -286,3 +286,4 @@ while (machine.cards.Pile_Card_Amount > machine.HP) {
 	machine.cards.Delete_Card(machine.cards.Pile_Card_Total->next->card_info.single_card_number);
 }
 ```
+*已实现：修正了动画显示被遮挡的bug...*

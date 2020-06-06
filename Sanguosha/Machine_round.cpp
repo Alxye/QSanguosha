@@ -112,6 +112,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			machine.animator_jink_counter = 0;
 			animator_running = true;
 			machine.cards.Delete_Card(jink);
+			discard_pile.Insert_Card(jink, 1);
 		}
 		else {
 			machine.HP--;
@@ -130,6 +131,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			machine.animator_jink_counter = 0;
 			animator_running = true;
 			machine.cards.Delete_Card(jink);
+			discard_pile.Insert_Card(jink, 1);
 		}
 		else {
 			machine.HP -= 2;
@@ -220,6 +222,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				break;
 			}
 			machine.cards.Delete_Card(peach);
+			discard_pile.Insert_Card(peach, 1);
 			cout << "Machine  machine.charactor_code ==" << machine.charactor_code << " give a peach £¡" << endl;
 			// go to peach-begger then having peach;also back up current state of turn for the situation that peach-begger is still in dying state even after get one blood recovered
 			exturn_backup = exturn;
@@ -249,6 +252,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			animator_running = true;
 			// result
 			machine.cards.Delete_Card(peach);
+			discard_pile.Insert_Card(peach, 1);
 			machine.skill.receive_peach = true;
 			exturn_backup = exturn;
 		}
@@ -259,6 +263,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			animator_running = true;
 			// result
 			machine.cards.Delete_Card(analeptic);
+			discard_pile.Insert_Card(analeptic, 1);
 			machine.skill.receive_peach = true;
 			exturn_backup = exturn;
 		}
@@ -294,6 +299,7 @@ void Game::Machine_Round(Player& machine) {
 					animator_running = true;
 					// result
 					machine.cards.Delete_Card(analeptic);
+					discard_pile.Insert_Card(analeptic, 1);
 					machine.drank_analeptic = true;
 					machine.kill_power++;
 					return;
@@ -331,6 +337,7 @@ void Game::Machine_Round(Player& machine) {
 							break;
 						}
 						machine.cards.Delete_Card(kill);
+						discard_pile.Insert_Card(kill, 1);
 						machine.kill_times++;
 						// change exturn
 						exturn = emeny_code;
@@ -360,6 +367,7 @@ void Game::Machine_Round(Player& machine) {
 							break;
 						}
 						machine.cards.Delete_Card(kill);
+						discard_pile.Insert_Card(kill, 1);
 						machine.kill_times++;
 						// change exturn
 						exturn = emeny_code;
@@ -375,6 +383,7 @@ void Game::Machine_Round(Player& machine) {
 					animator_running = true;
 					// result
 					machine.cards.Delete_Card(peach);
+					discard_pile.Insert_Card(peach, 1);
 					machine.HP++;
 					return;
 				}
@@ -393,7 +402,9 @@ void Game::Machine_Round(Player& machine) {
 			else {
 				// discard normal button set
 				while (machine.cards.Pile_Card_Amount > machine.HP){
-					machine.cards.Delete_Card(machine.cards.Pile_Card_Total->next->card_info.single_card_number);
+					int temp_delete_number = machine.cards.Pile_Card_Total->next->card_info.single_card_number;
+					machine.cards.Delete_Card(temp_delete_number);
+					discard_pile.Insert_Card(temp_delete_number, 1);
 				}
 				machine.round_discard_phase = false;
 				new_round = true;

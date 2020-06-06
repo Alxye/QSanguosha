@@ -43,7 +43,10 @@ public:
 	void out_put(Single_Card single);
 	// for count the killing number
 	int killing_number;
-
+	// display discard pile
+	Pile_Card discard_pile;
+	Texture texture_discard_pile;
+	Sprite sprite_discard_pile;
 
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows
@@ -73,6 +76,7 @@ public:
 	void Machine_Round(Player & machine);
 
 	void Draw();
+	void Draw_Discard_Pile();
 	void Draw_HumanPlayer_Button();
 	void Draw_HumanPlayer();
 	void Draw_Animator_Single(int set_frame, bool& animator, int& animator_counter, string file, int limited, int _x, int _y);
