@@ -15,6 +15,8 @@ Game::Game() {
 	message = new Message;
 	message->next = NULL;
 	message_amount = 0;
+	// initialize pile
+	piles.Shuffle_Card();
 }
 void Game::Initial() {
 	// initialize game state
@@ -24,19 +26,15 @@ void Game::Initial() {
 	gamerun = false;
 	gamechoose = false;
 	gamepause = false;
+	gameinfo = false;
 	restart = false;
-	start_style_mode = 0;    // default is 0--light,1--dark
+	// set style mode
+	globe_style_mode = 0;    // default is 0--light,1--dark
+	gamestart_style=0;
+	gameinfo_style=0;
+	gamechoose_style=0;
 	// initialize background number
 	img_bg_number = 0;
-	// for original round
-	new_round = true;
-	// extra turn initialize
-	exturn = normal;
-	exturn_backup = exturn;
-	// record who set signal of begging peach
-	peach_begger = -1; // default no one beg for peach
-	// get cards shuffled (originally)
-	piles.Shuffle_Card();
 	// load background(default)
 	Load_Image(texture_background, sprite_background, "image/back_stable/background-cover0.jpg", 0, 0, 1, 1);                  
 	// load equipment background in player's interface
@@ -102,19 +100,53 @@ void Game::Initial() {
 	Load_Image(gamestart_quit.texture_down, gamestart_quit.sprite_down, "image/back_stable/start-surface/start-button-quit-down.png", 0, 0, 1, 1);
 
 	// enable button state
+	//---->> for game start
 	gamestart_go.enable_normal_button();
 	gamestart_info.enable_normal_button();
 	gamestart_quit.enable_normal_button();
+	//---->> for game info
+	gameinfo_thanks.enable_normal_button();
+	gameinfo_gameinfo.enable_normal_button();
+	gameinfo_phaseinfo.enable_normal_button();
+	gameinfo_cardinfo.enable_normal_button();
+	//---->> GAME INFO surface image loading (default image)
+	Load_Image(texture_gameinfo_bg, sprite_gameinfo_bg, "image/back_stable/info-surface/bg-light.png", 0, 0, 1, 1);
+	//---->> GAME INFO button enable & texture,sprite tied
+	// normal (default is mode ==0)
+	Load_Image(gameinfo_thanks.texture_normal, gameinfo_thanks.sprite_normal, "image/back_stable/info-surface/thanksinfo-button-light.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_gameinfo.texture_normal, gameinfo_gameinfo.sprite_normal, "image/back_stable/info-surface/gameinfo-button-light.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_phaseinfo.texture_normal, gameinfo_phaseinfo.sprite_normal, "image/back_stable/info-surface/phaseinfo-button-light.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_cardinfo.texture_normal, gameinfo_cardinfo.sprite_normal, "image/back_stable/info-surface/cardinfo-button-light.png", 0, 0, 1, 1);
+	// high light (default is mode ==0)
+	Load_Image(gameinfo_thanks.texture_hover, gameinfo_thanks.sprite_hover, "image/back_stable/info-surface/thanksinfo-button-dark.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_gameinfo.texture_hover, gameinfo_gameinfo.sprite_hover, "image/back_stable/info-surface/gameinfo-button-dark.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_phaseinfo.texture_hover, gameinfo_phaseinfo.sprite_hover, "image/back_stable/info-surface/phaseinfo-button-dark.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_cardinfo.texture_hover, gameinfo_cardinfo.sprite_hover, "image/back_stable/info-surface/cardinfo-button-dark.png", 0, 0, 1, 1);
+	// down
+	Load_Image(gameinfo_thanks.texture_down, gameinfo_thanks.sprite_down, "image/back_stable/info-surface/thanksinfo-button-dark.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_gameinfo.texture_down, gameinfo_gameinfo.sprite_down, "image/back_stable/info-surface/gameinfo-button-dark.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_phaseinfo.texture_down, gameinfo_phaseinfo.sprite_down, "image/back_stable/info-surface/phaseinfo-button-dark.png", 0, 0, 1, 1);
+	Load_Image(gameinfo_cardinfo.texture_down, gameinfo_cardinfo.sprite_down, "image/back_stable/info-surface/cardinfo-button-dark.png", 0, 0, 1, 1);
+	//---->> game info load word texture (default is 0===light)
+	Load_Image(texture_gameinfo_thanks, sprite_gameinfo_thanks, "image/back_stable/info-surface/thanks-light.png", 0, 0, 1, 1);
+	Load_Image(texture_gameinfo_gameinfo, sprite_gameinfo_gameinfo, "image/back_stable/info-surface/gameinfo-light.png", 0, 0, 1, 1);
+	Load_Image(texture_gameinfo_phaseinfo, sprite_gameinfo_phaseinfo, "image/back_stable/info-surface/phaseinfo-light.png", 0, 0, 1, 1);
+	Load_Image(texture_gameinfo_cardinfo, sprite_gameinfo_cardinfo, "image/back_stable/info-surface/cardinfo-light.png", 0, 0, 1, 1);
+	//---->> return button initialize
+	Load_Image(return_button.texture_normal, return_button.sprite_normal, "image/back_stable/info-surface/return-normal.png", 0, 0, 1, 1);
+	Load_Image(return_button.texture_hover, return_button.sprite_hover, "image/back_stable/info-surface/return-hover.png", 0, 0, 1, 1);
+	Load_Image(return_button.texture_down,return_button.sprite_down, "image/back_stable/info-surface/return-normal.png", 0, 0, 1, 1);
+	return_button.enable_normal_button();
+
+	//---->> game chosen load texture&sprite
+	Load_Image(texture_gamechoose_contain, sprite_gamechoose_contain, "image/back_stable/chosen-surface/chosen-word-light.png", 0, 0, 1, 1);
+	//---->> game chosen button initialize
+	Load_Image(button_gamechoose.texture_hover, button_gamechoose.sprite_hover, "image/back_stable/chosen-surface/chosen-button-light.png", 0, 0, 1, 1);
+	button_gamechoose.enable_normal_button();
+
+
 	button_animate_count = 0;
 
-
-
-	//---->> machine amount
-	machine_number = 3;                     // default is 4
-
-
-	// insert message of sending signal of game start
-	Insert_Message(L"         ¡¤  ÓÎÏ·¿ªÊ¼ ¡¤");
 
 	//---->> initialize charactor code to get catch of each member
 	Human.charactor_code = human;
@@ -127,74 +159,7 @@ void Game::Initial() {
 	Human.location_one.y = -1;
 	Human.location_two.x = -1;
 	Human.location_two.y = -1;
-	switch (machine_number)
-	{
-	case 1:
-		// for machine-0
-		Machine[0].location_one.x = window_width * 2 / 5;
-		Machine[0].location_one.y = window_height / 15;
-		Machine[0].location_two.x = Machine[0].location_one.x +142;
-		Machine[0].location_two.y = Machine[0].location_one.y +195;
-		break;
-	case 2:
-		// for machine-0
-		Machine[0].location_one.x = 290;
-		Machine[0].location_one.y = 36;
-		Machine[0].location_two.x = Machine[0].location_one.x + 142;
-		Machine[0].location_two.y = Machine[0].location_one.y + 195;
-		// for machine-1
-		Machine[1].location_one.x = 550;
-		Machine[1].location_one.y = 36;
-		Machine[1].location_two.x = Machine[1].location_one.x + 142;
-		Machine[1].location_two.y = Machine[1].location_one.y + 195;
-		break;
-	case 3:
-		// for machine-0
-		Machine[0].location_one.x = 100;
-		Machine[0].location_one.y = 300;
-		Machine[0].location_two.x = Machine[0].location_one.x + 142;
-		Machine[0].location_two.y = Machine[0].location_one.y + 195;
-		// for machine-1
-		Machine[1].location_one.x = window_width * 2 / 5;
-		Machine[1].location_one.y = window_height/15;
-		Machine[1].location_two.x = Machine[1].location_one.x + 142;
-		Machine[1].location_two.y = Machine[1].location_one.y + 195;
-		// for machine-2
-		Machine[2].location_one.x = 750;
-		Machine[2].location_one.y = 300;
-		Machine[2].location_two.x = Machine[2].location_one.x + 142;
-		Machine[2].location_two.y = Machine[2].location_one.y + 195;
-		break;
-	case 4:
-		// for machine-0
-		Machine[0].location_one.x = 100;
-		Machine[0].location_one.y = 300;
-		Machine[0].location_two.x = Machine[0].location_one.x + 142;
-		Machine[0].location_two.y = Machine[0].location_one.y + 195;
-		// for machine-1
-		Machine[1].location_one.x = 290;
-		Machine[1].location_one.y = 36;
-		Machine[1].location_two.x = Machine[1].location_one.x + 142;
-		Machine[1].location_two.y = Machine[1].location_one.y + 195;
-		// for machine-2
-		Machine[2].location_one.x = 550;
-		Machine[2].location_one.y = 36;
-		Machine[2].location_two.x = Machine[2].location_one.x + 142;
-		Machine[2].location_two.y = Machine[2].location_one.y + 195;
-		// for machine-3
-		Machine[3].location_one.x = 750;
-		Machine[3].location_one.y = 300;
-		Machine[3].location_two.x = Machine[3].location_one.x + 142;
-		Machine[3].location_two.y = Machine[3].location_one.y + 195;
-		break;
-	default:
-		break;
-	}
-	//---->> initialize pile card
-	turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
-	exturn = normal;                         // original set is mean normal 
-	//---->> initialize killing number
-	killing_number = 0;
+	
 	//---->> diable all the button
 	button_ok.enable_diabled_button();
 	button_discard.enable_diabled_button();
@@ -279,7 +244,7 @@ void Game::Load_Image(Texture& texture, Sprite& sprite, string filename, float o
 		}
 	}
 	else {
-		cout << "Image Load Successfully" << endl;
+		//cout << "Image Load Successfully" << endl;
 		sprite.setTexture(texture);
 		sprite.setOrigin(originX, originY);
 		sprite.setScale(factorX, factorY);
@@ -305,7 +270,7 @@ void Game::Load_Font(Font& font, Text& text, string filename) {
 		}
 	}
 	else {
-		cout << "Font Load Successfully" << endl;
+		//cout << "Font Load Successfully" << endl;
 		text.setFont(font);
 	}
 }

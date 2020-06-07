@@ -3,14 +3,171 @@ void Game::Logic() {
 
 	if (gamestart) {
 		if (gamestart_go.is_disabled) {
-			gamerun = true;
+			gamechoose = true;
 			gamestart = false;
+
+			// restore attributes
+			gamestart_go.enable_normal_button();
+			gamestart_info.enable_normal_button();
+			gamestart_quit.enable_normal_button();
+
+			return;
+		}
+		else if (gamestart_info.is_disabled) {
+			gameinfo = true;
+			gamestart = false;
+
+			// restore attributes
+			gamestart_go.enable_normal_button();
+			gamestart_info.enable_normal_button();
+			gamestart_quit.enable_normal_button();
+
 			return;
 		}
 		else if (gamestart_quit.is_disabled) {
 			gamestart = false;
 			gamequit = true;
 			restart = true;
+		}
+	}
+	
+	if (gameinfo) {
+		if (return_button.is_disabled) {
+			gameinfo = false;
+			gamestart = true;
+
+			// Restore attributes
+			return_button.enable_normal_button();
+			gameinfo_thanks.enable_normal_button();
+			gameinfo_gameinfo.enable_normal_button();
+			gameinfo_phaseinfo.enable_normal_button();
+			gameinfo_cardinfo.enable_normal_button();
+
+
+			return;
+		}
+	}
+
+	if (gamechoose) {
+		if (return_button.is_disabled) {
+			gamechoose = false;
+			gamestart = true;
+
+			// Restore attributes
+			return_button.enable_normal_button();
+			button_gamechoose.enable_normal_button();
+
+			return;
+		}
+		else if (button_gamechoose.is_down) {
+
+			gamechoose = false;
+			gamerun = true;
+			restart = false;
+			// set new data
+
+	        // for original round
+			new_round = true;
+			// extra turn initialize
+			exturn = normal;
+			exturn_backup = exturn;
+			// record who set signal of begging peach
+			peach_begger = -1; // default no one beg for peach
+			// get cards shuffled (originally)
+
+			// get all card to pile card
+			Single_Card* ptr = discard_pile.Pile_Card_Total->next;
+			while (ptr) {
+				ptr = ptr->next;
+				int card_number;
+				card_number = discard_pile.Pile_Card_Total->next->card_info.single_card_number;
+				discard_pile.Delete_Card(card_number);
+				piles.Insert_Card(card_number, rand() % 4);
+			}
+            
+			// clear all player's card
+			Human.cards.clear();
+			for (int i = 0; i < 4; i++) Machine[i].cards.clear();
+
+			// insert message of sending signal of game start
+			Insert_Message(L"         ¡¤  ÓÎÏ·¿ªÊ¼ ¡¤");
+
+
+			switch (machine_number)
+			{
+			case 1:
+				// for machine-0
+				Machine[0].location_one.x = window_width * 2 / 5;
+				Machine[0].location_one.y = window_height / 15;
+				Machine[0].location_two.x = Machine[0].location_one.x + 142;
+				Machine[0].location_two.y = Machine[0].location_one.y + 195;
+				break;
+			case 2:
+				// for machine-0
+				Machine[0].location_one.x = 290;
+				Machine[0].location_one.y = 36;
+				Machine[0].location_two.x = Machine[0].location_one.x + 142;
+				Machine[0].location_two.y = Machine[0].location_one.y + 195;
+				// for machine-1
+				Machine[1].location_one.x = 550;
+				Machine[1].location_one.y = 36;
+				Machine[1].location_two.x = Machine[1].location_one.x + 142;
+				Machine[1].location_two.y = Machine[1].location_one.y + 195;
+				break;
+			case 3:
+				// for machine-0
+				Machine[0].location_one.x = 100;
+				Machine[0].location_one.y = 300;
+				Machine[0].location_two.x = Machine[0].location_one.x + 142;
+				Machine[0].location_two.y = Machine[0].location_one.y + 195;
+				// for machine-1
+				Machine[1].location_one.x = window_width * 2 / 5;
+				Machine[1].location_one.y = window_height / 15;
+				Machine[1].location_two.x = Machine[1].location_one.x + 142;
+				Machine[1].location_two.y = Machine[1].location_one.y + 195;
+				// for machine-2
+				Machine[2].location_one.x = 750;
+				Machine[2].location_one.y = 300;
+				Machine[2].location_two.x = Machine[2].location_one.x + 142;
+				Machine[2].location_two.y = Machine[2].location_one.y + 195;
+				break;
+			case 4:
+				// for machine-0
+				Machine[0].location_one.x = 100;
+				Machine[0].location_one.y = 300;
+				Machine[0].location_two.x = Machine[0].location_one.x + 142;
+				Machine[0].location_two.y = Machine[0].location_one.y + 195;
+				// for machine-1
+				Machine[1].location_one.x = 290;
+				Machine[1].location_one.y = 36;
+				Machine[1].location_two.x = Machine[1].location_one.x + 142;
+				Machine[1].location_two.y = Machine[1].location_one.y + 195;
+				// for machine-2
+				Machine[2].location_one.x = 550;
+				Machine[2].location_one.y = 36;
+				Machine[2].location_two.x = Machine[2].location_one.x + 142;
+				Machine[2].location_two.y = Machine[2].location_one.y + 195;
+				// for machine-3
+				Machine[3].location_one.x = 750;
+				Machine[3].location_one.y = 300;
+				Machine[3].location_two.x = Machine[3].location_one.x + 142;
+				Machine[3].location_two.y = Machine[3].location_one.y + 195;
+				break;
+			default:
+				break;
+			}
+			//---->> initialize pile card
+			turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
+			exturn = normal;                         // original set is mean normal 
+			//---->> initialize killing number
+			killing_number = 0;
+
+
+			// Restore attributes
+			return_button.enable_normal_button();
+			button_gamechoose.enable_normal_button();
+
+			return;
 		}
 	}
 

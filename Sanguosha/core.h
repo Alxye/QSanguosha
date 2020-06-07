@@ -297,7 +297,16 @@ public:
 			head->next = q;
 		}
 	}
-
+	void clear()
+	{
+		Single_Card * p;
+		while (Pile_Card_Total->next) {
+			p = Pile_Card_Total->next; //p指向链表中头结点后面的第一个结点
+			Pile_Card_Total->next = p->next; //删除p结点
+			free(p); //释放p结点占据的存储空间
+			Pile_Card_Amount--;
+		}
+	}
 	Pile_Card() {
 		Pile_Card_Total = new Single_Card;
 		Pile_Card_Total->next = NULL;

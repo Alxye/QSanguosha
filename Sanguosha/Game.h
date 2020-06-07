@@ -5,6 +5,17 @@ class Game
 {
 public:
 	RenderWindow window;
+
+	// style mode
+	int globe_style_mode;
+	int gamestart_style;
+	int gameinfo_style;
+	int gamechoose_style;
+	/// <for-style-change>
+	bool change_bg;
+	int button_animate_count;
+	/// </for-style-change>
+
 	int window_width, window_height;
 	int turn;                             // the mask of turning
 	int exturn;
@@ -12,7 +23,7 @@ public:
 	bool round_loop;                      // flag to judge if a loop have been existed
 	int round_loop_starter;               // mark loop starter
 	bool restart;                         // signal of gamer restart
-	bool gamestart, gameover, gamequit,gamerun,gamechoose,gamepause;
+	bool gamestart, gameover, gamequit,gamerun,gamechoose,gamepause,gameinfo;
 	bool new_round;
 	bool human_defense;                   // bool to see its turn to human defense
 	bool animator_running;                // judge animator is running ,so that machine play wont play so fast
@@ -55,17 +66,30 @@ public:
 	// globe input sent
 	Vector2i input_sent;
 
+	int img_bg_number;         // when game run ,change background
+
     // GAME-START texture & sprite
 	Texture texture_gamestart_bg;
 	Sprite sprite_gamestart_bg;
-	int img_bg_number;
-	bool change_bg;
-	int start_style_mode;
 	// GAME-START Button
 	Button gamestart_go;
 	Button gamestart_info;
 	Button gamestart_quit;
-	int button_animate_count;
+
+    // GAME-INFO texture & sprite
+	Texture texture_gameinfo_bg, texture_gameinfo_thanks, texture_gameinfo_gameinfo, texture_gameinfo_phaseinfo, texture_gameinfo_cardinfo;
+	Sprite sprite_gameinfo_bg, sprite_gameinfo_thanks, sprite_gameinfo_gameinfo, sprite_gameinfo_phaseinfo, sprite_gameinfo_cardinfo;
+	// GAME-INFO Button
+	Button gameinfo_thanks;
+	Button gameinfo_gameinfo;
+	Button gameinfo_phaseinfo;
+	Button gameinfo_cardinfo;
+	Button return_button;
+
+	// GAME-CHOOSE Button
+	Button button_gamechoose;
+	Texture texture_gamechoose_contain;
+	Sprite sprite_gamechoose_contain;
 
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows

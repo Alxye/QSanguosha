@@ -417,7 +417,8 @@ if (button_animate_count < 81) {
 		window.setFramerateLimit(300);
 }
 ```
-* 已实现：解决了全局Input & Human_input 局部模块的冲突，解决方案：全局约束 Input函数，在gamerun为真时，不允许运行。*
+*已实现：解决了全局Input & Human_input 局部模块的冲突，解决方案：全局约束 Input函数，在gamerun为真时，不允许运行。*
 ```
 if (!Sanguosha.gamerun) Sanguosha.Input(); 
 ```
+* 待实现：完成关卡选择模块 & 相关说明 模块。

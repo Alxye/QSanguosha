@@ -18,32 +18,30 @@ Vector2i Game::Input() {
 			// change style
 			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::A) {
 				change_bg = true;
-			}
-			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::S) {
-				gamestart = false;
-				gamerun = true;
+				if (globe_style_mode == 0) globe_style_mode = 1;
+				else if (globe_style_mode == 1) globe_style_mode = 0;
 			}
 			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
-				mouse_count_clock_two = Mouse::getPosition(window);
-				if (mouse_count_clock_two.x > 570 && mouse_count_clock_two.x < (570 + 80) && mouse_count_clock_two.y > 50 && mouse_count_clock_two.y < (50 + 400)){ 
+				//Mouse::getPosition(window) = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 570 && Mouse::getPosition(window).x < (570 + 80) && Mouse::getPosition(window).y > 50 && Mouse::getPosition(window).y < (50 + 400)){ 
 					gamestart_go.enable_down_button();
 				}
-				else if (mouse_count_clock_two.x > 470 && mouse_count_clock_two.x < (470+ 80) && mouse_count_clock_two.y > 90 && mouse_count_clock_two.y < (90 + 400)){
+				else if (Mouse::getPosition(window).x > 470 && Mouse::getPosition(window).x < (470+ 80) && Mouse::getPosition(window).y > 90 && Mouse::getPosition(window).y < (90 + 400)){
 					gamestart_info.enable_down_button();
 				}
-				else if (mouse_count_clock_two.x > 370 && mouse_count_clock_two.x < (370 + 80) && mouse_count_clock_two.y > 130 && mouse_count_clock_two.y < (130 + 400))	{
+				else if (Mouse::getPosition(window).x > 370 && Mouse::getPosition(window).x < (370 + 80) && Mouse::getPosition(window).y > 130 && Mouse::getPosition(window).y < (130 + 400))	{
 					gamestart_quit.enable_down_button();
 				}
 			}
 			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
-				mouse_count_clock_two = Mouse::getPosition(window);
-				if (mouse_count_clock_two.x > 570 && mouse_count_clock_two.x < (570 + 80) && mouse_count_clock_two.y > 50 && mouse_count_clock_two.y < (50 + 400)) {
+				Mouse::getPosition(window) = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 570 && Mouse::getPosition(window).x < (570 + 80) && Mouse::getPosition(window).y > 50 && Mouse::getPosition(window).y < (50 + 400)) {
 					gamestart_go.enable_diabled_button();
 				}
-				else if (mouse_count_clock_two.x > 470 && mouse_count_clock_two.x < (470 + 80) && mouse_count_clock_two.y > 90 && mouse_count_clock_two.y < (90 + 400)) {
+				else if (Mouse::getPosition(window).x > 470 && Mouse::getPosition(window).x < (470 + 80) && Mouse::getPosition(window).y > 90 && Mouse::getPosition(window).y < (90 + 400)) {
 					gamestart_info.enable_diabled_button();
 				}
-				else if (mouse_count_clock_two.x > 370 && mouse_count_clock_two.x < (370 + 80) && mouse_count_clock_two.y > 130 && mouse_count_clock_two.y < (130 + 400)) {
+				else if (Mouse::getPosition(window).x > 370 && Mouse::getPosition(window).x < (370 + 80) && Mouse::getPosition(window).y > 130 && Mouse::getPosition(window).y < (130 + 400)) {
 					gamestart_quit.enable_diabled_button();
 				}
 			}
@@ -84,6 +82,207 @@ Vector2i Game::Input() {
 		}
 		// when begin to choose start game , choose game mode for double player or more
 		if (gamechoose) {
+			// change style
+			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::A) {
+				change_bg = true;
+				if (globe_style_mode == 0) globe_style_mode = 1;
+				else if (globe_style_mode == 1) globe_style_mode = 0;
+			}
+			if (event_global.type == sf::Event::MouseMoved) {
+				if (!button_gamechoose.is_down) {
+
+					// control button of return-menu in hover state
+					if (event_global.mouseMove.x > 430 &&
+						event_global.mouseMove.x < (430 + 135) &&
+						event_global.mouseMove.y > 174 &&
+						event_global.mouseMove.y < (174 + 53)) {
+						button_gamechoose.enable_hover_button();
+						button_gamechoose.sprite_hover.setPosition(383, 188);
+					}
+					else if (event_global.mouseMove.x > 430 &&
+						event_global.mouseMove.x < (430 + 135) &&
+						event_global.mouseMove.y > 250 &&
+						event_global.mouseMove.y < (250 + 53)) {
+						button_gamechoose.enable_hover_button();
+						button_gamechoose.sprite_hover.setPosition(383, 266);
+					}
+					else if (event_global.mouseMove.x > 430 &&
+						event_global.mouseMove.x < (430 + 135) &&
+						event_global.mouseMove.y > 330 &&
+						event_global.mouseMove.y < (330 + 53)) {
+						button_gamechoose.enable_hover_button();
+						button_gamechoose.sprite_hover.setPosition(383, 344);
+					}
+					else if (event_global.mouseMove.x > 430 &&
+						event_global.mouseMove.x < (430 + 135) &&
+						event_global.mouseMove.y > 410 &&
+						event_global.mouseMove.y < (420 + 53)) {
+						button_gamechoose.enable_hover_button();
+						button_gamechoose.sprite_hover.setPosition(383, 422);
+					}
+					else {
+						button_gamechoose.enable_normal_button();
+					}
+				}
+				// control button of return-menu in hover state
+				if (return_button.is_normal || return_button.is_hover) {
+					if (event_global.mouseMove.x > 890 && event_global.mouseMove.x < (890 + 100) && event_global.mouseMove.y > 640 && event_global.mouseMove.y < (640 + 90)) {
+						return_button.enable_hover_button();
+					}
+					else {
+						return_button.enable_normal_button();
+					}
+				}
+			}
+			
+			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+				//mouse_count_clock_two = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 890 && 
+					Mouse::getPosition(window).x < (890 + 100) && 
+					Mouse::getPosition(window).y > 640 && 
+					Mouse::getPosition(window).y < (640 + 90)) {
+					return_button.enable_down_button();
+				}
+				else if ( Mouse::getPosition(window).x > 430 &&
+					 Mouse::getPosition(window).x < (430 + 135) &&
+					 Mouse::getPosition(window).y > 174 &&
+					 Mouse::getPosition(window).y < (174 + 53)) {
+					button_gamechoose.enable_down_button();
+					machine_number = 1;
+				}
+				else if ( Mouse::getPosition(window).x > 430 &&
+					 Mouse::getPosition(window).x < (430 + 135) &&
+					 Mouse::getPosition(window).y > 250 &&
+					 Mouse::getPosition(window).y < (250 + 53)) {
+					button_gamechoose.enable_down_button();
+					machine_number = 2;
+				}
+				else if ( Mouse::getPosition(window).x > 430 &&
+					 Mouse::getPosition(window).x < (430 + 135) &&
+					 Mouse::getPosition(window).y > 330 &&
+					 Mouse::getPosition(window).y < (330 + 53)) {
+					button_gamechoose.enable_down_button();
+					machine_number = 3;
+				}
+				else if ( Mouse::getPosition(window).x > 430 &&
+					 Mouse::getPosition(window).x < (430 + 135) &&
+					 Mouse::getPosition(window).y > 410 &&
+					 Mouse::getPosition(window).y < (420 + 53)) {
+					button_gamechoose.enable_down_button();
+					machine_number = 4;
+				}
+			}
+			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+				//mouse_count_clock_two = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 890 && Mouse::getPosition(window).x < (890 + 100) && Mouse::getPosition(window).y > 640 && Mouse::getPosition(window).y < (640 + 90)) {
+					return_button.enable_diabled_button();
+				}
+			}
+		
+		}
+		// when gameinfo
+		if (gameinfo) {
+			// change style
+			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::A) {
+				change_bg = true;
+				if (globe_style_mode == 0) globe_style_mode = 1;
+				else if (globe_style_mode == 1) globe_style_mode = 0;
+			}
+			if (event_global.type == sf::Event::MouseMoved) {
+				// control button of return-menu in hover state
+				if (return_button.is_normal || return_button.is_hover) {
+					if (event_global.mouseMove.x > 890 && event_global.mouseMove.x < (890 + 100) && event_global.mouseMove.y > 640 && event_global.mouseMove.y < (640 + 90)) {
+						return_button.enable_hover_button();
+					}
+					else {
+						return_button.enable_normal_button();
+					}
+				}
+				
+				// control thanks button
+				if (!gameinfo_thanks.is_down) {
+					if (event_global.mouseMove.x > 459 && event_global.mouseMove.x < (459 + 80) && event_global.mouseMove.y > 445 && event_global.mouseMove.y < (445 + 136)) {
+						if (gameinfo_thanks.is_normal) button_animate_count = 0;
+						gameinfo_thanks.enable_hover_button();
+					}
+					else {
+						gameinfo_thanks.enable_normal_button();
+					}
+				}
+				// control gameinfo button
+				if (!gameinfo_gameinfo.is_down) {
+					if (event_global.mouseMove.x > 529 && event_global.mouseMove.x < (529 + 86) && event_global.mouseMove.y > 430 && event_global.mouseMove.y < (430 + 183)) {
+						if (gameinfo_gameinfo.is_normal) button_animate_count = 0;
+						gameinfo_gameinfo.enable_hover_button();
+					}
+					else {
+						gameinfo_gameinfo.enable_normal_button();
+					}
+				}
+				// control phaseinfo button
+				if (!gameinfo_phaseinfo.is_down) {
+					if (event_global.mouseMove.x > 603 && event_global.mouseMove.x < (603 + 86) && event_global.mouseMove.y > 430 && event_global.mouseMove.y < (430 + 183)) {
+						if (gameinfo_phaseinfo.is_normal) button_animate_count = 0;
+						gameinfo_phaseinfo.enable_hover_button();
+					}
+					else {
+						gameinfo_phaseinfo.enable_normal_button();
+					}
+				}
+				// control cardinfo button
+				if (!gameinfo_cardinfo.is_down) {
+					if (event_global.mouseMove.x > 673 && event_global.mouseMove.x < (673 + 86) && event_global.mouseMove.y > 430 && event_global.mouseMove.y < (430 + 183)) {
+						if (gameinfo_cardinfo.is_normal) button_animate_count = 0;
+						gameinfo_cardinfo.enable_hover_button();
+					}
+					else {
+						gameinfo_cardinfo.enable_normal_button();
+					}
+				}
+			}
+
+
+			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+				//mouse_count_clock_two = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 890 && Mouse::getPosition(window).x < (890 + 100) && Mouse::getPosition(window).y > 640 && Mouse::getPosition(window).y < (640 + 90)) {
+					return_button.enable_down_button();
+				}
+				// control thanks button
+				else if (Mouse::getPosition(window).x > 459 && Mouse::getPosition(window).x < (459 + 80) && Mouse::getPosition(window).y > 445 && Mouse::getPosition(window).y < (445 + 136)) {
+					gameinfo_thanks.enable_down_button();
+					gameinfo_gameinfo.enable_normal_button();
+					gameinfo_phaseinfo.enable_normal_button();
+					gameinfo_cardinfo.enable_normal_button();
+
+				}
+				// control gameinfo button
+				else if (Mouse::getPosition(window).x > 529 && Mouse::getPosition(window).x < (529 + 86) && Mouse::getPosition(window).y > 430 && Mouse::getPosition(window).y < (430 + 183)) {
+					gameinfo_gameinfo.enable_down_button();
+					gameinfo_phaseinfo.enable_normal_button();
+					gameinfo_cardinfo.enable_normal_button();
+					gameinfo_thanks.enable_normal_button();
+				}
+				// control phaseinfo button
+				else if (Mouse::getPosition(window).x > 603 && Mouse::getPosition(window).x < (603 + 86) && Mouse::getPosition(window).y > 430 && Mouse::getPosition(window).y < (430 + 183)) {
+					gameinfo_phaseinfo.enable_down_button();
+					gameinfo_cardinfo.enable_normal_button();
+					gameinfo_thanks.enable_normal_button();
+					gameinfo_gameinfo.enable_normal_button();
+				}
+				// control cardinfo button
+				else if (Mouse::getPosition(window).x > 673 && Mouse::getPosition(window).x < (673 + 86) && Mouse::getPosition(window).y > 430 && Mouse::getPosition(window).y < (430 + 183)) {
+					gameinfo_cardinfo.enable_down_button();
+					gameinfo_thanks.enable_normal_button();
+					gameinfo_gameinfo.enable_normal_button();
+					gameinfo_phaseinfo.enable_normal_button();
+				}
+			}
+			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+				mouse_count_clock_two = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 890 && Mouse::getPosition(window).x < (890 + 100) && Mouse::getPosition(window).y > 640 && Mouse::getPosition(window).y < (640 + 90)) {
+					return_button.enable_diabled_button();
+				}
+			}
 
 		}
 		// when game pause --only when game is running can it be enabled
@@ -102,30 +301,24 @@ Vector2i Game::Input() {
 				else img_bg_number++;
 				change_bg = true;
 			}
+			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::Q) {
+				restart = true;
+			}
 
 			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
 				mouse_count_clock_two = Mouse::getPosition(window);
-				if (mouse_click_timer.getElapsedTime().asMilliseconds() < 500 && mouse_count_clock_two.x - mouse_count_clock_one.x < 10 && mouse_count_clock_two.y - mouse_count_clock_one.y < 10) {
-					cout << "Mouse::Left double click" << endl;
-					cout << mouse_count_clock_two.x << " || " << mouse_count_clock_two.y << endl;
-					return mouse_count_clock_two;
-				}
-				else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
+				if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 604 && mouse_count_clock_two.y < (604 + 75) && !button_ok.is_disabled)
 				{ // the button of ok //(807, 604)++(61,75)
 					button_ok.enable_down_button();
-					//cout << "鼠标按下确定" << endl;
 				}
 				else if (mouse_count_clock_two.x > 807 && mouse_count_clock_two.x < (807 + 61) && mouse_count_clock_two.y > 694 && mouse_count_clock_two.y < (694 + 73) && !button_cancel.is_disabled)
 				{ // the button of cancel //(807, 604)++(61,75)  
 					button_cancel.enable_down_button();
-					//cout << "鼠标按下取消" << endl;
 				}
 				else if (mouse_count_clock_two.x > 874 && mouse_count_clock_two.x < (874 + 33) && mouse_count_clock_two.y > 644 && mouse_count_clock_two.y < (644 + 81) && !button_discard.is_disabled)
 				{ // the button of discard //(807, 604)++(61,75)  
 					button_discard.enable_down_button();
-					//cout << "鼠标按下结束" << endl;
 				}
-
 			}
 			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
 				mouse_count_clock_one = Mouse::getPosition(window);
@@ -185,8 +378,10 @@ Vector2i Game::Input() {
 						//cout << "鼠标不在结束上" << endl;
 					}
 				}
+			    
 			}
-
+			
 		}
 	}
+	return virtual_vector;
 }

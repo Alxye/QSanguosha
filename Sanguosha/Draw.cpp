@@ -4,9 +4,9 @@ void Game::Draw() {
 
 	if (gamestart) {
         // draw background
-		if (change_bg) {
-			button_animate_count = 0;
-			if (start_style_mode==0){
+		if (change_bg||globe_style_mode!=gamestart_style) {
+			gamestart_style = globe_style_mode;
+			if (globe_style_mode==1){
 				// for background
 				Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_dark.png", 0, 0, 1, 1);
 				// for normal button
@@ -17,9 +17,8 @@ void Game::Draw() {
 				Load_Image(gamestart_go.texture_hover, gamestart_go.sprite_hover, "image/back_stable/start-surface/start-dark-button-go.png", 0, 0, 1, 1);
 				Load_Image(gamestart_info.texture_hover, gamestart_info.sprite_hover, "image/back_stable/start-surface/start-dark-button-info.png", 0, 0, 1, 1);
 				Load_Image(gamestart_quit.texture_hover, gamestart_quit.sprite_hover, "image/back_stable/start-surface/start-dark-button-quit.png", 0, 0, 1, 1);
-				start_style_mode = 1;
 			}
-			else if (start_style_mode == 1) {
+			else if (globe_style_mode == 0) {
 				// for background
 				Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_light.png", 0, 0, 1, 1);
 				// for normal button
@@ -30,7 +29,6 @@ void Game::Draw() {
 				Load_Image(gamestart_go.texture_hover, gamestart_go.sprite_hover, "image/back_stable/start-surface/start-light-button-go.png", 0, 0, 1, 1);
 				Load_Image(gamestart_info.texture_hover, gamestart_info.sprite_hover, "image/back_stable/start-surface/start-light-button-info.png", 0, 0, 1, 1);
 				Load_Image(gamestart_quit.texture_hover, gamestart_quit.sprite_hover, "image/back_stable/start-surface/start-light-button-quit.png", 0, 0, 1, 1);
-				start_style_mode = 0;
 			}
 			change_bg = false;
 		}
@@ -82,18 +80,216 @@ void Game::Draw() {
 	}
 
 	if (gamechoose) {
+		// draw background
+		if (change_bg || globe_style_mode != gamechoose_style) {
+			gamechoose_style = globe_style_mode;
+			if (globe_style_mode == 1) {
+				// for background
+				Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_dark.png", 0, 0, 1, 1);
+				// for container
+				Load_Image(texture_gamechoose_contain, sprite_gamechoose_contain, "image/back_stable/chosen-surface/chosen-word-dark.png", 0, 0, 1, 1);
+				// for chosen button
+				Load_Image(button_gamechoose.texture_hover, button_gamechoose.sprite_hover, "image/back_stable/chosen-surface/chosen-button-dark.png", 0, 0, 1, 1);
+			}
+			else if (globe_style_mode == 0) {
+				// for background
+				Load_Image(texture_gamestart_bg, sprite_gamestart_bg, "image/back_stable/start-surface/start_bg_light.png", 0, 0, 1, 1);
+				// for container
+				Load_Image(texture_gamechoose_contain, sprite_gamechoose_contain, "image/back_stable/chosen-surface/chosen-word-light.png", 0, 0, 1, 1);
+				// for chosen button
+				Load_Image(button_gamechoose.texture_hover, button_gamechoose.sprite_hover, "image/back_stable/chosen-surface/chosen-button-light.png", 0, 0, 1, 1);
+			}
+			change_bg = false;
+		}
 
+		sprite_gamestart_bg.setPosition(0, 0);
+		window.draw(sprite_gamestart_bg);
+
+		sprite_gamechoose_contain.setPosition(315, 75);
+		window.draw(sprite_gamechoose_contain);
+	
+		/// for chosen button  (hover)
+		if (button_gamechoose.is_hover) {
+			
+			window.draw(button_gamechoose.sprite_hover);
+		}
+
+		// the mask
+		if (globe_style_mode == 0) {
+			RectangleShape rect(Vector2f(140, 200)); // draw rectangle
+			rect.setFillColor(Color(255, 255, 255,255));
+			rect.setPosition(880, 580);
+			window.draw(rect);
+		}
+		else if (globe_style_mode == 1) {
+			RectangleShape rect(Vector2f(140, 200)); // draw rectangle
+			rect.setFillColor(Color(0, 0,0, 255));
+			rect.setPosition(880, 580);
+			window.draw(rect);
+		}
+
+		/// for draw return button
+		if (return_button.is_normal) {
+			return_button.sprite_normal.setPosition(900, 650);
+			window.draw(return_button.sprite_normal);
+		}
+		else if (return_button.is_hover) {
+			return_button.sprite_hover.setPosition(880, 630);
+			window.draw(return_button.sprite_hover);
+		}
+		else if (return_button.is_down) {
+			return_button.sprite_down.setPosition(900, 650);
+			window.draw(return_button.sprite_down);
+		}
 	}
 
-	if (gamepause) {
+	if (gameinfo) {
+		// draw stable background
+		if (change_bg||globe_style_mode!=gameinfo_style) {
+			gameinfo_style = globe_style_mode;
+			if (globe_style_mode == 0) {
+				// for background
+				Load_Image(texture_gameinfo_bg, sprite_gameinfo_bg, "image/back_stable/info-surface/bg-light.png", 0, 0, 1, 1);
+				// normal 
+				Load_Image(gameinfo_thanks.texture_normal, gameinfo_thanks.sprite_normal, "image/back_stable/info-surface/thanksinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_gameinfo.texture_normal, gameinfo_gameinfo.sprite_normal, "image/back_stable/info-surface/gameinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_phaseinfo.texture_normal, gameinfo_phaseinfo.sprite_normal, "image/back_stable/info-surface/phaseinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_cardinfo.texture_normal, gameinfo_cardinfo.sprite_normal, "image/back_stable/info-surface/cardinfo-button-light.png", 0, 0, 1, 1);
+				// high light 
+				Load_Image(gameinfo_thanks.texture_hover, gameinfo_thanks.sprite_hover, "image/back_stable/info-surface/thanksinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_gameinfo.texture_hover, gameinfo_gameinfo.sprite_hover, "image/back_stable/info-surface/gameinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_phaseinfo.texture_hover, gameinfo_phaseinfo.sprite_hover, "image/back_stable/info-surface/phaseinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_cardinfo.texture_hover, gameinfo_cardinfo.sprite_hover, "image/back_stable/info-surface/cardinfo-button-dark.png", 0, 0, 1, 1);
+				// down
+				Load_Image(gameinfo_thanks.texture_down, gameinfo_thanks.sprite_down, "image/back_stable/info-surface/thanksinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_gameinfo.texture_down, gameinfo_gameinfo.sprite_down, "image/back_stable/info-surface/gameinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_phaseinfo.texture_down, gameinfo_phaseinfo.sprite_down, "image/back_stable/info-surface/phaseinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_cardinfo.texture_down, gameinfo_cardinfo.sprite_down, "image/back_stable/info-surface/cardinfo-button-dark.png", 0, 0, 1, 1);
+				// for word style
+				Load_Image(texture_gameinfo_thanks, sprite_gameinfo_thanks, "image/back_stable/info-surface/thanks-light.png", 0, 0, 1, 1);
+				Load_Image(texture_gameinfo_gameinfo, sprite_gameinfo_gameinfo, "image/back_stable/info-surface/gameinfo-light.png", 0, 0, 1, 1);
+				Load_Image(texture_gameinfo_phaseinfo, sprite_gameinfo_phaseinfo, "image/back_stable/info-surface/phaseinfo-light.png", 0, 0, 1, 1);
+				Load_Image(texture_gameinfo_cardinfo, sprite_gameinfo_cardinfo, "image/back_stable/info-surface/cardinfo-light.png", 0, 0, 1, 1);
 
+			}
+			else if (globe_style_mode == 1) {
+				// for background
+				Load_Image(texture_gameinfo_bg, sprite_gameinfo_bg, "image/back_stable/info-surface/bg-dark.png", 0, 0, 1, 1);
+				// normal 
+				Load_Image(gameinfo_thanks.texture_normal, gameinfo_thanks.sprite_normal, "image/back_stable/info-surface/thanksinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_gameinfo.texture_normal, gameinfo_gameinfo.sprite_normal, "image/back_stable/info-surface/gameinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_phaseinfo.texture_normal, gameinfo_phaseinfo.sprite_normal, "image/back_stable/info-surface/phaseinfo-button-dark.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_cardinfo.texture_normal, gameinfo_cardinfo.sprite_normal, "image/back_stable/info-surface/cardinfo-button-dark.png", 0, 0, 1, 1);
+				// high dark 
+				Load_Image(gameinfo_thanks.texture_hover, gameinfo_thanks.sprite_hover, "image/back_stable/info-surface/thanksinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_gameinfo.texture_hover, gameinfo_gameinfo.sprite_hover, "image/back_stable/info-surface/gameinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_phaseinfo.texture_hover, gameinfo_phaseinfo.sprite_hover, "image/back_stable/info-surface/phaseinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_cardinfo.texture_hover, gameinfo_cardinfo.sprite_hover, "image/back_stable/info-surface/cardinfo-button-light.png", 0, 0, 1, 1);
+				// down
+				Load_Image(gameinfo_thanks.texture_down, gameinfo_thanks.sprite_down, "image/back_stable/info-surface/thanksinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_gameinfo.texture_down, gameinfo_gameinfo.sprite_down, "image/back_stable/info-surface/gameinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_phaseinfo.texture_down, gameinfo_phaseinfo.sprite_down, "image/back_stable/info-surface/phaseinfo-button-light.png", 0, 0, 1, 1);
+				Load_Image(gameinfo_cardinfo.texture_down, gameinfo_cardinfo.sprite_down, "image/back_stable/info-surface/cardinfo-button-light.png", 0, 0, 1, 1);
+				// for word style
+				Load_Image(texture_gameinfo_thanks, sprite_gameinfo_thanks, "image/back_stable/info-surface/thanks-dark.png", 0, 0, 1, 1);
+				Load_Image(texture_gameinfo_gameinfo, sprite_gameinfo_gameinfo, "image/back_stable/info-surface/gameinfo-dark.png", 0, 0, 1, 1);
+				Load_Image(texture_gameinfo_phaseinfo, sprite_gameinfo_phaseinfo, "image/back_stable/info-surface/phaseinfo-dark.png", 0, 0, 1, 1);
+				Load_Image(texture_gameinfo_cardinfo, sprite_gameinfo_cardinfo, "image/back_stable/info-surface/cardinfo-dark.png", 0, 0, 1, 1);
+			}
+			change_bg = false;
+		}
+		// draw background
+		sprite_gameinfo_bg.setPosition(0, 0);
+		window.draw(sprite_gameinfo_bg);
+		// draw word box
+		if (gameinfo_thanks.is_down) {
+			sprite_gameinfo_thanks.setPosition(77, 57);
+			window.draw(sprite_gameinfo_thanks);
+		}
+		else if (gameinfo_gameinfo.is_down) {
+			sprite_gameinfo_gameinfo.setPosition(92, 56);
+			window.draw(sprite_gameinfo_gameinfo);
+		}
+		else if (gameinfo_phaseinfo.is_down) {
+			sprite_gameinfo_phaseinfo.setPosition(32, 58);
+			window.draw(sprite_gameinfo_phaseinfo);
+		}
+		else if (gameinfo_cardinfo.is_down) {
+			sprite_gameinfo_cardinfo.setPosition(33, 56);
+			window.draw(sprite_gameinfo_cardinfo);
+		}
+
+		if (button_animate_count < 37) {
+			window.setFramerateLimit(200);
+			if (gameinfo_thanks.is_hover)	gameinfo_thanks.sprite_hover.setTextureRect(IntRect(0, 0, 86, button_animate_count * 5));
+			if (gameinfo_gameinfo.is_hover)gameinfo_gameinfo.sprite_hover.setTextureRect(IntRect(0, 0, 86, button_animate_count * 5));
+			if (gameinfo_phaseinfo.is_hover)gameinfo_phaseinfo.sprite_hover.setTextureRect(IntRect(0, 0, 86, button_animate_count * 5));
+			if (gameinfo_cardinfo.is_hover)gameinfo_cardinfo.sprite_hover.setTextureRect(IntRect(0, 0, 86, button_animate_count * 5));
+			button_animate_count++;
+			if (button_animate_count == 38)
+				window.setFramerateLimit(300);
+		}
+		/// for thanks button
+		gameinfo_thanks.sprite_normal.setPosition(459, 445);
+		window.draw(gameinfo_thanks.sprite_normal);
+		if (gameinfo_thanks.is_hover) {
+			gameinfo_thanks.sprite_hover.setPosition(459, 445);
+			window.draw(gameinfo_thanks.sprite_hover);
+		}
+		else if (gameinfo_thanks.is_down) {
+			gameinfo_thanks.sprite_down.setPosition(459, 445);
+			window.draw(gameinfo_thanks.sprite_down);
+		}
+		/// for gameinfo button
+		gameinfo_gameinfo.sprite_normal.setPosition(529, 430);
+		window.draw(gameinfo_gameinfo.sprite_normal);
+		if (gameinfo_gameinfo.is_hover) {
+			gameinfo_gameinfo.sprite_hover.setPosition(529, 430);
+			window.draw(gameinfo_gameinfo.sprite_hover);
+		}
+		else if (gameinfo_gameinfo.is_down) {
+			gameinfo_gameinfo.sprite_down.setPosition(529, 430);
+			window.draw(gameinfo_gameinfo.sprite_down);
+		}
+		/// for info phaseinfo button
+		gameinfo_phaseinfo.sprite_normal.setPosition(603, 430);
+		window.draw(gameinfo_phaseinfo.sprite_normal);
+		if (gameinfo_phaseinfo.is_hover) {
+			gameinfo_phaseinfo.sprite_hover.setPosition(603, 430);
+			window.draw(gameinfo_phaseinfo.sprite_hover);
+		}
+		else if (gameinfo_phaseinfo.is_down) {
+			gameinfo_phaseinfo.sprite_down.setPosition(603, 430);
+			window.draw(gameinfo_phaseinfo.sprite_down);
+		}
+		/// for info cardinfo button
+		gameinfo_cardinfo.sprite_normal.setPosition(673,430);
+		window.draw(gameinfo_cardinfo.sprite_normal);
+		if (gameinfo_cardinfo.is_hover) {
+			gameinfo_cardinfo.sprite_hover.setPosition(673, 430);
+			window.draw(gameinfo_cardinfo.sprite_hover);
+		}
+		else if (gameinfo_cardinfo.is_down) {
+			gameinfo_cardinfo.sprite_down.setPosition(673, 430);
+			window.draw(gameinfo_cardinfo.sprite_down);
+		}
+
+		/// for draw return button
+		if (return_button.is_normal) {
+			return_button.sprite_normal.setPosition(900, 650);
+			window.draw(return_button.sprite_normal);
+		}
+		else if (return_button.is_hover) {
+			return_button.sprite_hover.setPosition(880, 630);
+			window.draw(return_button.sprite_hover);
+		}
+		else if (return_button.is_down) {
+			return_button.sprite_down.setPosition(900, 650);
+			window.draw(return_button.sprite_down);
+		}
 	}
 
-	if (gameover) {
-
-	}
-
-	if (gamerun) {
+	if (gamerun||gamepause) {
 		// draw stable part
 		Draw_Stable_Background();
 
@@ -113,6 +309,14 @@ void Game::Draw() {
 			Draw_Machine(Machine[number]);
 			Draw_Animator_Machine(Machine[number]);
 		}
+	}
+
+	if (gamepause) {
+
+	}
+
+	if (gameover) {
+
 	}
 
 	window.display();
@@ -318,13 +522,12 @@ void Game::Draw_Animator_Single(int set_frame, bool& animator, int& animator_cou
 	ss << file << animator_counter << ".png";
 	Load_Image(texture_temp, sprite_temp, ss.str(), 0, 0, 1, 1);
 	sprite_temp.setPosition(_x, _y);
-	animator_counter++;
+	if(!gamepause) animator_counter++;
 	window.draw(sprite_temp);
 	if (animator_counter == limited) {
 		animator = false;
 		animator_running = false;
-		//Sleep(500);
-		window.setFramerateLimit(30);
+		window.setFramerateLimit(60);
 	}
 }
 

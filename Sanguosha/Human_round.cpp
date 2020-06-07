@@ -496,7 +496,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 	return 1;
 }
 void Game::Human_Round() {
-	Vector2i mouse_select_vector = Input();  // in general there only exist one input function  * wtf! that is matter most
+	Vector2i mouse_select_vector=Input();;  // in general there only exist one input function  * wtf! that is matter most
+	//
 	Human_Round_Initialize();
 	if(Human_Round_Skill_Judgment(mouse_select_vector)==0) return;
 
