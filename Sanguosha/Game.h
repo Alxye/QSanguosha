@@ -64,6 +64,10 @@ public:
 	Message_Box message;
 	int message_amount;
 
+	// temp piles card (using in amazing grace or any other situation that is needed card displayed
+	Pile_Card temp_pile;
+
+
 	// globe input sent
 	Vector2i input_sent;
 

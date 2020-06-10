@@ -1,6 +1,6 @@
 #include "Game.h"
 void Game::Machine_Round_Initialize(Player& machine) {
-	if (piles.Pile_Card_Amount < 20) {  /* if card few ,shuffle*/
+	if (piles.Pile_Card_Amount < 10) {  /* if card few ,shuffle*/
 		Single_Card* ptr = discard_pile.Pile_Card_Total->next;
 		while (ptr) {
 			ptr = ptr->next;

@@ -10,11 +10,14 @@
 #include <sstream>
 using namespace std;
 using namespace sf;
+#define species_amount 6
 typedef enum skill_number {
 	kill,             // kill
 	jink,             // escape
 	analeptic,        // wine
-	peach             // peach
+	peach,            // peach
+	amazing_grace,    // Îå¹È·áµÇ
+	nullification     // ÎÞÐ¸¿É»÷
 };
 typedef enum game_state {
 	zhugong_win,
@@ -119,7 +122,7 @@ public:
 		Pile_Card_Amount++;
 		P->next = S;
 		P = S;
-		cout << "***********yes get card succeed!!!" << endl;
+		//cout << "***********yes get card succeed!!!" << endl;
 	}
 
 	bool Delete_Card(int number) {
@@ -130,7 +133,7 @@ public:
 				T->next = p->next;
 				Pile_Card_Amount--;
 				delete p;
-				cout << "<<<<delete card succeed!!!" << endl;
+				//cout << "<<<<delete card succeed!!!" << endl;
 				return true;
 			}
 			else T = T->next;
@@ -146,7 +149,7 @@ public:
 				T->next = p->next;
 				Pile_Card_Amount--;
 				delete p;
-				cout << "<<<<delete card succeed!!!" << endl;
+				//cout << "<<<<delete card succeed!!!" << endl;
 				return true;
 			}
 			else T = T->next;
@@ -180,7 +183,7 @@ public:
 	bool Search_Card(int value) {
 		Single_Card* ptr = Pile_Card_Total->next;
 		if (ptr == NULL) {
-			cout << "the linklist is null,not found!!!" << endl;
+			//cout << "the linklist is null,not found!!!" << endl;
 			return false;
 		}
 		while (ptr != NULL && ptr->card_info.single_card_number != value) { ptr = ptr->next; }
@@ -189,7 +192,7 @@ public:
 			return true;
 		}
 		else {
-			cout << "NOT-FOUND__XXXXX>>" << value << endl;
+			//cout << "NOT-FOUND__XXXXX>>" << value << endl;
 			return false;
 		}
 	}
@@ -203,12 +206,12 @@ public:
 	bool Search_Card_Position(Vector2i target_position) {
 		Single_Card* ptr = Pile_Card_Total->next;
 		if (ptr == NULL) {
-			cout << "the linklist is null,not found!!!" << endl;
+			//cout << "the linklist is null,not found!!!" << endl;
 			return false;
 		}
 		while (ptr != NULL && !((target_position.x >= ptr->point_one.x) && (target_position.x <= ptr->point_two.x) && (target_position.y >= ptr->point_one.y) && (target_position.y <= ptr->point_two.y))) { ptr = ptr->next; }
 		if (ptr != NULL) {
-			cout << "find that! " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
+			//cout << "find that! " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
 			return true;
 		}
 		else {
@@ -219,15 +222,15 @@ public:
 	Single_Card* Search_Card_Position_locate(Vector2i target_position) {
 		Single_Card* ptr = Pile_Card_Total->next;
 		if (ptr == NULL) {
-			cout << "the linklist is null,not found!!!" << endl;
+			//cout << "the linklist is null,not found!!!" << endl;
 		}
 		while (ptr != NULL && !((target_position.x >= ptr->point_one.x) && (target_position.x <= ptr->point_two.x) && (target_position.y >= ptr->point_one.y) && (target_position.y <= ptr->point_two.y))) { ptr = ptr->next; }
 		if (ptr != NULL) {
-			cout << "find that! " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
+			//cout << "find that! " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
 			return ptr;
 		}
 		else {
-			cout << "target search false! no such one!>>>>>>> " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
+			//cout << "target search false! no such one!>>>>>>> " << "mouse_X" << target_position.x << "||mouse_Y" << target_position.y << endl;
 		}
 	}
 	void Change_number_to_name() {
@@ -249,10 +252,10 @@ public:
 				ptr->card_name = "ÌÒ";
 				break;
 			case 4:
-				ptr->card_name = "444";
+				ptr->card_name = "Îå¹È·áµÇ";
 				break;
 			case 5:
-				ptr->card_name = "555";
+				ptr->card_name = "ÎÞÐ¸¿É»÷";
 				break;
 			case 6:
 				ptr->card_name = "666";
@@ -271,9 +274,54 @@ public:
 	}
 	void Shuffle_Card() {
 		srand(time(NULL));
-		for (int i = 0; i < 200; i++)
+		int kill_amount=0;
+		int jink_amount=0;
+		int peach_amount=0;
+		int analeptic_amount=0;
+		int amazing_grace_amount = 0;
+		int nullification_amount = 0;
+
+		int cur_card;
+
+		for (int i = 0; i < 59; i++)
 		{
-			Insert_Card((rand() % 4), (rand() % 4));
+			cur_card = rand() % species_amount;
+			while (true) {
+				if (kill_amount != 30 && cur_card==kill) break;
+				if (jink_amount != 15 && cur_card==jink) break;
+				if (peach_amount != 8 && cur_card==peach) break;
+				if (analeptic_amount!= 3 && cur_card==analeptic) break;
+				if (amazing_grace_amount!= 1 && cur_card==amazing_grace) break;
+				if (nullification_amount != 2 && cur_card==nullification) break;
+				cur_card = rand() % species_amount;
+			}
+			Insert_Card(cur_card, (rand() % 4));
+			switch (cur_card) {
+			case kill:
+				kill_amount++;
+				cout << "É±-" <<kill_amount<< endl;
+				break;
+			case jink:
+				jink_amount++;
+				cout << "ÉÁ-"<<jink_amount << endl;
+				break;
+			case peach:
+				peach_amount++;
+				cout << "ÌÒ-" <<peach_amount<< endl;
+				break;
+			case analeptic:
+				analeptic_amount++;
+				cout << "¾Æ-"<<analeptic_amount << endl;
+				break;
+			case amazing_grace:
+				amazing_grace_amount++;
+				cout << "Îå¹È·áµÇ-"<<amazing_grace_amount << endl;
+				break;
+			case nullification:
+				nullification_amount++;
+				cout << "ÎÞÐ¸¿É»÷-" <<nullification_amount<< endl;
+				break;
+			}
 		}
 		Change_number_to_name();
 	}
@@ -323,7 +371,6 @@ public:
 	bool need_analeptic;
 	bool begging_peach;
 	bool defense_analeptic_kill;
-	bool have_decide_saving;
 	// define skill 
 
 	Skill() {
@@ -333,7 +380,6 @@ public:
 		need_analeptic = false;
 		begging_peach = false;
 		defense_analeptic_kill = false;
-		have_decide_saving=false;
 	}
 };
 

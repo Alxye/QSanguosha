@@ -1,6 +1,6 @@
 #include "Game.h"
 void Game::Human_Round_Initialize() {
-	if (piles.Pile_Card_Amount < 20) {
+	if (piles.Pile_Card_Amount < 10) {
 		Single_Card* ptr = discard_pile.Pile_Card_Total->next;
 		while (ptr){
 			ptr = ptr->next;
