@@ -289,7 +289,7 @@ void Game::Draw() {
 		}
 	}
 
-	if (gamerun||gamepause) {
+	if (gamerun||gamepause||gameover) {
 		// draw stable part
 		Draw_Stable_Background();
 
@@ -303,19 +303,132 @@ void Game::Draw() {
 		Draw_HumanPlayer();
 		Draw_Animator_Human();
 
-		//draw machine part
+		//draw machine part --stable
 		for (int number = 0; number < machine_number; number++) {
-
 			Draw_Machine(Machine[number]);
+		}
+		//draw machine part --animation
+		for (int number = 0; number < machine_number; number++) {
 			Draw_Animator_Machine(Machine[number]);
 		}
+		
+		// draw pause button
+		if (gamerun) {
+			/// for draw pause button
+			if (pause_button.is_normal) {
+				pause_button.sprite_normal.setPosition(0, -12);
+				window.draw(pause_button.sprite_normal);
+			}
+			else if (pause_button.is_hover) {
+				pause_button.sprite_hover.setPosition(-4, -12);
+				window.draw(pause_button.sprite_hover);
+			}
+			else if (pause_button.is_down) {
+				pause_button.sprite_down.setPosition(0, -12);
+				window.draw(pause_button.sprite_down);
+			}
+		}
+        
 	}
 
 	if (gamepause) {
+		sprite_gamepause_bg.setPosition(0, 0);
+		window.draw(sprite_gamepause_bg);
+
+		// for draw pause button
+		if (pause_continue.is_normal) {
+			pause_continue.sprite_normal.setPosition(230, 293);
+			window.draw(pause_continue.sprite_normal);
+		}
+		else if (pause_continue.is_hover) {
+			pause_continue.sprite_hover.setPosition(217, 283);
+			window.draw(pause_continue.sprite_hover);
+		}
+		else if (pause_continue.is_down) {
+			pause_continue.sprite_down.setPosition(236, 297);
+			window.draw(pause_continue.sprite_down);
+		}
+		// for draw pause button
+		if (pause_info.is_normal) {
+			pause_info.sprite_normal.setPosition(176, 368);
+			window.draw(pause_info.sprite_normal);
+		}
+		else if (pause_info.is_hover) {
+			pause_info.sprite_hover.setPosition(156, 361);
+			window.draw(pause_info.sprite_hover);
+		}
+		else if (pause_info.is_down) {
+			pause_info.sprite_down.setPosition(188, 371);
+			window.draw(pause_info.sprite_down);
+		}
+		// for draw pause button
+		if (pause_return_menu.is_normal) {
+			pause_return_menu.sprite_normal.setPosition(152, 436);
+			window.draw(pause_return_menu.sprite_normal);
+		}
+		else if (pause_return_menu.is_hover) {
+			pause_return_menu.sprite_hover.setPosition(131,428);
+			window.draw(pause_return_menu.sprite_hover);
+		}
+		else if (pause_return_menu.is_down) {
+			pause_return_menu.sprite_down.setPosition(165, 439);
+			window.draw(pause_return_menu.sprite_down);
+		}
 
 	}
 
 	if (gameover) {
+		if (gameover_state == 0) {  // show lose surface
+			sprite_gameover_bg_bad.setPosition(0, 0);
+			window.draw(sprite_gameover_bg_bad);
+		}
+		else if (gameover_state == 1) {  // show win surface
+			sprite_gameover_bg_good.setPosition(0, 0);
+			window.draw(sprite_gameover_bg_good);
+		}
+		/// for draw return button
+		if (return_menu.is_normal) {
+			return_menu.sprite_normal.setPosition(820, 300);
+			window.draw(return_menu.sprite_normal);
+		}
+		else if (return_menu.is_hover) {
+			return_menu.sprite_hover.setPosition(800, 280);
+			window.draw(return_menu.sprite_hover);
+		}
+		else if (return_menu.is_down) {
+			return_menu.sprite_down.setPosition(820, 300);
+			window.draw(return_menu.sprite_down);
+		}
+		int dx = 0;
+		Font text_font;
+		Text text;
+		Load_Font(text_font, text, "font/禹卫书法行书简体.ttf");
+		text.setCharacterSize(30);
+		text.setFillColor(Color(255, 255, 255, 255));
+		text.setStyle(Text::Bold);
+
+		text.setPosition(55, 340 + dx * 35);
+		wstring each_line = L"人类玩家杀敌：";
+		std::stringstream temp_str;
+		temp_str << Human.killing_number;
+		each_line = each_line + temp_str.str();
+		text.setString(each_line);
+		window.draw(text);
+		dx++;
+
+		for (int i = 0; i < machine_number; i++) {
+			temp_str.str("");
+			text.setPosition(65, 340 + dx * 35);
+			wstring each_line = L"电脑-";
+			temp_str << i+1;
+			each_line = each_line + temp_str.str()+L"杀敌：";
+			temp_str.str("");
+			temp_str << Machine[i].killing_number;
+			each_line = each_line + temp_str.str();
+			text.setString(each_line);
+			window.draw(text);
+			dx++;
+		}
 
 	}
 
@@ -334,10 +447,10 @@ void Game::Draw_Text_Console() {
 	// show each message in message box
 	Message_Box ptr = message->next;
 	int dx = 0;
+	Font text_font;
+	Text text;
+	Load_Font(text_font, text, "font/simsun.ttc");
 	while (ptr) {
-		Font text_font;
-		Text text;
-		Load_Font(text_font, text, "font/simsun.ttc");
 		text.setCharacterSize(15);
 		text.setFillColor(Color(255, 255, 255, 255));
 		text.setStyle(Text::Bold);
@@ -643,7 +756,7 @@ void Game::Draw_Stable_Background() {
 	reminded_note.setPosition(810, 20);
 	wstring reminded = L"已杀敌：";
 	std::stringstream temp_string;
-	temp_string << killing_number;
+	temp_string << Human.killing_number;
 	reminded = reminded + temp_string.str() ;
 
 	reminded_note.setString(reminded);

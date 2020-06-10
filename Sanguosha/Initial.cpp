@@ -28,6 +28,8 @@ void Game::Initial() {
 	gamepause = false;
 	gameinfo = false;
 	restart = false;
+	// set gameover state value to default
+	gameover_state = -1;
 	// set style mode
 	globe_style_mode = 0;    // default is 0--light,1--dark
 	gamestart_style=0;
@@ -144,9 +146,37 @@ void Game::Initial() {
 	Load_Image(button_gamechoose.texture_hover, button_gamechoose.sprite_hover, "image/back_stable/chosen-surface/chosen-button-light.png", 0, 0, 1, 1);
 	button_gamechoose.enable_normal_button();
 
+	//---->> GAME-OVER load texture & sprite
+	Load_Image(texture_gameover_bg_good, sprite_gameover_bg_good, "image/back_stable/over-surface/gameover-good.png", 0, 0, 1, 1);
+	Load_Image(texture_gameover_bg_bad, sprite_gameover_bg_bad, "image/back_stable/over-surface/gameover-bad.png", 0, 0, 1, 1);
+	Load_Image(return_menu.texture_normal, return_menu.sprite_normal, "image/back_stable/over-surface/返回主菜单-normal.png", 0, 0, 1, 1);
+	Load_Image(return_menu.texture_hover, return_menu.sprite_hover, "image/back_stable/over-surface/返回主菜单-hover.png", 0, 0, 1, 1);
+	Load_Image(return_menu.texture_down, return_menu.sprite_down, "image/back_stable/over-surface/返回主菜单-normal.png", 0, 0, 1, 1);
+	return_menu.enable_normal_button();
+
+	//---->> GAME-PAUSE button initialize
+	Load_Image(pause_button.texture_normal, pause_button.sprite_normal, "image/back_stable/gamepause-button-normal.png", 0, 0, 1, 1);
+	Load_Image(pause_button.texture_hover, pause_button.sprite_hover, "image/back_stable/gamepause-button-hover.png", 0, 0, 1, 1);
+	Load_Image(pause_button.texture_down, pause_button.sprite_down, "image/back_stable/gamepause-button-normal.png", 0, 0, 1, 1);
+	pause_button.enable_normal_button();
+
+	//---->> GAME_PAUSE surface
+	Load_Image(texture_gamepause_bg, sprite_gamepause_bg, "image/back_stable/pause-surface/pause-bg.png", 0, 0, 1, 1);
+	Load_Image(pause_continue.texture_normal, pause_continue.sprite_normal, "image/back_stable/pause-surface/pause-continue-normal.png", 0, 0, 1, 1);
+	Load_Image(pause_continue.texture_hover, pause_continue.sprite_hover, "image/back_stable/pause-surface/pause-continue-hover.png", 0, 0, 1, 1);
+	Load_Image(pause_continue.texture_down, pause_continue.sprite_down, "image/back_stable/pause-surface/pause-continue-normal.png", 0, 0, 1, 1);
+	Load_Image(pause_info.texture_normal, pause_info.sprite_normal, "image/back_stable/pause-surface/pause-info-normal.png", 0, 0, 1, 1);
+	Load_Image(pause_info.texture_hover, pause_info.sprite_hover, "image/back_stable/pause-surface/pause-info-hover.png", 0, 0, 1, 1);
+	Load_Image(pause_info.texture_down, pause_info.sprite_down, "image/back_stable/pause-surface/pause-info-normal.png", 0, 0, 1, 1);
+	Load_Image(pause_return_menu.texture_normal, pause_return_menu.sprite_normal, "image/back_stable/pause-surface/pause-return-menu-normal.png", 0, 0, 1, 1);
+	Load_Image(pause_return_menu.texture_hover, pause_return_menu.sprite_hover, "image/back_stable/pause-surface/pause-return-menu-hover.png", 0, 0, 1, 1);
+	Load_Image(pause_return_menu.texture_down, pause_return_menu.sprite_down, "image/back_stable/pause-surface/pause-return-menu-normal.png", 0, 0, 1, 1);
+	// initialize button
+	pause_continue.enable_normal_button();
+	pause_info.enable_normal_button();
+	pause_return_menu.enable_normal_button();
 
 	button_animate_count = 0;
-
 
 	//---->> initialize charactor code to get catch of each member
 	Human.charactor_code = human;
@@ -165,6 +195,17 @@ void Game::Initial() {
 	button_discard.enable_diabled_button();
 	button_cancel.enable_diabled_button();
 
+	// clear message
+	while (message_amount) {
+		Delete_Message();
+	}
+	// HP initial 
+	Human.HP = 3;
+	Human.limited_HP = 3;
+	for (int i=0; i < 4; i++) {
+		Machine[i].HP = 2;
+		Machine[i].limited_HP = 2;
+	}
 }
 
 int Game::Previous_Draw_Phase() {
@@ -217,10 +258,7 @@ int Game::Previous_Draw_Phase() {
 		Insert_Message(L"》》》电脑-4 抽得先手出牌！");
 		break;
 	}
-
 	return first_hand;  // the rand function would determine which one to play first
-	//return human;    // test for human to start whatever situation is
-	//return machine_0;    // test for human to start whatever situation is
 }
 
 // change string to lpcwstr so that string can display on warning windows

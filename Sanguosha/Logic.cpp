@@ -34,7 +34,8 @@ void Game::Logic() {
 	if (gameinfo) {
 		if (return_button.is_disabled) {
 			gameinfo = false;
-			gamestart = true;
+			if (message_amount) gamepause = true;
+			else gamestart = true;
 
 			// Restore attributes
 			return_button.enable_normal_button();
@@ -160,8 +161,11 @@ void Game::Logic() {
 			turn = Previous_Draw_Phase();            // first round is effected in initial function , then it goes a loop
 			exturn = normal;                         // original set is mean normal 
 			//---->> initialize killing number
-			killing_number = 0;
-
+			Human.killing_number = 0;
+			Machine[0].killing_number = 0;
+			Machine[1].killing_number = 0;
+			Machine[2].killing_number = 0;
+			Machine[3].killing_number = 0;
 
 			// Restore attributes
 			return_button.enable_normal_button();
@@ -172,6 +176,16 @@ void Game::Logic() {
 	}
 
 	if (gamerun) {
+		if (pause_button.is_disabled) {
+			gamerun = false;
+			gamepause = true;
+
+			// Restore attributes
+			pause_button.enable_normal_button();
+
+			return;
+		}
+
 		if (new_round) Round_Initialize(turn);     // where exist new round ,there a turn to judge & initialize player's data
 		if (!animator_running && (exturn == normal || exturn == human)) Human_Round();
 		switch (machine_number)
@@ -195,11 +209,60 @@ void Game::Logic() {
 			if (!animator_running && (exturn == normal || exturn == machine_3))	Machine_Round(Machine[3]);
 			break;
 		}
-		// gameover state judgment ===>> that need to be improved
+		// gameover state judgment
 		if (Human.die) {
-			cout << "machine win!!!" << endl;
+			if (Human.killing_number > Machine[0].killing_number &&
+				Human.killing_number > Machine[1].killing_number &&
+				Human.killing_number > Machine[2].killing_number &&
+				Human.killing_number > Machine[3].killing_number) {
+				gameover_state = 1;       // human win 
+			}
+			else gameover_state = 0;
 			gameover = true;
 			gamerun = false;
+		}
+	}
+
+	if (gamepause) {
+		if (pause_continue.is_disabled) {
+			gamepause = false;
+			gamerun = true;
+
+			// restore attributes
+			pause_continue.enable_normal_button();
+			pause_info.enable_normal_button();
+			pause_return_menu.enable_normal_button();
+
+			return;
+		}
+		else if (pause_info.is_disabled) {
+			gamepause = false;
+			gameinfo = true;
+
+			// restore attributes
+			pause_continue.enable_normal_button();
+			pause_info.enable_normal_button();
+			pause_return_menu.enable_normal_button();
+
+			return;
+		}
+		else if (pause_return_menu.is_disabled) {
+			gamepause = false;
+			restart = true;
+		}
+	}
+
+	if (gameover) {
+		if (return_menu.is_disabled) {
+			gameover = false;
+			gamestart = true;
+			restart = true;
+			gameover_state = -1;
+
+			// Restore attributes
+			return_menu.enable_normal_button();
+
+			return;
 		}
 	}
 }

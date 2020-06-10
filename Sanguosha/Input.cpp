@@ -46,7 +46,6 @@ Vector2i Game::Input() {
 				}
 			}
 			if (!gamestart_go.is_down && !gamestart_info.is_down && !gamestart_quit.is_down) {
-
 				if (event_global.type == sf::Event::MouseMoved)
 				{
 					// control button of cancel in hover state
@@ -287,22 +286,94 @@ Vector2i Game::Input() {
 		}
 		// when game pause --only when game is running can it be enabled
 		if (gamepause) {
-
+			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+				if (Mouse::getPosition(window).x > 222 && Mouse::getPosition(window).x < (222 + 110) && Mouse::getPosition(window).y > 288 && Mouse::getPosition(window).y < (288 + 70)) {
+					pause_continue.enable_down_button();
+				}
+				else if (Mouse::getPosition(window).x > 163 && Mouse::getPosition(window).x < (163 + 230) && Mouse::getPosition(window).y > 365 && Mouse::getPosition(window).y < (365 + 70)) {
+					pause_info.enable_down_button();
+				}
+				else if (Mouse::getPosition(window).x > 140 && Mouse::getPosition(window).x < (140 + 290) && Mouse::getPosition(window).y > 430 && Mouse::getPosition(window).y < (430 + 70)) {
+					pause_return_menu.enable_down_button();
+				}
+			}
+			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+				if (Mouse::getPosition(window).x > 222 && Mouse::getPosition(window).x < (222 + 110) && Mouse::getPosition(window).y > 288 && Mouse::getPosition(window).y < (288 + 70)) {
+					pause_continue.enable_diabled_button();
+				}
+				else if (Mouse::getPosition(window).x > 163 && Mouse::getPosition(window).x < (163 + 230) && Mouse::getPosition(window).y > 365 && Mouse::getPosition(window).y < (365 + 70)) {
+					pause_info.enable_diabled_button();
+				}
+				else if (Mouse::getPosition(window).x > 140 && Mouse::getPosition(window).x < (140 + 290) && Mouse::getPosition(window).y > 430 && Mouse::getPosition(window).y < (430 + 70)) {
+					pause_return_menu.enable_diabled_button();
+				}
+			}
+			if (!pause_continue.is_down && !pause_info.is_down && !pause_return_menu.is_down) {
+				if (event_global.type == sf::Event::MouseMoved)
+				{
+					// control button of cancel in hover state
+					if (event_global.mouseMove.x > 222 && event_global.mouseMove.x < (222 + 110) && event_global.mouseMove.y > 288 && event_global.mouseMove.y < (288 + 70))
+					{
+						pause_continue.enable_hover_button();
+					}
+					else {
+						pause_continue.enable_normal_button();
+					}
+					// control button of assure
+					if (event_global.mouseMove.x > 163 && event_global.mouseMove.x < (163 + 230) && event_global.mouseMove.y > 365 && event_global.mouseMove.y < (365 + 70))
+					{
+						pause_info.enable_hover_button();
+					}
+					else {
+						pause_info.enable_normal_button();
+					}
+					// control button of discard in hover state
+					if (event_global.mouseMove.x > 140 && event_global.mouseMove.x < (140 + 290) && event_global.mouseMove.y > 430 && event_global.mouseMove.y < (430 + 70))
+					{
+						pause_return_menu.enable_hover_button();
+					}
+					else {
+						pause_return_menu.enable_normal_button();
+					}
+				}
+			}
 		}
-        // human operate of gameover
-		if (gameover) {
 
+		// human operate of gameover
+		if (gameover) {
+			if (event_global.type == sf::Event::MouseMoved) {
+				// control button of return-menu in hover state
+				if (return_menu.is_normal || return_menu.is_hover) {
+					if (event_global.mouseMove.x > 820 && event_global.mouseMove.x < (820 + 100) && event_global.mouseMove.y > 300 && event_global.mouseMove.y < (300 + 200)) {
+						return_menu.enable_hover_button();
+					}
+					else {
+						return_menu.enable_normal_button();
+					}
+				}
+			}
+
+			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
+				//mouse_count_clock_two = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 820 && Mouse::getPosition(window).x < (820 + 100) && Mouse::getPosition(window).y > 300 && Mouse::getPosition(window).y < (300 + 200)) {
+					return_menu.enable_down_button();
+				}
+			}
+			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
+				//mouse_count_clock_two = Mouse::getPosition(window);
+				if (Mouse::getPosition(window).x > 820 && Mouse::getPosition(window).x < (820 + 100) && Mouse::getPosition(window).y > 300 && Mouse::getPosition(window).y < (300 + 200)) {
+					return_menu.enable_diabled_button();
+				}
+			}
 		}
 
 		if (gamerun) {
+
 			// change image
 			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::A) {
 				if (img_bg_number == 4) img_bg_number = 0;
 				else img_bg_number++;
 				change_bg = true;
-			}
-			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::Q) {
-				restart = true;
 			}
 
 			if (event_global.type == Event::MouseButtonPressed && event_global.mouseButton.button == Mouse::Left) {
@@ -319,11 +390,18 @@ Vector2i Game::Input() {
 				{ // the button of discard //(807, 604)++(61,75)  
 					button_discard.enable_down_button();
 				}
+				else if (mouse_count_clock_two.x > 0 && mouse_count_clock_two.x < (0 + 255) && mouse_count_clock_two.y > 0 && mouse_count_clock_two.y < (0 + 70) && !button_discard.is_disabled)
+				{ // the button of discard //(807, 604)++(61,75)  
+					pause_button.enable_down_button();
+				}
 			}
 			if (event_global.type == Event::MouseButtonReleased && event_global.mouseButton.button == Mouse::Left) {
 				mouse_count_clock_one = Mouse::getPosition(window);
 				//bool card_selected = Human.cards.Search_Card_Position(mouse_count_clock_one);
 				mouse_click_timer.restart();
+				if (Mouse::getPosition(window).x > 0 && Mouse::getPosition(window).x < (0 + 265) && Mouse::getPosition(window).y > 0 && Mouse::getPosition(window).y < (0 + 80)) {
+					pause_button.enable_diabled_button();
+				}
 				return mouse_count_clock_one;
 			}
 
@@ -379,6 +457,14 @@ Vector2i Game::Input() {
 					}
 				}
 			    
+				if (event_global.mouseMove.x > 0 && event_global.mouseMove.x < (0 + 255) && event_global.mouseMove.y >0 && event_global.mouseMove.y < (0 + 70))
+				{
+					pause_button.enable_hover_button();
+				}
+				else
+				{
+					pause_button.enable_normal_button();
+				}
 			}
 			
 		}

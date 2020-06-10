@@ -11,6 +11,7 @@ public:
 	int gamestart_style;
 	int gameinfo_style;
 	int gamechoose_style;
+	int gameover_state;                   // for gameover to judge lose or win 0--lose;1--win;default value is -1;
 	/// <for-style-change>
 	bool change_bg;
 	int button_animate_count;
@@ -54,7 +55,7 @@ public:
 	// Game Class
 	void out_put(Single_Card single);
 	// for count the killing number
-	int killing_number;
+	//int killing_number;
 	// display discard pile
 	Pile_Card discard_pile;
 	Texture texture_discard_pile;
@@ -90,6 +91,21 @@ public:
 	Button button_gamechoose;
 	Texture texture_gamechoose_contain;
 	Sprite sprite_gamechoose_contain;
+
+	// GAME-OVER texture & sprite
+	Texture texture_gameover_bg_good, texture_gameover_bg_bad;
+	Sprite sprite_gameover_bg_good, sprite_gameover_bg_bad;
+	Button return_menu;
+
+	// GAME-PAUSE button
+	Button pause_button;
+
+	// GAME-PAUSE surface
+	Texture texture_gamepause_bg;
+	Sprite sprite_gamepause_bg;
+	Button pause_continue;
+	Button pause_info;
+	Button pause_return_menu;
 
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows
@@ -130,7 +146,7 @@ public:
 	void Draw_Machine(Player& Machine);
 	void Draw_Stable_Background();
 
-	//other function
+	//message function
 	void Insert_Message(wstring str) {
 		//尾插法 新增 结点
 		Message_Box S = new Message;
@@ -142,7 +158,7 @@ public:
 			P = P->next;  // find tail node
 		P->next = S;
 		P = S;
-		cout << "***********yes insert message succeed!!!" << endl;
+		//cout << "***********yes insert message succeed!!!" << endl;
 		message_amount++;
 	}
 	void Delete_Message() {
@@ -152,7 +168,7 @@ public:
 			T->next = p->next;
 			delete p;
 			message_amount--;
-			cout << "<<<<message card succeed!!!" << endl;
+			//cout << "<<<<message card succeed!!!" << endl;
 			break;
 		}
 		return;

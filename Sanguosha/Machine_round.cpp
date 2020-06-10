@@ -76,7 +76,10 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 		switch (peach_begger)
 		{
 		case human:
-			if (Human.HP <= 0) Human.die = true;
+			if (Human.HP <= 0) {
+				Human.die = true;
+				machine.killing_number++;
+			}
 			break;
 		case machine_0:
 			if (Machine[0].HP <= 0) {
@@ -86,8 +89,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[0].self_save = false;
 				Machine[0].HP = 2;
 				Machine[0].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-1 重生了！");
+				machine.killing_number++;
 			}
 			break;
 		case machine_1:
@@ -98,8 +101,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[1].self_save = false;
 				Machine[1].HP = 2;
 				Machine[1].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-2 重生了！");
+				machine.killing_number++;
 			}
 			break;
 		case machine_2:
@@ -110,8 +113,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[2].self_save = false;
 				Machine[2].HP = 2;
 				Machine[2].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-3 重生了！");
+				machine.killing_number++;
 			}
 			break;
 		case machine_3:
@@ -122,8 +125,8 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 				Machine[3].self_save = false;
 				Machine[3].HP = 2;
 				Machine[3].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-4 重生了！");
+				machine.killing_number++;
 			}
 			break;
 		default:

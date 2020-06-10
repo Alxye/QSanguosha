@@ -90,8 +90,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[0].self_save = false;
 				Machine[0].HP = 2;
 				Machine[0].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-1 重生了！");
+				Human.killing_number++;
 			}
 			break;
 		case machine_1:
@@ -101,8 +101,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[1].self_save = false;
 				Machine[1].HP = 2;
 				Machine[1].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-2 重生了！");
+				Human.killing_number++;
 			}
 			break;
 		case machine_2:
@@ -112,8 +112,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[2].self_save = false;
 				Machine[2].HP = 2;
 				Machine[2].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-3 重生了！");
+				Human.killing_number++;
 			}
 			break;
 		case machine_3:
@@ -123,8 +123,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 				Machine[3].self_save = false;
 				Machine[3].HP = 2;
 				Machine[3].limited_HP = 2;
-				killing_number++;
 				Insert_Message(L"求助失败！电脑-4 重生了！");
+				Human.killing_number++;
 			}
 			break;
 		default:

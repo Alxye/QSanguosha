@@ -356,6 +356,9 @@ public:
 	int kill_times;
 	bool drank_analeptic;        // judge whether it played analeptic
 
+	// kill amount
+	int killing_number;
+
 	// emery can choose
 	int chosen_number;
 
@@ -420,6 +423,8 @@ public:
 		round_discard_phase = false;
 		// chosen 
 		chosen_number = 0;
+		// killing amount
+		killing_number = 0;
 	}
 };
 
