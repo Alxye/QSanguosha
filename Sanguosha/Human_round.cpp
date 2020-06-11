@@ -72,12 +72,9 @@ void Game::Human_Round_enable_dying_state() {
 }
 
 int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
-	// when its first time to defense , set cancel button enable
-	if ((exturn==human||Human.self_save|| Human.skill.begging_peach) && button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled) {
-		button_cancel.enable_normal_button();
-	}
+
 	// about begger-life
-	if (Human.skill.begging_peach == false && round_loop && round_loop_starter == human) {
+	if (Human.skill.begging_peach == false && dying_loop && round_loop_starter == human) {
 		switch (peach_begger)
 		{
 		case human:
@@ -130,14 +127,108 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 		default:
 			break;
 		}
-		round_loop = false;
+		dying_loop = false;
 		round_loop_starter = -1; // default value is -1 to escape & found unknown error
 		exturn = normal;
 		exturn_backup = -1;
+		// reset peach-begging to default false
+		Human.skill.begging_peach = false;
+		Machine[0].skill.begging_peach = false;
+		Machine[1].skill.begging_peach = false;
+		Machine[2].skill.begging_peach = false;
+		Machine[3].skill.begging_peach = false;
 		return 0;
 	}
 	// skill judgment
+
+
+	// end-up skill of amazing grace
+	if (Human.skill.amazing_grace_state == false && amazing_grace_loop && round_loop_starter == human) {
+		temp_pile.clear();
+		// reset all skill signal
+		Human.skill.amazing_grace_state = false;
+		Machine[0].skill.amazing_grace_state = false;
+		Machine[1].skill.amazing_grace_state = false;
+		Machine[2].skill.amazing_grace_state = false;
+		Machine[3].skill.amazing_grace_state = false;
+		// reset 
+		amazing_grace_loop = false;
+		round_loop_starter = -1;
+		exturn = normal;
+		exturn_backup = -1;
+	}
+    
+	if (Human.skill.amazing_grace_state){
+		// set no card enable to play
+		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
+		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
+			ptr->enable_to_play = false;
+			ptr = ptr->next;
+		}
+
+		if (temp_pile.Search_Card_Position(mouse_select_vector)) {
+			ptr = temp_pile.Search_Card_Position_locate(mouse_select_vector);
+			if (ptr->mouse_select_card == false && Human.select_card == false) {
+				ptr->mouse_select_card = true;
+				Human.select_card = true;
+				button_ok.enable_normal_button();
+			}
+			else if (ptr->mouse_select_card == true && Human.select_card == true) {
+				ptr->mouse_select_card = false;
+				Human.select_card = false;
+				button_ok.enable_diabled_button();
+			}
+		}
+		if (Human.select_card == true) {
+			button_discard.enable_diabled_button();
+			ptr = temp_pile.Pile_Card_Total->next;
+			while (ptr != NULL) {
+				if (ptr->mouse_select_card) break;
+				ptr = ptr->next;
+			}
+			if (button_ok.is_down) {
+				// result
+				Human.cards.Insert_Card(ptr->card_info.single_card_number, 1);
+				temp_pile.Delete_Card_Selected();
+				// initialize data
+				Human.select_card = false;
+				Human.selecet_card_amount = 0;
+				//human_defense = false;
+				if (exturn == machine_number + 1) exturn = human;  // meaning going to a loop
+				else exturn++;
+				// skill state 
+				Human.skill.amazing_grace_state = false;
+				// change button unable
+				button_ok.enable_diabled_button();
+				button_cancel.enable_diabled_button();
+				// show message box
+				Insert_Message(L"人类玩家 获得一张牌！");
+				// reset all card unselected
+				ptr = Human.cards.Pile_Card_Total->next;
+				while (ptr) {
+					ptr->mouse_select_card = false;
+					ptr = ptr->next;
+				}
+				return 0;
+			}
+			if (mouse_select_vector.x > 807 && mouse_select_vector.x < (807 + 61) && mouse_select_vector.y > 694 && mouse_select_vector.y < (694 + 73)) {  // when it go to cancel ,change all anyway
+				Human.chosen_number = 0;
+				Human.select_card = false;
+				ptr->mouse_select_card = false;
+				// then change button state
+				button_ok.enable_diabled_button();
+				button_cancel.enable_diabled_button();
+				button_discard.enable_diabled_button();
+				return 0;
+			}
+		}
+		button_discard.enable_diabled_button();
+		return 0;
+	}
+	
 	if (Human.skill.need_jink || Human.skill.defense_analeptic_kill) {
+		if (button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled)
+			button_cancel.enable_normal_button();
 		// set jink card enable to play
 		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
@@ -275,7 +366,9 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 	}
 	
 	if (Human.skill.begging_peach) {
-		round_loop = true;
+		if (button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled)
+			button_cancel.enable_normal_button();
+		dying_loop = true;
 		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
 			switch (ptr->card_info.single_card_number) {
@@ -391,6 +484,8 @@ int Game::Human_Round_Skill_Judgment(Vector2i mouse_select_vector) {
 
 	// dying & self_save
 	if (Human.self_save) {
+		if (button_cancel.is_disabled && button_ok.is_disabled && button_discard.is_disabled)
+			button_cancel.enable_normal_button();
 		Single_Card* ptr = Human.cards.Pile_Card_Total->next;
 		for (int i = 0; i < Human.cards.Pile_Card_Amount; i++) {
 			switch (ptr->card_info.single_card_number) {
@@ -523,6 +618,12 @@ void Game::Human_Round() {
 			case peach:
 				ptr->enable_to_play = true;
 				break;
+			case amazing_grace:
+				ptr->enable_to_play = true;
+				break;
+			case nullification:
+				ptr->enable_to_play = false;
+				break;
 			default:
 				break;
 			}
@@ -640,7 +741,6 @@ void Game::Human_Round() {
 						}
 						else if (ptr->card_info.single_card_number == kill)
 						{
-
 							cout << "__killllit:::" << number << endl;
 							//  animator running
 							Human.animator_kill = true;
@@ -705,6 +805,44 @@ void Game::Human_Round() {
 						discard_pile.Insert_Card(analeptic, 1);
 						Insert_Message(L"人类玩家 施展 酒");
 					}
+					else if (ptr->card_info.single_card_number == amazing_grace) { // get anyone a card
+						// round turn
+						exturn = human;
+						round_loop_starter = human;
+						amazing_grace_loop = true;
+						// sent skill signal 
+						Human.skill.amazing_grace_state = true;
+						for (int i = 0; i < machine_number; i++)
+							Machine[i].skill.amazing_grace_state = true;
+						// piles changes
+						discard_pile.Insert_Card(amazing_grace, 1);
+						Insert_Message(L"人类玩家 施展 五谷丰登");
+						// insert some cards according to current living player
+						for (int i = 0; i < machine_number+1; i++) {
+							temp_pile.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
+							piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
+						}
+						// set each card position (initialize)
+						Single_Card* ptr = temp_pile.Pile_Card_Total->next;
+						for (int i = 0; i < temp_pile.Pile_Card_Amount; i++) {  // each card:  width 93 || height 130
+							if (!ptr->file_loaded) {
+								stringstream ss;
+								ss << "image/skill&equip_card/small_card/" << ptr->card_info.single_card_number << ".jpg";
+								Load_Image(ptr->texture_card, ptr->sprite_card, ss.str(), 0, 0, 1, 1);
+								ptr->file_loaded = true;
+							}
+							ptr->point_one.x = 270 + i * 100;
+							ptr->point_one.y = 450;
+							ptr->point_two.x = ptr->point_one.x + 93;
+							ptr->point_two.y = ptr->point_one.y + 130;
+							ptr->mouse_select_card = false;
+							ptr = ptr->next;
+						}
+						button_discard.enable_diabled_button();
+						button_cancel.enable_diabled_button();
+						button_ok.enable_diabled_button();
+					}
+					
 					Machine[0].being_choose = false;
 					Machine[1].being_choose = false;
 					Machine[2].being_choose = false;

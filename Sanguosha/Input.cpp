@@ -371,7 +371,7 @@ Vector2i Game::Input() {
 
 			// change image
 			if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::A) {
-				if (img_bg_number == 4) img_bg_number = 0;
+				if (img_bg_number == bg_max_no) img_bg_number = 0;
 				else img_bg_number++;
 				change_bg = true;
 			}
@@ -410,54 +410,44 @@ Vector2i Game::Input() {
 				// control button of cancel in hover state
 				if (!button_cancel.is_disabled) {
 					if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 694 && event_global.mouseMove.y < (694 + 73))
-					{ // the button of cancel //(807, 694)++(61,73)
-						//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-						//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					{ 
 						button_cancel.enable_hover_button();
-						//cout << "鼠标位于取消上" << endl;
 					}
 					else {
-						//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-						//cout << "new mouse y: " << event_global.mouseMove.y << endl;
 						button_cancel.enable_normal_button();
-						//cout << "鼠标不在取消上" << endl;
 					}
 				}
 				// control button of assure
 				if (!button_ok.is_disabled) {
-					if (event_global.mouseMove.x > 807 && event_global.mouseMove.x < (807 + 61) && event_global.mouseMove.y > 604 && event_global.mouseMove.y < (604 + 75))
-					{ // the button of ok //(807, 604)++(61,75)
-						//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-						//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					if (event_global.mouseMove.x > 807 && 
+						event_global.mouseMove.x < (807 + 61) && 
+						event_global.mouseMove.y > 604 && 
+						event_global.mouseMove.y < (604 + 75))
+					{
 						button_ok.enable_hover_button();
-						//cout << "鼠标位于确定上" << endl;
-						//return virtual_vector;
 					}
 					else {
-						//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-						//cout << "new mouse y: " << event_global.mouseMove.y << endl;
 						button_ok.enable_normal_button();
-						//cout << "鼠标不在确定上" << endl;
 					}
 				}
 				// control button of discard in hover state
 				if (!button_discard.is_disabled) {
-					if (event_global.mouseMove.x > 874 && event_global.mouseMove.x < (874 + 33) && event_global.mouseMove.y > 644 && event_global.mouseMove.y < (644 + 81))
-					{ // the button of ok //(874, 644)++(33,81)
-						//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-						//cout << "new mouse y: " << event_global.mouseMove.y << endl;
+					if (event_global.mouseMove.x > 874 && 
+						event_global.mouseMove.x < (874 + 33) && 
+						event_global.mouseMove.y > 644 && 
+						event_global.mouseMove.y < (644 + 81))
+					{ 
 						button_discard.enable_hover_button();
-						//cout << "鼠标位于结束上" << endl;
 					}
 					else {
-						//cout << "new mouse x: " << event_global.mouseMove.x << endl;
-						//cout << "new mouse y: " << event_global.mouseMove.y << endl;
 						button_discard.enable_normal_button();
-						//cout << "鼠标不在结束上" << endl;
 					}
 				}
 			    
-				if (event_global.mouseMove.x > 0 && event_global.mouseMove.x < (0 + 255) && event_global.mouseMove.y >0 && event_global.mouseMove.y < (0 + 70))
+				if (event_global.mouseMove.x > 0 && 
+					event_global.mouseMove.x < (0 + 255) && 
+					event_global.mouseMove.y >0 && 
+					event_global.mouseMove.y < (0 + 70))
 				{
 					pause_button.enable_hover_button();
 				}

@@ -72,7 +72,7 @@ void Game::Machine_Round_enable_dying_state(Player& machine) {
 
 int Game::Machine_Round_Skill_Judgment(Player& machine) {
 	// about begger-life
-	if (machine.skill.begging_peach == false && round_loop && round_loop_starter == machine.charactor_code) {
+	if (machine.skill.begging_peach == false && dying_loop && round_loop_starter == machine.charactor_code) {
 		switch (peach_begger)
 		{
 		case human:
@@ -132,12 +132,54 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 		default:
 			break;
 		}
-		round_loop = false;
+		dying_loop = false;
 		round_loop_starter = -1; // default value is -1 to escape & found unknown error
 		exturn = normal;
 		exturn_backup = -1;
+		// reset peach-begging to default false
+		Human.skill.begging_peach = false;
+		Machine[0].skill.begging_peach = false;
+		Machine[1].skill.begging_peach = false;
+		Machine[2].skill.begging_peach = false;
+		Machine[3].skill.begging_peach = false;
 		return 0;
 	}
+
+	// end-up skill of amazing grace
+	if (machine.skill.amazing_grace_state == false && amazing_grace_loop && round_loop_starter == machine.charactor_code) {
+		temp_pile.clear();
+		// reset all skill signal
+		Human.skill.amazing_grace_state = false;
+		Machine[0].skill.amazing_grace_state = false;
+		Machine[1].skill.amazing_grace_state = false;
+		Machine[2].skill.amazing_grace_state = false;
+		Machine[3].skill.amazing_grace_state = false;
+		// reset 
+		amazing_grace_loop = false;
+		round_loop_starter = -1;
+		exturn = normal;
+		exturn_backup = -1;
+	}
+
+	if (machine.skill.amazing_grace_state) {
+		// result
+		machine.cards.Insert_Card(temp_pile.Pile_Card_Total->next->card_info.single_card_number, 1);
+		temp_pile.Delete_Card(temp_pile.Pile_Card_Total->next->card_info.single_card_number);
+		// show message box
+		wstring reminded = L"电脑-";
+		std::stringstream temp_string;
+		temp_string << machine.charactor_code - 1;
+		reminded = reminded + temp_string.str() + L"  得到一张牌";
+		Insert_Message(reminded);
+		// reset
+		machine.skill.amazing_grace_state = false;
+		// round change
+		if (exturn == machine_number + 1) exturn = human;  // meaning going to a loop
+		else exturn++;
+		return 0;
+	}
+
+
 	if (machine.skill.need_jink) {
 		if (machine.cards.Search_Card(jink)) {
 			machine.animator_jink = true;
@@ -246,7 +288,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 			Machine[3].skill.begging_peach = false;
 			peach_begger = -1;    // default one is -1 in case unknown error
 			round_loop_starter = -1;
-			round_loop = false;
+			dying_loop = false;
 			machine.self_save = false;
 			machine.is_dying = false;
 		}
@@ -254,7 +296,7 @@ int Game::Machine_Round_Skill_Judgment(Player& machine) {
 	}
 	
 	if (machine.skill.begging_peach) {
-		round_loop = true;
+		dying_loop = true;
 		if (machine.cards.Search_Card(peach)) {
 			// figure out who sent begging peach signal then give it
 
@@ -381,6 +423,51 @@ void Game::Machine_Round(Player& machine) {
 	}
 	if (exturn == normal && turn == machine.charactor_code) {
 		if (machine.round_play_phase) {
+			if (machine.cards.Search_Card(amazing_grace)) {
+				
+				// round turn
+				exturn = machine.charactor_code;
+				round_loop_starter = machine.charactor_code;
+				amazing_grace_loop = true;
+
+				// sent skill signal 
+				Human.skill.amazing_grace_state = true;
+				for (int i = 0; i < machine_number; i++)
+					Machine[i].skill.amazing_grace_state = true;
+
+				// message box
+				wstring reminded = L"电脑-";
+				std::stringstream temp_string;
+				temp_string << machine.charactor_code - 1;
+				reminded = reminded + temp_string.str() + L" 施展 五谷丰登";
+				Insert_Message(reminded);
+
+				// piles changes
+				machine.cards.Delete_Card(amazing_grace);
+				discard_pile.Insert_Card(amazing_grace, 1);// show message
+				// insert some cards according to current living player
+				for (int i = 0; i < machine_number + 1; i++) {
+					temp_pile.Insert_Card(piles.Pile_Card_Total->next->card_info.single_card_number, piles.Pile_Card_Total->next->card_info.suit);
+					piles.Delete_Card(piles.Pile_Card_Total->next->card_info.single_card_number);
+				}
+				// set each card position
+				Single_Card* ptr = temp_pile.Pile_Card_Total->next;
+				for (int i = 0; i < temp_pile.Pile_Card_Amount; i++) {  // each card:  width 93 || height 130
+					if (!ptr->file_loaded) {
+						stringstream ss;
+						ss << "image/skill&equip_card/small_card/" << ptr->card_info.single_card_number << ".jpg";
+						Load_Image(ptr->texture_card, ptr->sprite_card, ss.str(), 0, 0, 1, 1);
+						ptr->file_loaded = true;
+					}
+					ptr->point_one.x = 270 + i * 100;
+					ptr->point_one.y = 450;
+					ptr->point_two.x = ptr->point_one.x + 93;
+					ptr->point_two.y = ptr->point_one.y + 130;
+					ptr->mouse_select_card = false;
+					ptr = ptr->next;
+				}
+				return;
+			}
 			if (machine.drank_analeptic == false) {
 				if (machine.cards.Search_Card(analeptic)) {
 					// animator start

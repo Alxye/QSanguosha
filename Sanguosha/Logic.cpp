@@ -44,7 +44,6 @@ void Game::Logic() {
 			gameinfo_phaseinfo.enable_normal_button();
 			gameinfo_cardinfo.enable_normal_button();
 
-
 			return;
 		}
 	}
@@ -97,6 +96,8 @@ void Game::Logic() {
 			switch (machine_number)
 			{
 			case 1:
+				Human.HP = 2;
+				Human.limited_HP = 2;
 				// for machine-0
 				Machine[0].location_one.x = window_width * 2 / 5;
 				Machine[0].location_one.y = window_height / 15;
@@ -104,6 +105,8 @@ void Game::Logic() {
 				Machine[0].location_two.y = Machine[0].location_one.y + 195;
 				break;
 			case 2:
+				Human.HP = 2;
+				Human.limited_HP = 2;
 				// for machine-0
 				Machine[0].location_one.x = 290;
 				Machine[0].location_one.y = 36;
@@ -116,6 +119,8 @@ void Game::Logic() {
 				Machine[1].location_two.y = Machine[1].location_one.y + 195;
 				break;
 			case 3:
+				Human.HP = 3;
+				Human.limited_HP = 3;
 				// for machine-0
 				Machine[0].location_one.x = 100;
 				Machine[0].location_one.y = 300;
@@ -133,6 +138,8 @@ void Game::Logic() {
 				Machine[2].location_two.y = Machine[2].location_one.y + 195;
 				break;
 			case 4:
+				Human.HP = 4;
+				Human.limited_HP = 4;
 				// for machine-0
 				Machine[0].location_one.x = 100;
 				Machine[0].location_one.y = 300;

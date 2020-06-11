@@ -328,6 +328,51 @@ void Game::Draw() {
 				window.draw(pause_button.sprite_down);
 			}
 		}
+
+		// show temp-pile card where using amazing grace
+		if (exturn == human && Human.skill.amazing_grace_state) {
+            // draw back-stable ground
+			RectangleShape bg_rect(Vector2f((100*temp_pile.Pile_Card_Amount+20)>319? (100 * temp_pile.Pile_Card_Amount + 20):320, 180)); // draw rectangle
+			bg_rect.setFillColor(Color(0, 0, 0, 100));
+			bg_rect.setPosition(260, 410);
+			window.draw(bg_rect);
+
+			// draw remind note
+			Font reminded_note_font;
+			Text reminded_note;
+			Load_Font(reminded_note_font, reminded_note, "font/simsun.ttc");
+			reminded_note.setCharacterSize(20);
+			reminded_note.setFillColor(Color(255, 255, 255, 255));
+			reminded_note.setStyle(Text::Bold);
+			reminded_note.setPosition(265, 415);
+			wstring reminded = L"Îå¹È·áµÇ--ÇëÑ¡ÔñÒ»ÕÅÅÆÊÕÈëÄÒÖÐ";
+			reminded_note.setString(reminded);
+			window.draw(reminded_note);
+
+
+			Single_Card* ptr = temp_pile.Pile_Card_Total->next;
+			for (int i = 0; i < temp_pile.Pile_Card_Amount; i++) {  // each card:  width 93 || height 130
+				ptr->point_one.x = 270 + i * 100;
+				ptr->point_one.y = 450;
+				ptr->point_two.x = ptr->point_one.x + 93;
+				ptr->point_two.y = ptr->point_one.y + 130;
+				if (ptr->mouse_select_card) {
+					ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
+					window.draw(ptr->sprite_card);
+
+					RectangleShape rect(Vector2f(93, 130)); // draw rectangle
+					rect.setFillColor(Color(155, 0, 0, 100));
+					rect.setPosition(ptr->point_one.x, ptr->point_one.y);
+					window.draw(rect);
+				}
+				else {
+					ptr->sprite_card.setPosition(ptr->point_one.x, ptr->point_one.y);
+					window.draw(ptr->sprite_card);
+				}
+				//window.draw(ptr->sprite_card);
+				ptr = ptr->next;
+			}
+		}
         
 	}
 
@@ -491,6 +536,12 @@ void Game::Draw_Discard_Pile() {
 			break;
 		case peach:
 			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/3.jpg");
+			break;
+		case amazing_grace:
+			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/4.jpg");
+			break;
+		case archery_attack:
+			Load_Image(texture_discard_pile, sprite_discard_pile, "image/skill&equip_card/small_card/5.jpg");
 			break;
 		default:
 			break;
@@ -753,12 +804,34 @@ void Game::Draw_Stable_Background() {
 	reminded_note.setCharacterSize(20);
 	reminded_note.setFillColor(Color(255, 255, 255, 255));
 	reminded_note.setStyle(Text::Bold);
-	reminded_note.setPosition(810, 20);
+	
+	// show killing time 
 	wstring reminded = L"ÒÑÉ±µÐ£º";
 	std::stringstream temp_string;
 	temp_string << Human.killing_number;
 	reminded = reminded + temp_string.str() ;
 
 	reminded_note.setString(reminded);
+	reminded_note.setPosition(810, 20);
+	window.draw(reminded_note);
+
+	// show piles amount
+	reminded = L"ÃþÅÆ¶ÑÅÆÊý£º";
+	temp_string.str("");
+	temp_string << piles.Pile_Card_Amount;
+	reminded = reminded + temp_string.str();
+
+	reminded_note.setString(reminded);
+	reminded_note.setPosition(350, 450);
+	window.draw(reminded_note);
+
+	// show discard piles amount
+	reminded = L"ÆúÅÆ¶ÑÅÆÊý£º";
+	temp_string.str("");
+	temp_string << discard_pile.Pile_Card_Amount;
+	reminded = reminded + temp_string.str();
+
+	reminded_note.setString(reminded);
+	reminded_note.setPosition(550, 450);
 	window.draw(reminded_note);
 }

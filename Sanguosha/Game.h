@@ -21,8 +21,13 @@ public:
 	int turn;                             // the mask of turning
 	int exturn;
 	int exturn_backup;
-	bool round_loop;                      // flag to judge if a loop have been existed
+
 	int round_loop_starter;               // mark loop starter
+	// dying round loop
+	bool dying_loop;                      // flag to judge if a loop have been existed
+	bool amazing_grace_loop;
+	bool archery_attack_loop;
+
 	bool restart;                         // signal of gamer restart
 	bool gamestart, gameover, gamequit,gamerun,gamechoose,gamepause,gameinfo;
 	bool new_round;

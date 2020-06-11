@@ -7,7 +7,6 @@ Game::Game() {
 	virtual_vector.y = -999;
 	human_defense = false;
 	animator_running = false;
-	round_loop = false;
 	window.create(sf::VideoMode(window_width, window_height), L"Èý¹úÉ±_BY_ÕÔÜçÜç", sf::Style::Close);
 	Human.HP = 2;
 	Human.limited_HP = Human.HP;
@@ -37,6 +36,14 @@ void Game::Initial() {
 	gamechoose_style=0;
 	// initialize background number
 	img_bg_number = 0;
+
+	round_loop_starter = -1;
+	// dying round loop
+	dying_loop = false;
+	// amazing grace round loop
+	amazing_grace_loop = false;
+	archery_attack_loop = false;
+
 	// load background(default)
 	Load_Image(texture_background, sprite_background, "image/back_stable/background-cover0.jpg", 0, 0, 1, 1);                  
 	// load equipment background in player's interface

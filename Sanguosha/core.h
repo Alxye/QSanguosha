@@ -10,13 +10,15 @@
 #include <sstream>
 using namespace std;
 using namespace sf;
-#define species_amount 6
+#define species_amount 5
+#define bg_max_no 5
 typedef enum skill_number {
 	kill,             // kill
 	jink,             // escape
 	analeptic,        // wine
 	peach,            // peach
 	amazing_grace,    // 五谷丰登
+	archery_attack,   // 万箭齐发
 	nullification     // 无懈可击
 };
 typedef enum game_state {
@@ -255,7 +257,7 @@ public:
 				ptr->card_name = "五谷丰登";
 				break;
 			case 5:
-				ptr->card_name = "无懈可击";
+				ptr->card_name = "万箭齐发";
 				break;
 			case 6:
 				ptr->card_name = "666";
@@ -279,20 +281,22 @@ public:
 		int peach_amount=0;
 		int analeptic_amount=0;
 		int amazing_grace_amount = 0;
-		int nullification_amount = 0;
+		int archery_attack_amount = 0;
+		//int nullification_amount = 0;
 
 		int cur_card;
 
-		for (int i = 0; i < 59; i++)
+		for (int i = 0; i < 58; i++)
 		{
+			
 			cur_card = rand() % species_amount;
 			while (true) {
 				if (kill_amount != 30 && cur_card==kill) break;
 				if (jink_amount != 15 && cur_card==jink) break;
 				if (peach_amount != 8 && cur_card==peach) break;
 				if (analeptic_amount!= 3 && cur_card==analeptic) break;
-				if (amazing_grace_amount!= 1 && cur_card==amazing_grace) break;
-				if (nullification_amount != 2 && cur_card==nullification) break;
+				if (amazing_grace_amount!= 2 && cur_card==amazing_grace) break;
+				//if (archery_attack_amount != 4 && cur_card== archery_attack) break;
 				cur_card = rand() % species_amount;
 			}
 			Insert_Card(cur_card, (rand() % 4));
@@ -317,9 +321,9 @@ public:
 				amazing_grace_amount++;
 				cout << "五谷丰登-"<<amazing_grace_amount << endl;
 				break;
-			case nullification:
-				nullification_amount++;
-				cout << "无懈可击-" <<nullification_amount<< endl;
+			case archery_attack:
+				archery_attack_amount++;
+				cout << "万箭齐发-" << archery_attack_amount<< endl;
 				break;
 			}
 		}
@@ -371,6 +375,8 @@ public:
 	bool need_analeptic;
 	bool begging_peach;
 	bool defense_analeptic_kill;
+	bool amazing_grace_state;
+	bool defense_archery_attack;
 	// define skill 
 
 	Skill() {
@@ -380,6 +386,8 @@ public:
 		need_analeptic = false;
 		begging_peach = false;
 		defense_analeptic_kill = false;
+		amazing_grace_state = false;
+		defense_archery_attack = false;
 	}
 };
 
