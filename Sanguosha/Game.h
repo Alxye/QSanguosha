@@ -116,6 +116,11 @@ public:
 	Button pause_info;
 	Button pause_return_menu;
 
+	// Music
+	Music music_bg;
+	int sound_volume;
+
+
 	// basic function
 	// change string to lpcwstr so that string can display on warning windows
 	LPCWSTR string_To_LPCWSTR(string _string);
@@ -123,6 +128,8 @@ public:
 	void Load_Image(Texture& texture, Sprite& sprite, string filename, float originX = 0, float originY = 0, float factorX = 1, float factorY = 1);
 	// load font & text
 	void Load_Font(Font& font, Text& text, string filename);
+	void Load_Sound(Sound& sound, SoundBuffer& soundbuffer, string filename);
+	void Load_Music(Music& music, string filename);
 
 	void Initial();
 	int Previous_Draw_Phase();

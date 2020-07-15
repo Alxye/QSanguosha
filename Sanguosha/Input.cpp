@@ -12,6 +12,18 @@ Vector2i Game::Input() {
 			window.close();
 			gamequit = true;
 		}
+		
+		// background music sound controller
+		if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::PageUp)
+		{
+			if (sound_volume < 95)		sound_volume += 5;
+			music_bg.setVolume(sound_volume);
+		}
+		else if (event_global.type == sf::Event::EventType::KeyReleased && event_global.key.code == sf::Keyboard::PageDown)
+		{
+			if (sound_volume > 5)		sound_volume -= 5;
+			music_bg.setVolume(sound_volume);
+		}
 
 		// when game begin yet is showing the main menu
 		if (gamestart) {

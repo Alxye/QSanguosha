@@ -261,6 +261,7 @@ void Game::Logic() {
 
 	if (gameover) {
 		if (return_menu.is_disabled) {
+
 			gameover = false;
 			gamestart = true;
 			restart = true;

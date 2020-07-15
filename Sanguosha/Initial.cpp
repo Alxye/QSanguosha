@@ -16,6 +16,9 @@ Game::Game() {
 	message_amount = 0;
 	// initialize pile
 	piles.Shuffle_Card();
+	// music-play
+	Load_Music(music_bg, "audio/bg.ogg");
+	sound_volume = 20;
 }
 void Game::Initial() {
 	// initialize game state
@@ -289,7 +292,6 @@ void Game::Load_Image(Texture& texture, Sprite& sprite, string filename, float o
 		}
 	}
 	else {
-		//cout << "Image Load Successfully" << endl;
 		sprite.setTexture(texture);
 		sprite.setOrigin(originX, originY);
 		sprite.setScale(factorX, factorY);
@@ -315,7 +317,39 @@ void Game::Load_Font(Font& font, Text& text, string filename) {
 		}
 	}
 	else {
-		//cout << "Font Load Successfully" << endl;
 		text.setFont(font);
+	}
+}
+
+void Game::Load_Sound(Sound& sound, SoundBuffer& soundbuffer, string filename) {
+	if (!soundbuffer.loadFromFile(filename)) {
+		int result = MessageBox(NULL, string_To_LPCWSTR("Invalid Path , file is missing : " + filename), TEXT("Error ! Failed to load !"), MB_RETRYCANCEL);
+		switch (result) {
+		case IDRETRY:
+			return Load_Sound(sound,soundbuffer, filename);
+		case IDCANCEL:
+			exit(0);
+		}
+	}
+	else {
+		sound.setVolume(50);
+		sound.setBuffer(soundbuffer);
+	}
+}
+
+void Game::Load_Music(Music& music, string filename) {
+	if (!music.openFromFile(filename)) {
+		int result = MessageBox(NULL, string_To_LPCWSTR("Invalid Path , file is missing : " + filename), TEXT("Error ! Failed to load !"), MB_RETRYCANCEL);
+		switch (result) {
+		case IDRETRY:
+			return Load_Music(music, filename);
+		case IDCANCEL:
+			exit(0);
+		}
+	}
+	else {
+		music.setVolume(20);
+		music.play();
+		music.setLoop(true);
 	}
 }

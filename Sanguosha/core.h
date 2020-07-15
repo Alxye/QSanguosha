@@ -281,7 +281,7 @@ public:
 		int peach_amount=0;
 		int analeptic_amount=0;
 		int amazing_grace_amount = 0;
-		int archery_attack_amount = 0;
+		//int archery_attack_amount = 0;
 		//int nullification_amount = 0;
 
 		int cur_card;
@@ -320,10 +320,6 @@ public:
 			case amazing_grace:
 				amazing_grace_amount++;
 				cout << "Îå¹È·áµÇ-"<<amazing_grace_amount << endl;
-				break;
-			case archery_attack:
-				archery_attack_amount++;
-				cout << "Íò¼ýÆë·¢-" << archery_attack_amount<< endl;
 				break;
 			}
 		}
