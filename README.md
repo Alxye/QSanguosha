@@ -1,5 +1,6 @@
 # Sanguosha
-support by SFML &amp; C++  
+support by SFML & C++  开发平台：Visual Studio 2019
+调试环境 Release x64 demo最佳运行环境：window x64
 ## 2020.4.7 开发思路  
 * 思考：就是 引入 按钮 确定 取消 结束 和 设置 目标要关联起来   以便以后 国战  单机多人   
 * 思考：技能怎么引入是个大问题  加个技能类》》又不能引入别的参数   不知道加players 的类行不行  已知 game 类不行  
